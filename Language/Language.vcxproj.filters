@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Parser">
+      <UniqueIdentifier>{f0f1f71d-6936-4be3-9413-d3b68301ef5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LanguageGrammar">
+      <UniqueIdentifier>{ce5da771-0290-4a78-b80d-1a3b22a7a2da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Modules">
+      <UniqueIdentifier>{1a48b78a-4b9b-4fa3-87d2-84f33dfaa613}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Compiler">
+      <UniqueIdentifier>{6e8725f8-d8e6-4433-a04a-903af5b5e583}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Compiler\x86">
+      <UniqueIdentifier>{86250602-6238-4a81-a180-6d88be97b1e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Compiler\SoftCPU">
+      <UniqueIdentifier>{7c50a4b4-0b12-430b-a130-6e55690263d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Modules\Text">
+      <UniqueIdentifier>{1fe88b86-bde0-4f95-912f-d8695a3ad264}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Modules\Tree">
+      <UniqueIdentifier>{c7208fd4-60d3-4e6a-9760-65bb46963b7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Modules\ExtArr">
+      <UniqueIdentifier>{f406da04-d497-461a-87b2-66bd724a82d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Parser\Lexer">
+      <UniqueIdentifier>{fdd37f65-b536-437e-ab08-8556d7f2efe3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Modules\Logs">
+      <UniqueIdentifier>{c8509c92-b73d-413a-8ca1-875b87378a47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Modules\List">
+      <UniqueIdentifier>{4753dfe3-aba4-4e3b-a9ae-e310fafd6190}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Modules\FilesIO">
+      <UniqueIdentifier>{08bb178e-95ae-477f-97bd-01bab8951b30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LanguageGrammar\Universal">
+      <UniqueIdentifier>{ed01dde0-f355-45a2-92d2-e651fa17f639}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LanguageGrammar\English">
+      <UniqueIdentifier>{d892f48c-6ed5-4e9e-96b1-446afe7604ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LanguageGrammar\Russian">
+      <UniqueIdentifier>{894ad54c-355a-4234-9dd3-fe4aa442c1d3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Modules\Logs\Logs.cpp">
+      <Filter>Modules\Logs</Filter>
+    </ClCompile>
+    <ClCompile Include="Modules\List\List.cpp">
+      <Filter>Modules\List</Filter>
+    </ClCompile>
+    <ClCompile Include="Modules\List\List_UnitTests.cpp">
+      <Filter>Modules\List</Filter>
+    </ClCompile>
+    <ClCompile Include="Modules\List\List_Verify.cpp">
+      <Filter>Modules\List</Filter>
+    </ClCompile>
+    <ClCompile Include="Modules\Text\Text.cpp">
+      <Filter>Modules\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="Modules\Tree\Tree.cpp">
+      <Filter>Modules\Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="Modules\FilesIO\FilesIO.cpp">
+      <Filter>Modules\FilesIO</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Parser\Lexer\Lexer.cpp">
+      <Filter>Parser\Lexer</Filter>
+    </ClCompile>
+    <ClCompile Include="LanguageGrammar\LanguageGrammar.cpp">
+      <Filter>LanguageGrammar</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Modules\Logs\Logs.h">
+      <Filter>Modules\Logs</Filter>
+    </ClInclude>
+    <ClInclude Include="Modules\Logs\LogsConfig.h">
+      <Filter>Modules\Logs</Filter>
+    </ClInclude>
+    <ClInclude Include="Modules\List\_list_private.h">
+      <Filter>Modules\List</Filter>
+    </ClInclude>
+    <ClInclude Include="Modules\List\List.h">
+      <Filter>Modules\List</Filter>
+    </ClInclude>
+    <ClInclude Include="Modules\List\List_Config.h">
+      <Filter>Modules\List</Filter>
+    </ClInclude>
+    <ClInclude Include="Modules\List\List_Logs.h">
+      <Filter>Modules\List</Filter>
+    </ClInclude>
+    <ClInclude Include="Modules\List\List_UnitTests.h">
+      <Filter>Modules\List</Filter>
+    </ClInclude>
+    <ClInclude Include="Modules\Text\Text.h">
+      <Filter>Modules\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="Modules\Tree\Tree.h">
+      <Filter>Modules\Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="Modules\ErrorsHandling.h">
+      <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Modules\FilesIO\FilesIO.h">
+      <Filter>Modules\FilesIO</Filter>
+    </ClInclude>
+    <ClInclude Include="Parser\Lexer\Lexer.h">
+      <Filter>Parser\Lexer</Filter>
+    </ClInclude>
+    <ClInclude Include="LanguageGrammar\LanguageGrammar.h">
+      <Filter>LanguageGrammar</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="LanguageGrammar\Universal\Operators.inc">
+      <Filter>LanguageGrammar\Universal</Filter>
+    </None>
+    <None Include="LanguageGrammar\Universal\SpecialSymbols.inc">
+      <Filter>LanguageGrammar\Universal</Filter>
+    </None>
+    <None Include="LanguageGrammar\English\Keywords.inc">
+      <Filter>LanguageGrammar\English</Filter>
+    </None>
+  </ItemGroup>
+</Project>
