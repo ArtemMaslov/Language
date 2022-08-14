@@ -1,0 +1,110 @@
+digraph G
+{
+	graph[dpi = 100];
+	ranksep   = 1;
+	bgcolor   = "#303030";
+
+	edge
+	[
+		minlen   = 3,
+		penwidth = 3,
+		color    = "green"
+	];
+
+	node
+	[
+		shape     = "record",
+		style     = "rounded, filled",
+		fillcolor = "#404040",
+		fontsize  = 18,
+		penwidth  = 1,
+		color     = "#F9D423",
+		margin    = "0.05 0.4",
+		fontcolor = "#E1F5C4"
+	]
+}
+
+astNode [label = "
+{
+	{ AstRoot } |
+	{ Nodes\nextArray<constr>\n%p }
+}"];
+
+constrNode%zd [label = "
+{
+	{ Construction } | 
+	{ %s\n%d } | //type + typeId
+	{ {Funct\n%p} | {GlobVar\n%p} } 
+}"];
+			 
+instrNode%zd [label = "
+{
+	{ Instruction } |
+	{ %s\n%d } | //type + typeId
+	{ {Var\n%p} | {FunctCall\n%p} | {If\n%p} | {While\n%p} }
+}"];
+
+variableNode%zd [label = "
+{
+	{ Variable } |
+	{ %s\n%d } | //Name + NameId
+	{ InitValue\n%p }
+}"];
+
+binOperNode%zd [label = "
+{
+	{ BinaryOperator } |
+	{ %s\n%d } | //OperatorName + OperatorNameId
+	{ {Left\n%p} | {Right\n%p} }
+}"];
+
+unarOperNode%zd [label = "
+{
+	{ UnaryOperator } |
+	{ %s\n%d } | //OperatorName + OperatorNameId
+	{ Operand\n%p }
+}"];
+
+exprNode%zd [label = "
+{
+	{ Expression } |
+	{ %s\n%d } | //TypeName + OperatorNameId
+	{ {BinOper\n%p} | {UnOper\n%p} | {Number\n%lf} | {FunctCall\n%p} | {Var\n%p} }
+}"];
+
+functParamNode%zd [label = "
+{
+	{ FunctParam } |
+	{ %s\n%d } | //Name + NameId
+	{ Value\n%p }
+}"];
+
+functDefNode%zd [label = "
+{
+	{ FunctDef } |
+	{ %s\n%d } | //Name + NameId
+	{ Params\nextArr<functParamDef>\n%p }
+	{ Body\nextArr<instr>\n%p }
+}"];
+
+functCallNode%zd [label = "
+{
+	{ FunctCall } |
+	{ %s\n%d } | //Name + NameId
+	{ Params\nextArr<functParamDef>\n%p }
+}"];
+
+ifNode%zd [label = "
+{
+	{ If } |
+	{ Condition\n%p } |
+	{ True\nextArr<instr>\n%p }
+	{ False\nextArr<instr>\n%p }
+}"];
+
+whileNode%zd [label = "
+{
+	{ While } |
+	{ Condition\n%p } |
+	{ Body\nextArr<instr>\n%p }
+}"];

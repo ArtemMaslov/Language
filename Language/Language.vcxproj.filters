@@ -1,35 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Parser">
-      <UniqueIdentifier>{f0f1f71d-6936-4be3-9413-d3b68301ef5c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="LanguageGrammar">
       <UniqueIdentifier>{ce5da771-0290-4a78-b80d-1a3b22a7a2da}</UniqueIdentifier>
     </Filter>
     <Filter Include="Modules">
       <UniqueIdentifier>{1a48b78a-4b9b-4fa3-87d2-84f33dfaa613}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Compiler">
-      <UniqueIdentifier>{6e8725f8-d8e6-4433-a04a-903af5b5e583}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Compiler\x86">
-      <UniqueIdentifier>{86250602-6238-4a81-a180-6d88be97b1e7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Compiler\SoftCPU">
-      <UniqueIdentifier>{7c50a4b4-0b12-430b-a130-6e55690263d5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Modules\Text">
       <UniqueIdentifier>{1fe88b86-bde0-4f95-912f-d8695a3ad264}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Modules\Tree">
-      <UniqueIdentifier>{c7208fd4-60d3-4e6a-9760-65bb46963b7d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Modules\ExtArr">
-      <UniqueIdentifier>{f406da04-d497-461a-87b2-66bd724a82d7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Parser\Lexer">
-      <UniqueIdentifier>{fdd37f65-b536-437e-ab08-8556d7f2efe3}</UniqueIdentifier>
     </Filter>
     <Filter Include="Modules\Logs">
       <UniqueIdentifier>{c8509c92-b73d-413a-8ca1-875b87378a47}</UniqueIdentifier>
@@ -49,6 +28,30 @@
     <Filter Include="LanguageGrammar\Russian">
       <UniqueIdentifier>{894ad54c-355a-4234-9dd3-fe4aa442c1d3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Modules\ExtArray">
+      <UniqueIdentifier>{f406da04-d497-461a-87b2-66bd724a82d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Back end">
+      <UniqueIdentifier>{6e8725f8-d8e6-4433-a04a-903af5b5e583}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Back end\x86">
+      <UniqueIdentifier>{86250602-6238-4a81-a180-6d88be97b1e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Back end\SoftCPU">
+      <UniqueIdentifier>{7c50a4b4-0b12-430b-a130-6e55690263d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Front end">
+      <UniqueIdentifier>{f0f1f71d-6936-4be3-9413-d3b68301ef5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Front end\Lexer">
+      <UniqueIdentifier>{fdd37f65-b536-437e-ab08-8556d7f2efe3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Modules\ExtHeap">
+      <UniqueIdentifier>{067989f8-99b8-476e-a356-bb680c7e22ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AST">
+      <UniqueIdentifier>{75cf9723-ff5f-4c51-8ffc-8eaa4fd10928}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Modules\Logs\Logs.cpp">
@@ -66,18 +69,57 @@
     <ClCompile Include="Modules\Text\Text.cpp">
       <Filter>Modules\Text</Filter>
     </ClCompile>
-    <ClCompile Include="Modules\Tree\Tree.cpp">
-      <Filter>Modules\Tree</Filter>
-    </ClCompile>
     <ClCompile Include="Modules\FilesIO\FilesIO.cpp">
       <Filter>Modules\FilesIO</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Parser\Lexer\Lexer.cpp">
-      <Filter>Parser\Lexer</Filter>
-    </ClCompile>
     <ClCompile Include="LanguageGrammar\LanguageGrammar.cpp">
       <Filter>LanguageGrammar</Filter>
+    </ClCompile>
+    <ClCompile Include="Modules\ExtArray\ExtArray.cpp">
+      <Filter>Modules\ExtArray</Filter>
+    </ClCompile>
+    <ClCompile Include="Front end\Lexer\Lexer.cpp">
+      <Filter>Front end\Lexer</Filter>
+    </ClCompile>
+    <ClCompile Include="Front end\Parser.cpp">
+      <Filter>Front end</Filter>
+    </ClCompile>
+    <ClCompile Include="Front end\Lexer\_identifier.cpp">
+      <Filter>Front end\Lexer</Filter>
+    </ClCompile>
+    <ClCompile Include="Modules\ExtHeap\ExtHeap.cpp">
+      <Filter>Modules\ExtHeap</Filter>
+    </ClCompile>
+    <ClCompile Include="Front end\Lexer\LexerUnitTests.cpp">
+      <Filter>Front end\Lexer</Filter>
+    </ClCompile>
+    <ClCompile Include="Front end\ParserUnitTests.cpp">
+      <Filter>Front end</Filter>
+    </ClCompile>
+    <ClCompile Include="AST\_aux_nodes.cpp">
+      <Filter>AST</Filter>
+    </ClCompile>
+    <ClCompile Include="AST\_funct_nodes.cpp">
+      <Filter>AST</Filter>
+    </ClCompile>
+    <ClCompile Include="AST\_expr_nodes.cpp">
+      <Filter>AST</Filter>
+    </ClCompile>
+    <ClCompile Include="AST\_keyword_nodes.cpp">
+      <Filter>AST</Filter>
+    </ClCompile>
+    <ClCompile Include="AST\AST.cpp">
+      <Filter>AST</Filter>
+    </ClCompile>
+    <ClCompile Include="AST\AST_Verify.cpp">
+      <Filter>AST</Filter>
+    </ClCompile>
+    <ClCompile Include="Back end\SoftCPU\Compiler.cpp">
+      <Filter>Back end\SoftCPU</Filter>
+    </ClCompile>
+    <ClCompile Include="Back end\SoftCPU\CompilerUnitTests.cpp">
+      <Filter>Back end\SoftCPU</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -105,20 +147,80 @@
     <ClInclude Include="Modules\Text\Text.h">
       <Filter>Modules\Text</Filter>
     </ClInclude>
-    <ClInclude Include="Modules\Tree\Tree.h">
-      <Filter>Modules\Tree</Filter>
-    </ClInclude>
     <ClInclude Include="Modules\ErrorsHandling.h">
       <Filter>Modules</Filter>
     </ClInclude>
     <ClInclude Include="Modules\FilesIO\FilesIO.h">
       <Filter>Modules\FilesIO</Filter>
     </ClInclude>
-    <ClInclude Include="Parser\Lexer\Lexer.h">
-      <Filter>Parser\Lexer</Filter>
-    </ClInclude>
     <ClInclude Include="LanguageGrammar\LanguageGrammar.h">
       <Filter>LanguageGrammar</Filter>
+    </ClInclude>
+    <ClInclude Include="Modules\ExtArray\ExtArray.h">
+      <Filter>Modules\ExtArray</Filter>
+    </ClInclude>
+    <ClInclude Include="Front end\Lexer\Lexer.h">
+      <Filter>Front end\Lexer</Filter>
+    </ClInclude>
+    <ClInclude Include="Front end\Parser.h">
+      <Filter>Front end</Filter>
+    </ClInclude>
+    <ClInclude Include="Front end\Lexer\_identifier.h">
+      <Filter>Front end\Lexer</Filter>
+    </ClInclude>
+    <ClInclude Include="Modules\ExtHeap\ExtHeap.h">
+      <Filter>Modules\ExtHeap</Filter>
+    </ClInclude>
+    <ClInclude Include="Front end\Lexer\LexerUnitTests.h">
+      <Filter>Front end\Lexer</Filter>
+    </ClInclude>
+    <ClInclude Include="Front end\ParserUnitTests.h">
+      <Filter>Front end</Filter>
+    </ClInclude>
+    <ClInclude Include="AST\AST.h">
+      <Filter>AST</Filter>
+    </ClInclude>
+    <ClInclude Include="AST\_aux_nodes.h">
+      <Filter>AST</Filter>
+    </ClInclude>
+    <ClInclude Include="AST\_funct_nodes.h">
+      <Filter>AST</Filter>
+    </ClInclude>
+    <ClInclude Include="AST\_expr_nodes.h">
+      <Filter>AST</Filter>
+    </ClInclude>
+    <ClInclude Include="AST\_keyword_nodes.h">
+      <Filter>AST</Filter>
+    </ClInclude>
+    <ClInclude Include="AST\AST_Verify.h">
+      <Filter>AST</Filter>
+    </ClInclude>
+    <ClInclude Include="AST\_ast_verify_patterns.h">
+      <Filter>AST</Filter>
+    </ClInclude>
+    <ClInclude Include="Back end\SoftCPU\Compiler.h">
+      <Filter>Back end\SoftCPU</Filter>
+    </ClInclude>
+    <ClInclude Include="Back end\SoftCPU\CompilerUnitTests.h">
+      <Filter>Back end\SoftCPU</Filter>
+    </ClInclude>
+    <ClInclude Include="Front end\_parse_aux.h">
+      <Filter>Front end</Filter>
+    </ClInclude>
+    <ClInclude Include="Front end\_parse_expr.h">
+      <Filter>Front end</Filter>
+    </ClInclude>
+    <ClInclude Include="Front end\_parse_funct.h">
+      <Filter>Front end</Filter>
+    </ClInclude>
+    <ClInclude Include="Front end\_parse_keyword.h">
+      <Filter>Front end</Filter>
+    </ClInclude>
+    <ClInclude Include="Back end\SoftCPU\_compiler_config.h">
+      <Filter>Back end\SoftCPU</Filter>
+    </ClInclude>
+    <ClInclude Include="Back end\SoftCPU\_intrinsic_funct.h">
+      <Filter>Back end\SoftCPU</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

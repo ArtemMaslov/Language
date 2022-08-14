@@ -6,33 +6,37 @@
 
 #include "Text.h"
 
-///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
-///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
+//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
+//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 
-int TextConstructor(Text* text)
+ProgramStatus TextConstructor(Text* text)
 {
 	assert(text);
 	
-	assert(text->Data == nullptr);
-	assert(text->Size == 0);
+	assert(text->Data   == nullptr);
+	assert(text->Size   == 0);
+	assert(text->Readed == false);
 
-	return PROGRAM_NO_ERRORS;
+	return ProgramStatus::Ok;
 }
 
-void TextDestructor(Text* text)
+ProgramStatus TextDestructor(Text* text)
 {
 	assert(text);
 
 	free(text->Data);
 	
-	text->Data = nullptr;
-	text->Size = 0;
+	text->Data   = nullptr;
+	text->Size   = 0;
+	text->Readed = false;
+
+	return ProgramStatus::Ok;
 }
 
-///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
-///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
+//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
+//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 
-int TextReadFile(Text* text, const char* fileName)
+ProgramStatus TextReadFile(Text* text, const char* fileName)
 {
 	assert(text);
 	assert(fileName);
@@ -41,24 +45,29 @@ int TextReadFile(Text* text, const char* fileName)
 
 	if (!file)
 	{
-		return PROGRAM_FAULT;
+		return ProgramStatus::Fault;
 	}
 
-	const size_t fileSize = GetFileSize(file);
+	const size_t fileSize   = GetFileSize(file);
+	const size_t bufferSize = fileSize + 1;
 
-	char* buffer = (char*)calloc(fileSize + 1, sizeof(char));
+	char* buffer = (char*)calloc(bufferSize, sizeof(char));
 
 	if (!buffer)
 	{
-		return PROGRAM_FAULT;
+		return ProgramStatus::Fault;
 	}
 
 	size_t readed = fread(buffer, sizeof(char), fileSize, file);
 
 	fclose(file);
 
-	return PROGRAM_NO_ERRORS;
+	text->Data   = buffer;
+	text->Size   = bufferSize;
+	text->Readed = true;
+
+	return ProgramStatus::Ok;
 }
 
-///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
-///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
+//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
+//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 

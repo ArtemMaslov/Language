@@ -1,12 +1,12 @@
 
-GRAMMAR(LNG_KEYWORD, LNG_GRAMMAR_EN, LNG_KWD_IF, "if")
+GRAMMAR(LngTokenType::Keyword, GrammarType::English, KeywordType::If, "if")
 
-GRAMMAR(LNG_KEYWORD, LNG_GRAMMAR_EN, LNG_KWD_ELSE, "else")
+GRAMMAR(LngTokenType::Keyword, GrammarType::English, KeywordType::Else, "else")
 
-GRAMMAR(LNG_KEYWORD, LNG_GRAMMAR_EN, LNG_KWD_WHILE, "while")
+GRAMMAR(LngTokenType::Keyword, GrammarType::English, KeywordType::While, "while")
 
-GRAMMAR(LNG_KEYWORD, LNG_GRAMMAR_EN, LNG_KWD_RET, "ret")
+GRAMMAR(LngTokenType::Keyword, GrammarType::English, KeywordType::Return, "ret")
 
-GRAMMAR(LNG_KEYWORD, LNG_GRAMMAR_EN, LNG_KWD_IN, "in")
+GRAMMAR(LngTokenType::Keyword, GrammarType::English, KeywordType::Input, "in")
 
-GRAMMAR(LNG_KEYWORD, LNG_GRAMMAR_EN, LNG_KWD_OUT, "out")
+GRAMMAR(LngTokenType::Keyword, GrammarType::English, KeywordType::Output, "out")

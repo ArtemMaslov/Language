@@ -1,28 +1,28 @@
 
-GRAMMAR(LNG_OPERATOR, LNG_GRAMMAR_UNI, LNG_OPER_ADD, "+")
+GRAMMAR(LngTokenType::Operator, GrammarType::Universal, OperatorType::Addition, "+")
 
-GRAMMAR(LNG_OPERATOR, LNG_GRAMMAR_UNI, LNG_OPER_SUB, "-")
+GRAMMAR(LngTokenType::Operator, GrammarType::Universal, OperatorType::Subtraction, "-")
 
-GRAMMAR(LNG_OPERATOR, LNG_GRAMMAR_UNI, LNG_OPER_MUL, "*")
+GRAMMAR(LngTokenType::Operator, GrammarType::Universal, OperatorType::Multiplication, "*")
 
-GRAMMAR(LNG_OPERATOR, LNG_GRAMMAR_UNI, LNG_OPER_DIV, "/")
+GRAMMAR(LngTokenType::Operator, GrammarType::Universal, OperatorType::Division, "/")
 
-GRAMMAR(LNG_OPERATOR, LNG_GRAMMAR_UNI, LNG_OPER_EQUAL, "==")
+GRAMMAR(LngTokenType::Operator, GrammarType::Universal, OperatorType::Equal, "==")
 
-GRAMMAR(LNG_OPERATOR, LNG_GRAMMAR_UNI, LNG_OPER_NOT_EQUAL, "!=")
+GRAMMAR(LngTokenType::Operator, GrammarType::Universal, OperatorType::NotEqual, "!=")
 
-//GRAMMAR(LNG_OPERATOR, LNG_GRAMMAR_UNI, LNG_MOP_GREATER_EQUAL, ">=")
+GRAMMAR(LngTokenType::Operator, GrammarType::Universal, OperatorType::GreaterEqual, ">=")
 
-GRAMMAR(LNG_OPERATOR, LNG_GRAMMAR_UNI, LNG_OPER_GREATER, ">")
+GRAMMAR(LngTokenType::Operator, GrammarType::Universal, OperatorType::Greater, ">")
 
-//GRAMMAR(LNG_OPERATOR, LNG_GRAMMAR_UNI, LNG_MOP_LESS_EQUAL, "<=")
+GRAMMAR(LngTokenType::Operator, GrammarType::Universal, OperatorType::LessEqual, "<=")
 
-GRAMMAR(LNG_OPERATOR, LNG_GRAMMAR_UNI, LNG_OPER_LESS, "<")
+GRAMMAR(LngTokenType::Operator, GrammarType::Universal, OperatorType::Less, "<")
 
-GRAMMAR(LNG_OPERATOR, LNG_GRAMMAR_UNI, LNG_OPER_NOT, "!")
+GRAMMAR(LngTokenType::Operator, GrammarType::Universal, OperatorType::Not, "!")
 
-GRAMMAR(LNG_OPERATOR, LNG_GRAMMAR_UNI, LNG_OPER_AND, "&&")
+GRAMMAR(LngTokenType::Operator, GrammarType::Universal, OperatorType::And, "&&")
 
-GRAMMAR(LNG_OPERATOR, LNG_GRAMMAR_UNI, LNG_OPER_OR, "||")
+GRAMMAR(LngTokenType::Operator, GrammarType::Universal, OperatorType::Or, "||")
 
-GRAMMAR(LNG_OPERATOR, LNG_GRAMMAR_UNI, LNG_OPER_SET_VALUE, "=")
+GRAMMAR(LngTokenType::Operator, GrammarType::Universal, OperatorType::SetValue, "=")

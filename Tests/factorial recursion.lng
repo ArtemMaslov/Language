@@ -1,0 +1,27 @@
+main()
+{
+	n = 0
+	
+	in n
+	
+	fact = Factorial(n)
+	
+	out fact
+}
+
+Factorial(n)
+{
+	if (n < 0)
+	{
+		ret -1
+	}
+	
+	if (n == 0)
+	{
+		ret 1
+	}
+	else
+	{
+		ret Factorial(n - 1) * n
+	}
+}

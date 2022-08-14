@@ -1,26 +1,26 @@
 
-GRAMMAR(LNG_SPECIAL_SYMBOL, LNG_GRAMMAR_UNI, LNG_SPEC_L_ROUND_BRACKET, "(")
+GRAMMAR(LngTokenType::SpecialSymbol, GrammarType::Universal, SpecialSymbolType::OpeningParenthesis, "(")
 
-GRAMMAR(LNG_SPECIAL_SYMBOL, LNG_GRAMMAR_UNI, LNG_SPEC_R_ROUND_BRACKET, ")")
+GRAMMAR(LngTokenType::SpecialSymbol, GrammarType::Universal, SpecialSymbolType::ClosingParenthesis, ")")
 
-GRAMMAR(LNG_SPECIAL_SYMBOL, LNG_GRAMMAR_UNI, LNG_SPEC_L_SQUARE_BRACKET, "[")
+GRAMMAR(LngTokenType::SpecialSymbol, GrammarType::Universal, SpecialSymbolType::OpeningSquareBracket, "[")
 
-GRAMMAR(LNG_SPECIAL_SYMBOL, LNG_GRAMMAR_UNI, LNG_SPEC_R_SQUARE_BRACKET, "]")
+GRAMMAR(LngTokenType::SpecialSymbol, GrammarType::Universal, SpecialSymbolType::ClosingSquareBracket, "]")
 
-GRAMMAR(LNG_SPECIAL_SYMBOL, LNG_GRAMMAR_UNI, LNG_SPEC_L_CURLY_BRACKET, "{")
+GRAMMAR(LngTokenType::SpecialSymbol, GrammarType::Universal, SpecialSymbolType::OpeningBrace, "{")
 
-GRAMMAR(LNG_SPECIAL_SYMBOL, LNG_GRAMMAR_UNI, LNG_SPEC_R_CURLY_BRACKET, "}")
+GRAMMAR(LngTokenType::SpecialSymbol, GrammarType::Universal, SpecialSymbolType::ClosingBrace, "}")
 
-GRAMMAR(LNG_SPECIAL_SYMBOL, LNG_GRAMMAR_UNI, LNG_SPEC_POINT, ".")
+GRAMMAR(LngTokenType::SpecialSymbol, GrammarType::Universal, SpecialSymbolType::Point, ".")
 
-GRAMMAR(LNG_SPECIAL_SYMBOL, LNG_GRAMMAR_UNI, LNG_SPEC_COMMA, ",")
+GRAMMAR(LngTokenType::SpecialSymbol, GrammarType::Universal, SpecialSymbolType::Comma, ",")
 
-//GRAMMAR(LNG_SPECIAL_SYMBOL, LNG_GRAMMAR_UNI, LNG_SPEC_EQUAL, "=")
+//GRAMMAR(LngTokenType::SpecialSymbol, GrammarType::Universal, SpecialSymbolType::Equal, "=")
 
-GRAMMAR(LNG_SPECIAL_SYMBOL, LNG_GRAMMAR_UNI, LNG_SPEC_COLON, ":")
+GRAMMAR(LngTokenType::SpecialSymbol, GrammarType::Universal, SpecialSymbolType::Colon, ":")
 
-GRAMMAR(LNG_SPECIAL_SYMBOL, LNG_GRAMMAR_UNI, LNG_SPEC_SEMICOLON, ";")
+GRAMMAR(LngTokenType::SpecialSymbol, GrammarType::Universal, SpecialSymbolType::Semicolon, ";")
 
-GRAMMAR(LNG_SPECIAL_SYMBOL, LNG_GRAMMAR_UNI, LNG_SPEC_SINGLE_QUOTES, "\'")
+GRAMMAR(LngTokenType::SpecialSymbol, GrammarType::Universal, SpecialSymbolType::SingleQuotes, "\'")
 
-GRAMMAR(LNG_SPECIAL_SYMBOL, LNG_GRAMMAR_UNI, LNG_SPEC_DOUBLE_QUOTES, "\"")
+GRAMMAR(LngTokenType::SpecialSymbol, GrammarType::Universal, SpecialSymbolType::DoubleQuotes, "\"")

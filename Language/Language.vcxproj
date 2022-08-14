@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -104,6 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CRT_SECURE_NO_WARNINGS;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -118,6 +119,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CRT_SECURE_NO_WARNINGS;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AssemblerOutput>NoListing</AssemblerOutput>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -127,20 +130,67 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AST\AST.cpp" />
+    <ClCompile Include="AST\AST_Verify.cpp" />
+    <ClCompile Include="AST\_aux_nodes.cpp" />
+    <ClCompile Include="AST\_expr_nodes.cpp" />
+    <ClCompile Include="AST\_funct_nodes.cpp" />
+    <ClCompile Include="AST\_keyword_nodes.cpp" />
+    <ClCompile Include="Back end\SoftCPU\Compiler.cpp" />
+    <ClCompile Include="Back end\SoftCPU\CompilerUnitTests.cpp" />
+    <ClCompile Include="Front end\Lexer\_identifier.cpp" />
+    <ClCompile Include="Front end\Lexer\Lexer.cpp" />
+    <ClCompile Include="Front end\Lexer\LexerUnitTests.cpp" />
+    <ClCompile Include="Front end\Parser.cpp" />
+    <ClCompile Include="Front end\ParserUnitTests.cpp" />
     <ClCompile Include="LanguageGrammar\LanguageGrammar.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Modules\ExtArray\ExtArray.cpp" />
+    <ClCompile Include="Modules\ExtHeap\ExtHeap.cpp" />
     <ClCompile Include="Modules\FilesIO\FilesIO.cpp" />
     <ClCompile Include="Modules\List\List.cpp" />
     <ClCompile Include="Modules\List\List_UnitTests.cpp" />
     <ClCompile Include="Modules\List\List_Verify.cpp" />
     <ClCompile Include="Modules\Logs\Logs.cpp" />
     <ClCompile Include="Modules\Text\Text.cpp" />
-    <ClCompile Include="Modules\Tree\Tree.cpp" />
-    <ClCompile Include="Parser\Lexer\Lexer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AST\AST.h" />
+    <ClInclude Include="AST\AST_Verify.h" />
+    <ClInclude Include="AST\_ast_verify_patterns.h" />
+    <ClInclude Include="AST\_aux_nodes.h" />
+    <ClInclude Include="AST\_expr_nodes.h" />
+    <ClInclude Include="AST\_funct_nodes.h" />
+    <ClInclude Include="AST\_keyword_nodes.h" />
+    <ClInclude Include="Back end\SoftCPU\Compiler.h" />
+    <ClInclude Include="Back end\SoftCPU\CompilerUnitTests.h" />
+    <ClInclude Include="Back end\SoftCPU\_compiler_config.h" />
+    <ClInclude Include="Back end\SoftCPU\_intrinsic_funct.h" />
+    <ClInclude Include="Front end\Lexer\_identifier.h" />
+    <ClInclude Include="Front end\Lexer\Lexer.h" />
+    <ClInclude Include="Front end\Lexer\LexerUnitTests.h" />
+    <ClInclude Include="Front end\Parser.h" />
+    <ClInclude Include="Front end\ParserUnitTests.h" />
+    <ClInclude Include="Front end\_parse_aux.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Front end\_parse_expr.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Front end\_parse_funct.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Front end\_parse_keyword.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="LanguageGrammar\LanguageGrammar.h" />
     <ClInclude Include="Modules\ErrorsHandling.h" />
+    <ClInclude Include="Modules\ExtArray\ExtArray.h" />
+    <ClInclude Include="Modules\ExtHeap\ExtHeap.h" />
     <ClInclude Include="Modules\FilesIO\FilesIO.h" />
     <ClInclude Include="Modules\List\List.h" />
     <ClInclude Include="Modules\List\List_Config.h" />
@@ -150,8 +200,6 @@
     <ClInclude Include="Modules\Logs\Logs.h" />
     <ClInclude Include="Modules\Logs\LogsConfig.h" />
     <ClInclude Include="Modules\Text\Text.h" />
-    <ClInclude Include="Modules\Tree\Tree.h" />
-    <ClInclude Include="Parser\Lexer\Lexer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="LanguageGrammar\English\Keywords.inc" />

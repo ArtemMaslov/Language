@@ -1,113 +1,133 @@
 #ifndef LANGUAGE_GRAMMAR_H
 #define LANGUAGE_GRAMMAR_H
 
-///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
-///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
+//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
+//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 
 // Ключевые слова
-enum KeywordTypes
+enum class KeywordType
 {
-	LNG_KWD_IF         = 0,
-	LNG_KWD_ELSE       = 1,
+	Null   = -1, // Лексема не является ключевым словом.
 
-	LNG_KWD_WHILE      = 10,
+	If     = 0,
+	Else   = 1,
 
-	LNG_KWD_RET        = 20,
+	While  = 10,
 
-	LNG_KWD_IN         = 30,
-	LNG_KWD_OUT        = 31,
+	Return = 20,
+
+	Input  = 30,
+	Output = 31,
 
 };
 
 // Операторы
-enum OperatorTypes
+enum class OperatorType
 {
+	Null			= -1,  // Лексема не является оператором.
+
 	// Арифметические операции.
-	LNG_OPER_ADD        = 0,  // Сложение.
-	LNG_OPER_SUB        = 1,  // Вычитание.
-	LNG_OPER_MUL        = 2,  // Умножение.
-	LNG_OPER_DIV        = 3,  // Деление.
+	Addition        = 0,   // Сложение.
+	Subtraction     = 1,   // Вычитание.
+	Multiplication  = 2,   // Умножение.
+	Division        = 3,   // Деление.
 
 	// Операторы сравнения.
-	LNG_OPER_EQUAL      = 100, // Оператор сравнения равно.
-	LNG_OPER_NOT_EQUAL  = 101, // Оператор сравнения не равно.
+	Equal           = 100, // Оператор сравнения равно.
+	NotEqual        = 101, // Оператор сравнения не равно.
 
-	//LNG_MOP_GREATER_EQUAL
-	LNG_OPER_GREATER    = 103, // Оператор сравнения больше.
+	GreaterEqual    = 102, // Оператор сравнения больше или равно.
+	Greater         = 103, // Оператор сравнения больше.
 
-	//LNG_MOP_LESS_EQUAL
-	LNG_OPER_LESS       = 105, // Оператор сравнения меньше.
+	LessEqual       = 104, // Оператор сравнения меньше или равно.
+	Less            = 105, // Оператор сравнения меньше.
 
     // Логические операторы.
-	LNG_OPER_NOT        = 120, // Логическое не.
-	LNG_OPER_AND        = 121, // Логическое и.
-	LNG_OPER_OR         = 122, // Логическое или.
+	Not             = 120, // Логическое не.
+	And             = 121, // Логическое и.
+	Or              = 122, // Логическое или.
 
-	LNG_OPER_SET_VALUE  = 130, // Присвоение.
+	SetValue        = 130, // Присвоение.
 };
 
 // Специальные символы.
-enum SpecialSymbolTypes
+enum class SpecialSymbolType
 {
-	LNG_SPEC_L_ROUND_BRACKET  = '(',  // Символ открывающаяся круглая скобка (.
-	LNG_SPEC_R_ROUND_BRACKET  = ')',  // Символ закрывающаяся круглая скобка ).
+	Null             = -1,   // Лексема не является специальным символом.
 
-	LNG_SPEC_L_SQUARE_BRACKET = '[',  // Символ открывающаяся квадратная скобка [.
-	LNG_SPEC_R_SQUARE_BRACKET = ']',  // Символ закрывающаяся квадратная скобка ].
+	OpeningParenthesis  = '(',  // Символ открывающаяся круглая скобка (.
+	ClosingParenthesis  = ')',  // Символ закрывающаяся круглая скобка ).
 
-	LNG_SPEC_L_CURLY_BRACKET  = '{',  // Символ открывающаяся фигурная скобка {.
-	LNG_SPEC_R_CURLY_BRACKET  = '}',  // Символ закрывающаяся фигурная скобка }.
+	OpeningSquareBracket = '[',  // Символ открывающаяся квадратная скобка [.
+	ClosingSquareBracket = ']',  // Символ закрывающаяся квадратная скобка ].
 
-	LNG_SPEC_POINT            = '.',  // Символ точка ..
-	LNG_SPEC_COMMA            = ',',  // Символ запятая ,.
+	OpeningBrace  = '{',  // Символ открывающаяся фигурная скобка {.
+	ClosingBrace  = '}',  // Символ закрывающаяся фигурная скобка }.
 
-	//LNG_SPEC_EQUAL            = '=',  // Символ равно =.
-	LNG_SPEC_COLON            = ':',  // Символ двоеточие :.
-	LNG_SPEC_SEMICOLON        = ';',  // Символ точка с запятой ;.
+	Point            = '.',  // Символ точка ..
+	Comma            = ',',  // Символ запятая ,.
 
-	LNG_SPEC_SINGLE_QUOTES    = '\'', // Символ одинарная кавычка '.
-	LNG_SPEC_DOUBLE_QUOTES    = '\"', // Символ двойная кавычка ".
+	//Equal            = '=',  // Символ равно =.
+	Colon            = ':',  // Символ двоеточие :.
+	Semicolon        = ';',  // Символ точка с запятой ;.
+
+	SingleQuotes    = '\'', // Символ одинарная кавычка '.
+	DoubleQuotes    = '\"', // Символ двойная кавычка ".
 };
 
-///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
-///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
+//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
+//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 
 // Типы лексем
-enum TokenTypes
+// Название LngTokenType, а не TokenType, потому что TokenType - это одно из значений enum подключаемой библиотеки.
+enum class LngTokenType
 {
-	LNG_KEYWORD        = 0,
-	LNG_OPERATOR       = 1,
-	LNG_IDENTIFIER     = 2,
-	LNG_SPECIAL_SYMBOL = 3
+	Keyword       = 0,
+	Operator      = 1,
+	Identifier    = 2,
+	SpecialSymbol = 3,
+	Number        = 4
 };
 
-enum GrammarType
+enum class GrammarType
 {
-	LNG_GRAMMAR_UNI = 1 << 0, // Универсальная грамматика.
-	LNG_GRAMMAR_RU  = 1 << 1, // Русский тип грамматики.
-	LNG_GRAMMAR_EN  = 1 << 2, // Английский тип грамматики.
+	Universal = 1 << 0, // Универсальная грамматика.
+	Russian   = 1 << 1, // Русский тип грамматики.
+	English   = 1 << 2, // Английский тип грамматики.
 };
 
 struct GrammarToken
 {
-	TokenTypes  Type;
+	LngTokenType   Type;
 	GrammarType Grammar;
 
 	union
 	{
-		KeywordTypes       Keyword;
-		OperatorTypes      Operator;
-		SpecialSymbolTypes SpecialSymbol;
-	};
+		// Числовое значение лексемы. 
+		int               Int;
+		KeywordType       Keyword;
+		OperatorType      Operator;
+		SpecialSymbolType SpecialSymbol;
+	} Value;
 
-	const char* Name;
+	const char*  Name;
+	const size_t NameSize;
 };
 
 extern GrammarToken Operators[];
 extern GrammarToken SpecialSymbols[];
 extern GrammarToken Keywords[];
 
-///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
-///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
+extern const size_t KeywordsSize;
+extern const size_t SpecialSymbolsSize;
+extern const size_t OperatorsSize;
 
-#endif
+//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
+//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
+
+const GrammarToken* GrammarGetName(LngTokenType type, int id);
+
+//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
+//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
+
+#endif // !LANGUAGE_GRAMMAR_H
