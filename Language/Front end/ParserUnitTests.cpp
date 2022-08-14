@@ -18,9 +18,10 @@
 static const char* testFiles[] =
 {
 	//"../../Tests/simple hello world.lng",
-	"../../Tests/quadratic equation 1.lng",
-	"../../Tests/factorial recursion.lng",
-	"../../Tests/factorial while.lng",
+	//"../../Tests/quadratic equation 1.lng",
+	//"../../Tests/factorial recursion.lng",
+	//"../../Tests/factorial while.lng",
+	"../../Tests/circle.lng",
 };
 
 static const size_t testFilesCount = sizeof(testFiles) / sizeof(char*);

@@ -1,0 +1,45 @@
+main()
+{
+	x0 = 29
+	y0 = 29
+	rad = 20
+	
+	draw_circle(x0, y0, rad)
+	
+	dsp()
+}
+
+draw_circle(x0, y0, rad)
+{
+	x = 0
+	
+	while (x <= rad)
+	{
+		y = calc_y(x, rad)
+		
+		draw_row(x0 - x, y0 - y, y0 + y)
+		
+		draw_row(x0 + x, y0 - y, y0 + y)
+		
+		x = x + 1
+	}
+}
+
+calc_y(x, rad)
+{
+	ret sqrt(rad * rad - x * x)
+}
+
+draw_row(x, y1, y2)
+{
+	x = int(x)
+	
+	while (y1 <= y2)
+	{
+		ram_addr = 128 + x + int(y1) * 60
+		
+		set_ram(ram_addr, 1)
+		
+		y1 = y1 + 1
+	}
+}

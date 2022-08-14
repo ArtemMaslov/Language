@@ -55,9 +55,7 @@ ProgramStatus IdentifierTableAddElem(IdentifierTable* table, const char* name, c
 	{
 		const Identifier* idTable = (Identifier*)ExtArrayGetElemAt(&table->Table, st);
 
-		const size_t minSize = nameLength < idTable->NameLength ? nameLength : idTable->NameLength;
-
-		if (strncmp(name, idTable->Name, minSize) == 0)
+		if (idTable->NameLength == nameLength && strncmp(name, idTable->Name, nameLength) == 0)
 		{
 			*outId = idTable->Id;
 			return ProgramStatus::Ok;

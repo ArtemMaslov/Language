@@ -10,8 +10,9 @@
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 
 #define CHECK_STATUS \
-	if (status != ProgramStatus::Ok) \
-		return status
+	assert(status == ProgramStatus::Ok)
+//if (status != ProgramStatus::Ok) \
+//		return status
 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
@@ -74,6 +75,7 @@ ProgramStatus ParserConstructor(Parser* parser)
 	ProgramStatus status = ProgramStatus::Ok;
 
 	status = LexerConstructor(&parser->Lexer);
+	CHECK_STATUS;
 
 	return status;
 }
@@ -85,6 +87,7 @@ ProgramStatus ParserDestructor(Parser* parser)
 	ProgramStatus status = ProgramStatus::Ok;
 
 	status = LexerDestructor(&parser->Lexer);
+	CHECK_STATUS;
 
 	return status;
 }
@@ -125,6 +128,7 @@ ProgramStatus ParserParseFile(Parser* parser, AST* outAst, const char* fileName)
 			continue;
 		}
 
+		assert(!"Error");
 		return ProgramStatus::Fault;
 	}
 

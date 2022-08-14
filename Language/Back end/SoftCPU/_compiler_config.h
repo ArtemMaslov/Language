@@ -84,7 +84,9 @@ static const char* const CompOr =
 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 
-static const char* const CompSqrt = "\tsqrt\n\n";
+static const char* const CompSqrt = 
+	"\tsqrt\n"
+	"\tpop ax\n\n";
 
 static const char* const CompFunctDefStart =
 "%s:\n"
@@ -121,6 +123,21 @@ static const char* const CompVarGetValue = GET_VAR_VALUE "\n";
 
 static const char* const CompNumber = 
 	"\tpush %lf\n\n";
+
+static const char* const CompSetRam = 
+	"\tpop ax\n"
+	"\tpop [ax]\n\n";
+
+static const char* const CompGetRam = 
+	"\tpop ax\n"
+	"\tpush [ax]\n"
+	"\tpop ax\n\n";
+
+static const char* const CompDisplay = "\tdsp\n\n";
+
+static const char* const CompInt = 
+	"\tint\n"
+	"\tpop ax\n\n";
 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 

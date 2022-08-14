@@ -89,6 +89,7 @@ ProgramStatus LexerGetTokens(Lexer* lexer)
 
 			if (scaned != 1)
 			{
+				assert(!"Error");
 				return ProgramStatus::Fault;
 			}
 
@@ -103,7 +104,7 @@ ProgramStatus LexerGetTokens(Lexer* lexer)
 			text += readed;
 			continue;
 		}
-		else if ('a' <= c && c <= 'z' || 'A' <= c && c <= 'Z')
+		else if ('a' <= c && c <= 'z' || 'A' <= c && c <= 'Z' || c == '_')
 		{
 			const char* word = text;
 			// Считываем идентификатор или ключевое слово.
@@ -111,7 +112,7 @@ ProgramStatus LexerGetTokens(Lexer* lexer)
 			{
 				c = *(++text);
 			}
-			while ('a' <= c && c <= 'z' || 'A' <= c && c <= 'Z' || '0' <= c && c <= '9');
+			while ('a' <= c && c <= 'z' || 'A' <= c && c <= 'Z' || '0' <= c && c <= '9' || c == '_');
 
 			const size_t wordLen = text - word;
 
@@ -175,6 +176,7 @@ ProgramStatus LexerGetTokens(Lexer* lexer)
 			}
 
 			// Не удалось обработать символ. Выдаём ошибку.
+			assert(!"Error");
 			return ProgramStatus::Fault;
 		}
 	}
@@ -267,9 +269,7 @@ static KeywordType CheckKeyword(const char* word, const size_t wordLength)
 	{
 		const GrammarToken keyword = Keywords[st];
 
-		const size_t minSize = wordLength < keyword.NameSize ? wordLength : keyword.NameSize;
-
-		if (strncmp(word, keyword.Name, minSize) == 0)
+		if (wordLength == keyword.NameSize && strncmp(word, keyword.Name, wordLength) == 0)
 		{
 			return keyword.Value.Keyword;
 		}

@@ -674,12 +674,65 @@ static ProgramStatus CompileInstrinsicFunction(Compiler* comp, FunctCallNode* fu
 	{
 		assert(functCallNode->Params.Size == 1);
 
-		FunctParamNode* param = (FunctParamNode*)ExtArrayGetElemAt(&functCallNode->Params, 0);
+		FunctParamNode* arg = (FunctParamNode*)ExtArrayGetElemAt(&functCallNode->Params, 0);
 
-		ProgramStatus status = CompileExpression(comp, param->Value);
+		ProgramStatus status = CompileExpression(comp, arg->Value);
 		CHECK_STATUS;
 
 		fputs(CompSqrt, comp->File);
+
+		return status;
+	}
+	else if (strncmp(functNodeName, IntrinSetRam.Name, IntrinSetRam.NameSize) == 0)
+	{
+		assert(functCallNode->Params.Size == 2);
+
+		FunctParamNode* ramAddr = (FunctParamNode*)ExtArrayGetElemAt(&functCallNode->Params, 0);
+		FunctParamNode* value   = (FunctParamNode*)ExtArrayGetElemAt(&functCallNode->Params, 1);
+
+		ProgramStatus status = ProgramStatus::Ok;
+		
+		status = CompileExpression(comp, value->Value);
+		CHECK_STATUS;
+
+		status = CompileExpression(comp, ramAddr->Value);
+		CHECK_STATUS;
+		
+		fputs(CompSetRam, comp->File);
+
+		return status;
+	}
+	else if (strncmp(functNodeName, IntrinGetRam.Name, IntrinGetRam.NameSize) == 0)
+	{
+		assert(functCallNode->Params.Size == 1);
+
+		FunctParamNode* ramAddr = (FunctParamNode*)ExtArrayGetElemAt(&functCallNode->Params, 0);
+
+		ProgramStatus status = CompileExpression(comp, ramAddr->Value);
+		CHECK_STATUS;
+
+		fputs(CompGetRam, comp->File);
+
+		return status;
+	}
+	else if (strncmp(functNodeName, IntrinDisplay.Name, IntrinDisplay.NameSize) == 0)
+	{
+		assert(functCallNode->Params.Size == 0);
+
+		fputs(CompDisplay, comp->File);
+
+		return ProgramStatus::Ok;
+	}
+	else if (strncmp(functNodeName, IntrinInt.Name, IntrinInt.NameSize) == 0)
+	{
+		assert(functCallNode->Params.Size == 1);
+
+		FunctParamNode* value = (FunctParamNode*)ExtArrayGetElemAt(&functCallNode->Params, 0);
+
+		ProgramStatus status = CompileExpression(comp, value->Value);
+		CHECK_STATUS;
+
+		fputs(CompInt, comp->File);
 
 		return ProgramStatus::Ok;
 	}
