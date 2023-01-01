@@ -1,17 +1,18 @@
-#ifndef AST_VERIFY_H
-#define AST_VERIFY_H
+#ifndef SOFT_CPU_COMPILER_H
+#define SOFT_CPU_COMPILER_H
 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 
-#include "AST.h"
+#include "../../AST/AST.h"
+#include "../../Modules/ErrorsHandling.h"
 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 
-ProgramStatus AstGraphicDump(const AST* ast);
+ProgramStatus SoftCpuCompileFile(AST* ast, const char* outFile);
 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 
-#endif // !AST_VERIFY_H
+#endif // !SOFT_CPU_COMPILER_H

@@ -18,10 +18,10 @@ ProgramStatus AstFunctDefNodeConstructor(FunctDefNode* node)
 
 	ProgramStatus status = ProgramStatus::Ok;
 
-	status = ExtArrayConstructor(&node->Body, sizeof(InstructionNode), AST_FUNCT_BODY_DEFAULT_SIZE);
+	status = ExtArrayConstructor(&node->Body, sizeof(InstructionNode), AstFunctBodyDefaultCapacity);
 	CHECK_STATUS;
 
-	status = ExtArrayConstructor(&node->Params, sizeof(FunctParamNode), AST_FUNCT_PARAMS_DEFAULT_SIZE);
+	status = ExtArrayConstructor(&node->Params, sizeof(FunctParamNode), AstFunctParamsDefaultCapacity);
 
 	return status;
 }
@@ -48,7 +48,7 @@ ProgramStatus AstFunctCallNodeConstructor(FunctCallNode* node)
 
 	ProgramStatus status = ProgramStatus::Ok;
 
-	status = ExtArrayConstructor(&node->Params, sizeof(FunctParamNode), AST_FUNCT_PARAMS_DEFAULT_SIZE);
+	status = ExtArrayConstructor(&node->Params, sizeof(FunctParamNode), AstFunctParamsDefaultCapacity);
 
 	return status;
 }

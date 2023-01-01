@@ -8,7 +8,7 @@ static IfNode* ParseIf(Parser* parser)
 {
 	assert(parser);
 
-	const Token* tokens = parser->Tokens;
+	const Token* tokens = parser->Commands;
 	AST* ast = parser->outAst;
 
 	if (tokens[parser->CurrentToken].Type != LngTokenType::Keyword ||
@@ -60,7 +60,7 @@ static InputNode* ParseInput(Parser* parser)
 {
 	assert(parser);
 
-	const Token* tokens = parser->Tokens;
+	const Token* tokens = parser->Commands;
 	AST* ast = parser->outAst;
 
 	if (tokens[parser->CurrentToken].Type != LngTokenType::Keyword ||
@@ -103,7 +103,7 @@ static OutputNode* ParseOutput(Parser* parser)
 {
 	assert(parser);
 
-	const Token* tokens = parser->Tokens;
+	const Token* tokens = parser->Commands;
 	AST* ast = parser->outAst;
 
 	if (tokens[parser->CurrentToken].Type != LngTokenType::Keyword ||
@@ -130,7 +130,7 @@ static ReturnNode* ParseReturn(Parser* parser)
 {
 	assert(parser);
 
-	const Token* tokens = parser->Tokens;
+	const Token* tokens = parser->Commands;
 	AST* ast = parser->outAst;
 
 	if (tokens[parser->CurrentToken].Type != LngTokenType::Keyword ||
@@ -164,7 +164,7 @@ static WhileNode* ParseWhile(Parser* parser)
 {
 	assert(parser);
 
-	const Token* tokens = parser->Tokens;
+	const Token* tokens = parser->Commands;
 	AST* ast = parser->outAst;
 
 	if (tokens[parser->CurrentToken].Type != LngTokenType::Keyword ||
@@ -200,12 +200,12 @@ static WhileNode* ParseWhile(Parser* parser)
 }
 
 
-/// Condition - Это ExpressionNode, обязательно окруженная ().
+/// Condition - Р­С‚Рѕ ExpressionNode, РѕР±СЏР·Р°С‚РµР»СЊРЅРѕ РѕРєСЂСѓР¶РµРЅРЅР°СЏ ().
 static ExpressionNode* ParseCondition(Parser* parser)
 {
 	assert(parser);
 
-	const Token* tokens = parser->Tokens;
+	const Token* tokens = parser->Commands;
 
 	if (tokens[parser->CurrentToken].Type != LngTokenType::SpecialSymbol ||
 		tokens[parser->CurrentToken].Value.SpecialSymbol != SpecialSymbolType::OpeningParenthesis)

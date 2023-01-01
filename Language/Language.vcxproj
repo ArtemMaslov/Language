@@ -70,12 +70,24 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)$(PlatformTarget)\$(Configuration)\</OutDir>
+    <IntDir>$(PlatformTarget)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)$(PlatformTarget)\$(Configuration)\</OutDir>
+    <IntDir>$(PlatformTarget)\$(Configuration)\</IntDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AssemblerOutput>NoListing</AssemblerOutput>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -88,8 +100,11 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <Optimization>Disabled</Optimization>
+      <AssemblerOutput>NoListing</AssemblerOutput>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -136,15 +151,23 @@
     <ClCompile Include="AST\_expr_nodes.cpp" />
     <ClCompile Include="AST\_funct_nodes.cpp" />
     <ClCompile Include="AST\_keyword_nodes.cpp" />
-    <ClCompile Include="Back end\SoftCPU\Compiler.cpp" />
-    <ClCompile Include="Back end\SoftCPU\CompilerUnitTests.cpp" />
+    <ClCompile Include="Back end\SoftCPU\SoftCpuCompiler.cpp" />
+    <ClCompile Include="Back end\SoftCPU\SoftCpuCompilerUnitTests.cpp" />
+    <ClCompile Include="Back end\x86\x86Compiler.cpp">
+      <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">All</AssemblerOutput>
+    </ClCompile>
+    <ClCompile Include="Back end\x86\x86CompilerUnitTests.cpp" />
+    <ClCompile Include="Back end\x86\_asm_representation.cpp" />
     <ClCompile Include="Front end\Lexer\_identifier.cpp" />
     <ClCompile Include="Front end\Lexer\Lexer.cpp" />
     <ClCompile Include="Front end\Lexer\LexerUnitTests.cpp" />
     <ClCompile Include="Front end\Parser.cpp" />
     <ClCompile Include="Front end\ParserUnitTests.cpp" />
     <ClCompile Include="LanguageGrammar\LanguageGrammar.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="main.cpp">
+      <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NoListing</AssemblerOutput>
+      <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">All</AssemblerOutput>
+    </ClCompile>
     <ClCompile Include="Modules\ExtArray\ExtArray.cpp" />
     <ClCompile Include="Modules\ExtHeap\ExtHeap.cpp" />
     <ClCompile Include="Modules\FilesIO\FilesIO.cpp" />
@@ -162,10 +185,16 @@
     <ClInclude Include="AST\_expr_nodes.h" />
     <ClInclude Include="AST\_funct_nodes.h" />
     <ClInclude Include="AST\_keyword_nodes.h" />
-    <ClInclude Include="Back end\SoftCPU\Compiler.h" />
-    <ClInclude Include="Back end\SoftCPU\CompilerUnitTests.h" />
+    <ClInclude Include="Back end\SoftCPU\SoftCpuCompiler.h" />
+    <ClInclude Include="Back end\SoftCPU\SoftCpuCompilerUnitTests.h" />
     <ClInclude Include="Back end\SoftCPU\_compiler_config.h" />
     <ClInclude Include="Back end\SoftCPU\_intrinsic_funct.h" />
+    <ClInclude Include="Back end\x86\DSL.h" />
+    <ClInclude Include="Back end\x86\x86Compiler.h" />
+    <ClInclude Include="Back end\x86\x86CompilerUnitTests.h" />
+    <ClInclude Include="Back end\x86\_asm_representation.h" />
+    <ClInclude Include="Back end\x86\_compiler_config.h" />
+    <ClInclude Include="Back end\x86\_intrinsic_funct.h" />
     <ClInclude Include="Front end\Lexer\_identifier.h" />
     <ClInclude Include="Front end\Lexer\Lexer.h" />
     <ClInclude Include="Front end\Lexer\LexerUnitTests.h" />
@@ -202,6 +231,8 @@
     <ClInclude Include="Modules\Text\Text.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Back end\x86\_asm_cmd_names.inc" />
+    <None Include="Back end\x86\_asm_regs.inc" />
     <None Include="LanguageGrammar\English\Keywords.inc" />
     <None Include="LanguageGrammar\Universal\Operators.inc" />
     <None Include="LanguageGrammar\Universal\SpecialSymbols.inc" />

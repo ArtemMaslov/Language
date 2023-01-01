@@ -32,11 +32,12 @@
 *.app
 
 
-.vs*
-*/Debug/*
-Debug/*
-x64/*
-Language/x64/*
+.vs
+Release
+Debug
+x64
+x86
+Language/x64
+Language/x86
 
-Пометки.txt
-Пометки.txt.bak
+*.bak

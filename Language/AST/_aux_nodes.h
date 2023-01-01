@@ -33,27 +33,27 @@ struct InstructionNode
 	} Node;
 };
 
-const size_t AST_CONSTR_NODE_DEFAULT_SIZE = 64;
+const size_t AstConstrNodeDefaultCapacity = 64;
 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 
 /**
- * @brief Выделяет память под ConstructionNode в ExtHeap и инициализирует её.
+ * @brief Р’С‹РґРµР»СЏРµС‚ РїР°РјСЏС‚СЊ РїРѕРґ ConstructionNode РІ ExtHeap Рё РёРЅРёС†РёР°Р»РёР·РёСЂСѓРµС‚ РµС‘.
  * 
- * @param ast       Указатель на абстрактное синтаксическое дерево.
- * @param functNode Указатель на узел определения функции.
+ * @param ast       РЈРєР°Р·Р°С‚РµР»СЊ РЅР° Р°Р±СЃС‚СЂР°РєС‚РЅРѕРµ СЃРёРЅС‚Р°РєСЃРёС‡РµСЃРєРѕРµ РґРµСЂРµРІРѕ.
+ * @param functNode РЈРєР°Р·Р°С‚РµР»СЊ РЅР° СѓР·РµР» РѕРїСЂРµРґРµР»РµРЅРёСЏ С„СѓРЅРєС†РёРё.
  * 
- * @return Указатель на ConstructionNode.
+ * @return РЈРєР°Р·Р°С‚РµР»СЊ РЅР° ConstructionNode.
 */
 ConstructionNode* AstCreateConstrNode(AST* ast, FunctDefNode* functNode);
 
 /**
- * @brief Выделяет память под ConstructionNode в ExtHeap и инициализирует её.
+ * @brief Р’С‹РґРµР»СЏРµС‚ РїР°РјСЏС‚СЊ РїРѕРґ ConstructionNode РІ ExtHeap Рё РёРЅРёС†РёР°Р»РёР·РёСЂСѓРµС‚ РµС‘.
  *
- * @param ast         Указатель на абстрактное синтаксическое дерево.
- * @param globVarNode Указатель на узел определения глобальной переменной.
+ * @param ast         РЈРєР°Р·Р°С‚РµР»СЊ РЅР° Р°Р±СЃС‚СЂР°РєС‚РЅРѕРµ СЃРёРЅС‚Р°РєСЃРёС‡РµСЃРєРѕРµ РґРµСЂРµРІРѕ.
+ * @param globVarNode РЈРєР°Р·Р°С‚РµР»СЊ РЅР° СѓР·РµР» РѕРїСЂРµРґРµР»РµРЅРёСЏ РіР»РѕР±Р°Р»СЊРЅРѕР№ РїРµСЂРµРјРµРЅРЅРѕР№.
  *
- * @return Указатель на ConstructionNode.
+ * @return РЈРєР°Р·Р°С‚РµР»СЊ РЅР° ConstructionNode.
 */
 ConstructionNode* AstCreateConstrNode(AST* ast, VariableNode* globVarNode);
 

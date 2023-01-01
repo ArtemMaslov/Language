@@ -12,7 +12,7 @@ struct Parser
 {
 	Lexer Lexer;
 
-	Token* Tokens;
+	Token* Commands;
 	size_t TokensCount;
 	size_t CurrentToken;
 

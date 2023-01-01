@@ -1,14 +1,12 @@
-#ifndef LIST_UNIT_TESTS_H
-#define LIST_UNIT_TESTS_H
+#ifndef SOFT_CPU_COMPILER_UNIT_TESTS_H
+#define SOFT_CPU_COMPILER_UNIT_TESTS_H
 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 
-void ListUnitTest_BasicFunctions1();
-
-void ListUnitTest_Resize1();
+void SoftCpuCompilerTest1();
 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 
-#endif // !LIST_UNIT_TESTS_H
+#endif // !SOFT_CPU_COMPILER_UNIT_TESTS_H

@@ -45,6 +45,7 @@ ProgramStatus TextReadFile(Text* text, const char* fileName)
 
 	if (!file)
 	{
+		assert(!"error");
 		return ProgramStatus::Fault;
 	}
 
@@ -55,6 +56,7 @@ ProgramStatus TextReadFile(Text* text, const char* fileName)
 
 	if (!buffer)
 	{
+		assert(!"error");
 		return ProgramStatus::Fault;
 	}
 

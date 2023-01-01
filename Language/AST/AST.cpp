@@ -18,7 +18,7 @@ ProgramStatus AstConstructor(AST* ast)
 
 	ProgramStatus status = ProgramStatus::Ok;
 
-	status = ExtArrayConstructor(&ast->ConstrNodes, sizeof(ConstructionNode), AST_CONSTR_NODE_DEFAULT_SIZE);
+	status = ExtArrayConstructor(&ast->ConstrNodes, sizeof(ConstructionNode), AstConstrNodeDefaultCapacity);
 	CHECK_STATUS;
 
 	status = ExtHeapConstructor(&ast->Nodes, AST_NODES_HEAP_DEFAULT_SIZE);

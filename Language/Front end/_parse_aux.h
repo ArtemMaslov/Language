@@ -23,7 +23,7 @@ static ProgramStatus ParseProgramBlock(Parser* parser, ExtArray* instrBlock)
 	assert(parser);
 	assert(instrBlock);
 
-	const Token* tokens = parser->Tokens;
+	const Token* tokens = parser->Commands;
 	AST* ast = parser->outAst;
 
 	if (tokens[parser->CurrentToken].Type != LngTokenType::SpecialSymbol ||
@@ -91,7 +91,7 @@ static ProgramStatus ParseProgramBlock(Parser* parser, ExtArray* instrBlock)
 		return ProgramStatus::Fault;
 	}
 
-	// Îáðàáàòûâàåì çàêðûâàþùóþñÿ ôèãóðíóþ ñêîáêó "}".
+	// ÐžÐ±Ñ€Ð°Ð±Ð°Ñ‚Ñ‹Ð²Ð°ÐµÐ¼ Ð·Ð°ÐºÑ€Ñ‹Ð²Ð°ÑŽÑ‰ÑƒÑŽÑÑ Ñ„Ð¸Ð³ÑƒÑ€Ð½ÑƒÑŽ ÑÐºÐ¾Ð±ÐºÑƒ "}".
 	parser->CurrentToken += 1;
 
 	return ProgramStatus::Ok;

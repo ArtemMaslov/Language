@@ -1,9 +1,10 @@
 #include <assert.h>
 #include <stdio.h>
 
-#include "LexerUnitTests.h"
-#include "Lexer.h"
-#include "../../Modules/ErrorsHandling.h"
+#include "../../Front end/Parser.h"
+#include "../../AST/AST.h"
+#include "SoftCpuCompiler.h"
+#include "SoftCpuCompilerUnitTests.h"
 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
@@ -16,10 +17,11 @@
 
 static const char* testFiles[] =
 {
-	//"../../Tests/simple hello world.lng",
+	"../../Tests/simple hello world.lng",
 	"../../Tests/quadratic equation 1.lng",
 	"../../Tests/factorial recursion.lng",
 	"../../Tests/factorial while.lng",
+	"../../Tests/circle.lng",
 };
 
 static const size_t testFilesCount = sizeof(testFiles) / sizeof(char*);
@@ -27,29 +29,37 @@ static const size_t testFilesCount = sizeof(testFiles) / sizeof(char*);
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 
-void LexerTest1()
+void SoftCpuCompilerTest1()
 {
-	Lexer lexer = {};
-
 	ProgramStatus status = ProgramStatus::Ok;
 
 	for (size_t st = 0; st < testFilesCount; st++)
 	{
-		status = LexerConstructor(&lexer);
+		Parser parser = {};
+		AST ast = {};
+
+		status = ParserConstructor(&parser);
 		CHECK_STATUS;
 
-		status = LexerReadFile(&lexer, testFiles[st]);
+		status = AstConstructor(&ast);
 		CHECK_STATUS;
 
-		status = LexerGetTokens(&lexer);
+		status = ParserParseFile(&parser, &ast, testFiles[st]);
 		CHECK_STATUS;
 
-		status = LexerLogDump(&lexer);
+		char buffer[256] = "";
+		sprintf(buffer, "compiled%zd.code", st);
+
+		status = SoftCpuCompileFile(&ast, buffer);
 		CHECK_STATUS;
 
-		status = LexerDestructor(&lexer);
+		status = AstDestructor(&ast);
 		CHECK_STATUS;
+
+		status = ParserDestructor(&parser);
 	}
+
+	CHECK_STATUS;
 }
 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 

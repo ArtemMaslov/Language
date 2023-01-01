@@ -19,7 +19,7 @@ struct Token
 
 	union
 	{
-		// Числовое значение лексемы. 
+		// Р§РёСЃР»РѕРІРѕРµ Р·РЅР°С‡РµРЅРёРµ Р»РµРєСЃРµРјС‹. 
 		int                Int;
 		KeywordType       Keyword;
 		OperatorType      Operator;
@@ -31,7 +31,7 @@ struct Token
 
 struct Lexer
 {
-	ExtArray Tokens;
+	ExtArray Commands;
 
 	Text Text;
 

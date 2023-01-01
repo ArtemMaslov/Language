@@ -17,7 +17,7 @@ static ExpressionNode* ParseOr(Parser* parser)
 {
 	assert(parser);
 
-	const Token* tokens = parser->Tokens;
+	const Token* tokens = parser->Commands;
 	AST* ast = parser->outAst;
 
 	ExpressionNode* leftOperand  = nullptr;
@@ -69,7 +69,7 @@ static ExpressionNode* ParseAnd(Parser* parser)
 {
 	assert(parser);
 
-	const Token* tokens = parser->Tokens;
+	const Token* tokens = parser->Commands;
 	AST* ast = parser->outAst;
 
 	ExpressionNode* leftOperand  = nullptr;
@@ -121,7 +121,7 @@ static ExpressionNode* ParseNot(Parser* parser)
 {
 	assert(parser);
 
-	const Token* tokens = parser->Tokens;
+	const Token* tokens = parser->Commands;
 	AST* ast = parser->outAst;
 
 	if (tokens[parser->CurrentToken].Type != LngTokenType::Operator ||
@@ -164,7 +164,7 @@ static ExpressionNode* ParseEqual(Parser* parser)
 {
 	assert(parser);
 
-	const Token* tokens = parser->Tokens;
+	const Token* tokens = parser->Commands;
 	AST* ast = parser->outAst;
 
 	ExpressionNode* leftOperand  = nullptr;
@@ -218,7 +218,7 @@ static ExpressionNode* ParseCompare(Parser* parser)
 {
 	assert(parser);
 
-	const Token* tokens = parser->Tokens;
+	const Token* tokens = parser->Commands;
 	AST* ast = parser->outAst;
 
 	ExpressionNode* leftOperand  = nullptr;
@@ -273,7 +273,7 @@ static ExpressionNode* ParseAddSub(Parser* parser)
 {
 	assert(parser);
 
-	const Token* tokens = parser->Tokens;
+	const Token* tokens = parser->Commands;
 	AST* ast = parser->outAst;
 
 	ExpressionNode* leftOperand  = nullptr;
@@ -326,7 +326,7 @@ static ExpressionNode* ParseMulDiv(Parser* parser)
 {
 	assert(parser);
 
-	const Token* tokens = parser->Tokens;
+	const Token* tokens = parser->Commands;
 	AST* ast = parser->outAst;
 
 	ExpressionNode* leftOperand  = nullptr;
@@ -379,7 +379,7 @@ static ExpressionNode* ParseUnaryAddSub(Parser* parser)
 {
 	assert(parser);
 
-	const Token* tokens = parser->Tokens;
+	const Token* tokens = parser->Commands;
 	AST* ast = parser->outAst;
 
 	if (tokens[parser->CurrentToken].Type != LngTokenType::Operator ||
@@ -393,7 +393,7 @@ static ExpressionNode* ParseUnaryAddSub(Parser* parser)
 	{
 		case OperatorType::Addition:
 		{
-			// Èãíîðèðóåì óíàðíûé ïëþñ. Îí íå ìåíÿåò çíàê.
+			// Ð˜Ð³Ð½Ð¾Ñ€Ð¸Ñ€ÑƒÐµÐ¼ ÑƒÐ½Ð°Ñ€Ð½Ñ‹Ð¹ Ð¿Ð»ÑŽÑ. ÐžÐ½ Ð½Ðµ Ð¼ÐµÐ½ÑÐµÑ‚ Ð·Ð½Ð°Ðº.
 
 			parser->CurrentToken += 1;
 
@@ -409,7 +409,7 @@ static ExpressionNode* ParseUnaryAddSub(Parser* parser)
 		}
 		case OperatorType::Subtraction:
 		{
-			// Îáðàáàòûâàåì óíàðíûé ìèíóñ.
+			// ÐžÐ±Ñ€Ð°Ð±Ð°Ñ‚Ñ‹Ð²Ð°ÐµÐ¼ ÑƒÐ½Ð°Ñ€Ð½Ñ‹Ð¹ Ð¼Ð¸Ð½ÑƒÑ.
 
 			parser->CurrentToken += 1;
 
@@ -451,7 +451,7 @@ static ExpressionNode* Parse_Num_Var_Funct(Parser* parser)
 {
 	assert(parser);
 
-	const Token* tokens = parser->Tokens;
+	const Token* tokens = parser->Commands;
 	AST* ast = parser->outAst;
 
 	switch (tokens[parser->CurrentToken].Type)
@@ -461,7 +461,7 @@ static ExpressionNode* Parse_Num_Var_Funct(Parser* parser)
 			if (tokens[parser->CurrentToken + 1].Type == LngTokenType::SpecialSymbol &&
 				tokens[parser->CurrentToken + 1].Value.SpecialSymbol == SpecialSymbolType::OpeningParenthesis)
 			{
-				//***///***///---\\\***\\\***\\\___/// Âûçîâ ôóíêöèè \\\___///***///***///---\\\***\\\***\\ 
+				//***///***///---\\\***\\\***\\\___/// Ð’Ñ‹Ð·Ð¾Ð² Ñ„ÑƒÐ½ÐºÑ†Ð¸Ð¸ \\\___///***///***///---\\\***\\\***\\ 
 
 				const int functNameId = tokens[parser->CurrentToken].Value.Identifier;
 				FunctCallNode* functCallNode = AstCreateFunctCallNode(ast, functNameId);
@@ -496,7 +496,7 @@ static ExpressionNode* Parse_Num_Var_Funct(Parser* parser)
 			}
 			else
 			{
-				//***///***///---\\\***\\\***\\\___/// Ïåðåìåííàÿ \\\___///***///***///---\\\***\\\***\\ 
+				//***///***///---\\\***\\\***\\\___/// ÐŸÐµÑ€ÐµÐ¼ÐµÐ½Ð½Ð°Ñ \\\___///***///***///---\\\***\\\***\\ 
 
 				int varNameId = tokens[parser->CurrentToken].Value.Identifier;
 				VariableNode* varNode = AstCreateVariableNode(ast, varNameId, nullptr);
@@ -548,7 +548,7 @@ static ExpressionNode* ParseParentheses(Parser* parser)
 {
 	assert(parser);
 
-	const Token* tokens = parser->Tokens;
+	const Token* tokens = parser->Commands;
 	AST* ast = parser->outAst;
 
 	if (tokens[parser->CurrentToken].Type == LngTokenType::SpecialSymbol &&
@@ -584,7 +584,7 @@ static VariableNode* ParseVariable(Parser* parser)
 {
 	assert(parser);
 
-	const Token* tokens = parser->Tokens;
+	const Token* tokens = parser->Commands;
 	AST* ast = parser->outAst;
 
 	if (tokens[parser->CurrentToken].Type != LngTokenType::Identifier)
@@ -598,7 +598,7 @@ static VariableNode* ParseVariable(Parser* parser)
 		return nullptr;
 	}
 
-	// "Èäåíòèôèêàòîð" + "=" => îáúÿâëåíèå ïåðåìåííîé.
+	// "Ð˜Ð´ÐµÐ½Ñ‚Ð¸Ñ„Ð¸ÐºÐ°Ñ‚Ð¾Ñ€" + "=" => Ð¾Ð±ÑŠÑÐ²Ð»ÐµÐ½Ð¸Ðµ Ð¿ÐµÑ€ÐµÐ¼ÐµÐ½Ð½Ð¾Ð¹.
 
 	int varNameId = tokens[parser->CurrentToken].Value.Identifier;
 

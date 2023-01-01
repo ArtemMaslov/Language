@@ -4,7 +4,7 @@
 #include "Modules/Logs/Logs.h"
 #include "Front end/Lexer/LexerUnitTests.h"
 #include "Front end/ParserUnitTests.h"
-#include "Back end/SoftCPU/CompilerUnitTests.h"
+#include "Back end/x86/x86CompilerUnitTests.h"
 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
 
 	//LexerTest1();
 	//ParserTest1();
-	CompilerTest1();
+	x86CompilerTest1();
 
 	LogsDestructor();
 }

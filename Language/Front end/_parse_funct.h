@@ -8,7 +8,7 @@ static FunctCallNode* ParseFunctionCall(Parser* parser)
 {
 	assert(parser);
 
-	const Token* tokens = parser->Tokens;
+	const Token* tokens = parser->Commands;
 	AST* ast = parser->outAst;
 
 	if (tokens[parser->CurrentToken].Type != LngTokenType::Identifier)
@@ -48,7 +48,7 @@ static ProgramStatus ParseFunctionCallParams(Parser* parser, ExtArray* outParams
 	assert(parser);
 	assert(outParams);
 
-	const Token* tokens = parser->Tokens;
+	const Token* tokens = parser->Commands;
 	AST* ast = parser->outAst;
 
 	while (tokens[parser->CurrentToken].Type != LngTokenType::SpecialSymbol ||
@@ -86,7 +86,7 @@ static ProgramStatus ParseFunctionCallParams(Parser* parser, ExtArray* outParams
 		}
 	}
 
-	// Îáðàáàòûâàåì çàêðûâàþùóþñÿ êðóãëóþ ñêîáêó ")".
+	// ÐžÐ±Ñ€Ð°Ð±Ð°Ñ‚Ñ‹Ð²Ð°ÐµÐ¼ Ð·Ð°ÐºÑ€Ñ‹Ð²Ð°ÑŽÑ‰ÑƒÑŽÑÑ ÐºÑ€ÑƒÐ³Ð»ÑƒÑŽ ÑÐºÐ¾Ð±ÐºÑƒ ")".
 	parser->CurrentToken++;
 
 	return ProgramStatus::Ok;
@@ -97,7 +97,7 @@ static ProgramStatus ParseFunctionDefParams(Parser* parser, ExtArray* outParams)
 	assert(parser);
 	assert(outParams);
 
-	const Token* tokens = parser->Tokens;
+	const Token* tokens = parser->Commands;
 	AST* ast = parser->outAst;
 
 	while (tokens[parser->CurrentToken].Type != LngTokenType::SpecialSymbol ||
@@ -137,7 +137,7 @@ static ProgramStatus ParseFunctionDefParams(Parser* parser, ExtArray* outParams)
 		}
 	}
 
-	// Îáðàáàòûâàåì çàêðûâàþùóþñÿ êðóãëóþ ñêîáêó ")".
+	// ÐžÐ±Ñ€Ð°Ð±Ð°Ñ‚Ñ‹Ð²Ð°ÐµÐ¼ Ð·Ð°ÐºÑ€Ñ‹Ð²Ð°ÑŽÑ‰ÑƒÑŽÑÑ ÐºÑ€ÑƒÐ³Ð»ÑƒÑŽ ÑÐºÐ¾Ð±ÐºÑƒ ")".
 	parser->CurrentToken++;
 
 	return ProgramStatus::Ok;
@@ -147,7 +147,7 @@ static FunctDefNode* ParseFunctionDef(Parser* parser)
 {
 	assert(parser);
 
-	const Token* tokens = parser->Tokens;
+	const Token* tokens = parser->Commands;
 	AST* ast = parser->outAst;
 
 	if (tokens[parser->CurrentToken].Type != LngTokenType::Identifier)
@@ -161,7 +161,7 @@ static FunctDefNode* ParseFunctionDef(Parser* parser)
 		return nullptr;
 	}
 
-	// "Èäåíòèôèêàòîð" + "(" => îáúÿâëåíèå ôóíêöèè.
+	// "Ð˜Ð´ÐµÐ½Ñ‚Ð¸Ñ„Ð¸ÐºÐ°Ñ‚Ð¾Ñ€" + "(" => Ð¾Ð±ÑŠÑÐ²Ð»ÐµÐ½Ð¸Ðµ Ñ„ÑƒÐ½ÐºÑ†Ð¸Ð¸.
 
 	const int functNameId = tokens[parser->CurrentToken].Value.Identifier;
 	FunctDefNode* node = AstCreateFunctDefNode(ast, functNameId);

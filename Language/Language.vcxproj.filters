@@ -115,11 +115,20 @@
     <ClCompile Include="AST\AST_Verify.cpp">
       <Filter>AST</Filter>
     </ClCompile>
-    <ClCompile Include="Back end\SoftCPU\Compiler.cpp">
+    <ClCompile Include="Back end\SoftCPU\SoftCpuCompiler.cpp">
       <Filter>Back end\SoftCPU</Filter>
     </ClCompile>
-    <ClCompile Include="Back end\SoftCPU\CompilerUnitTests.cpp">
+    <ClCompile Include="Back end\SoftCPU\SoftCpuCompilerUnitTests.cpp">
       <Filter>Back end\SoftCPU</Filter>
+    </ClCompile>
+    <ClCompile Include="Back end\x86\x86Compiler.cpp">
+      <Filter>Back end\x86</Filter>
+    </ClCompile>
+    <ClCompile Include="Back end\x86\x86CompilerUnitTests.cpp">
+      <Filter>Back end\x86</Filter>
+    </ClCompile>
+    <ClCompile Include="Back end\x86\_asm_representation.cpp">
+      <Filter>Back end\x86</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -198,10 +207,10 @@
     <ClInclude Include="AST\_ast_verify_patterns.h">
       <Filter>AST</Filter>
     </ClInclude>
-    <ClInclude Include="Back end\SoftCPU\Compiler.h">
+    <ClInclude Include="Back end\SoftCPU\SoftCpuCompiler.h">
       <Filter>Back end\SoftCPU</Filter>
     </ClInclude>
-    <ClInclude Include="Back end\SoftCPU\CompilerUnitTests.h">
+    <ClInclude Include="Back end\SoftCPU\SoftCpuCompilerUnitTests.h">
       <Filter>Back end\SoftCPU</Filter>
     </ClInclude>
     <ClInclude Include="Front end\_parse_aux.h">
@@ -222,6 +231,24 @@
     <ClInclude Include="Back end\SoftCPU\_intrinsic_funct.h">
       <Filter>Back end\SoftCPU</Filter>
     </ClInclude>
+    <ClInclude Include="Back end\x86\_intrinsic_funct.h">
+      <Filter>Back end\x86</Filter>
+    </ClInclude>
+    <ClInclude Include="Back end\x86\x86Compiler.h">
+      <Filter>Back end\x86</Filter>
+    </ClInclude>
+    <ClInclude Include="Back end\x86\x86CompilerUnitTests.h">
+      <Filter>Back end\x86</Filter>
+    </ClInclude>
+    <ClInclude Include="Back end\x86\_asm_representation.h">
+      <Filter>Back end\x86</Filter>
+    </ClInclude>
+    <ClInclude Include="Back end\x86\DSL.h">
+      <Filter>Back end\x86</Filter>
+    </ClInclude>
+    <ClInclude Include="Back end\x86\_compiler_config.h">
+      <Filter>Back end\x86</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="LanguageGrammar\Universal\Operators.inc">
@@ -232,6 +259,12 @@
     </None>
     <None Include="LanguageGrammar\English\Keywords.inc">
       <Filter>LanguageGrammar\English</Filter>
+    </None>
+    <None Include="Back end\x86\_asm_cmd_names.inc">
+      <Filter>Back end\x86</Filter>
+    </None>
+    <None Include="Back end\x86\_asm_regs.inc">
+      <Filter>Back end\x86</Filter>
     </None>
   </ItemGroup>
 </Project>

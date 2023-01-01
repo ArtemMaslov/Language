@@ -15,7 +15,7 @@ struct FunctParamNode
 struct FunctDefNode
 {
 	int NameId;
-	/// ExtArray<FunctParamNode>
+	// ExtArray<FunctParamNode>
 	ExtArray Params;
 	ExtArray Body;
 };
@@ -24,12 +24,12 @@ struct FunctCallNode
 {
 	int NameId;
 
-	/// ExtArray<FunctParamNode>
+	// ExtArray<FunctParamNode>
 	ExtArray Params;
 };
 
-const size_t AST_FUNCT_PARAMS_DEFAULT_SIZE = 16;
-const size_t AST_FUNCT_BODY_DEFAULT_SIZE   = 256;
+const size_t AstFunctParamsDefaultCapacity = 16;
+const size_t AstFunctBodyDefaultCapacity   = 256;
 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 

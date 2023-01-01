@@ -112,9 +112,9 @@ ProgramStatus ParserParseFile(Parser* parser, AST* outAst, const char* fileName)
 	outAst->IdentififerTable = parser->Lexer.IdentifierTable;
 
 	parser->outAst = outAst;
-	parser->Tokens = (Token*)parser->Lexer.Tokens.Array;
+	parser->Commands = (Token*)parser->Lexer.Commands.Array;
 	parser->CurrentToken = 0;
-	parser->TokensCount  = parser->Lexer.Tokens.Size;
+	parser->TokensCount  = parser->Lexer.Commands.Size;
 
 	while (parser->CurrentToken < parser->TokensCount)
 	{

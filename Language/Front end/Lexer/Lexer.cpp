@@ -34,7 +34,7 @@ ProgramStatus LexerConstructor(Lexer* lexer)
 
 	status = TextConstructor(&lexer->Text);
 	CHECK_STATUS;
-	status = ExtArrayConstructor(&lexer->Tokens, sizeof(Token));
+	status = ExtArrayConstructor(&lexer->Commands, sizeof(Token));
 	CHECK_STATUS;
 	status = IdentifierTableConstructor(&lexer->IdentifierTable);
 
@@ -49,7 +49,7 @@ ProgramStatus LexerDestructor(Lexer* lexer)
 
 	status = TextDestructor(&lexer->Text);
 	CHECK_STATUS;
-	status = ExtArrayDestructor(&lexer->Tokens);
+	status = ExtArrayDestructor(&lexer->Commands);
 	CHECK_STATUS;
 	status = IdentifierTableDestructor(&lexer->IdentifierTable);
 
@@ -69,7 +69,7 @@ ProgramStatus LexerGetTokens(Lexer* lexer)
 	const char*  text     = lexer->Text.Data;
 	const size_t textSize = lexer->Text.Size;
 
-	ExtArray* const tokens = &lexer->Tokens;
+	ExtArray* const tokens = &lexer->Commands;
 
 	while (*text)
 	{
@@ -206,10 +206,10 @@ ProgramStatus LexerLogDump(Lexer* lexer)
 
 	fputs("Срез состояния лексера.\n", file);
 
-	const size_t tokensCount = lexer->Tokens.Size;
+	const size_t tokensCount = lexer->Commands.Size;
 	for (size_t st = 0; st < tokensCount; st++)
 	{
-		const Token* token = (Token*)ExtArrayGetElemAt(&lexer->Tokens, st);
+		const Token* token = (Token*)ExtArrayGetElemAt(&lexer->Commands, st);
 
 		switch (token->Type)
 		{
