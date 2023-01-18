@@ -1,0 +1,10 @@
+main()
+{
+	Funct()
+}
+
+Funct()
+{
+	var = 10
+	ret var
+}

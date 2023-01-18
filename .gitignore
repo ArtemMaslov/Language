@@ -32,12 +32,12 @@
 *.app
 
 
-.vs
-Release
-Debug
-x64
-x86
-Language/x64
-Language/x86
+/.vs
+/Release
+/Debug
+/x64
+/x86
+/Language/x64
+/Language/x86
 
 *.bak

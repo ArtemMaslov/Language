@@ -1,0 +1,60 @@
+main()
+{
+	x0 = 29
+	y0 = 29
+	rad = 20
+
+	draw_circle(x0, y0, rad)
+}
+
+draw_circle(x0, y0, rad)
+{
+	y = 0
+	
+	while (y < y0 - rad)
+	{
+		draw_row(-1, -1)
+		y = y + 1
+	}
+	
+	while (y <= y0 + rad)
+	{
+		x = calc_x(y0 - y, rad)
+		
+		draw_row(x0 - x, x0 + x)
+		y = y + 1
+	}
+	
+	while (y < 60)
+	{
+		draw_row(-1, -1)
+		y = y + 1
+	}
+}
+
+calc_x(y, rad)
+{
+	ret sqrt(rad * rad - y * y)
+}
+
+draw_row(x1, x2)
+{
+	st = 0
+	while (st < x1)
+	{
+		dark()
+		st = st + 1
+	}
+		
+	while (st <= x2)
+	{
+		light()
+		st = st + 1
+	}
+	
+	while (st < 60)
+	{
+		dark()
+		st = st + 1
+	}
+}
