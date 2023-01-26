@@ -16,7 +16,7 @@
 #define CHECK_STATUS \
 	assert(status == ProgramStatus::Ok)
 
-#define ASM_CMD(cmd, name) name,
+#define ASM_CMD(cmd, name, ...) name,
 const char* const AsmCommandNames[] =
 {
 #include "_asm_cmd_names.inc"
@@ -30,16 +30,51 @@ const char* const AsmRegNames[] =
 };
 #undef ASM_REG
 
-#define ASM_CMD(type, arg1, arg2, code, codeSize) \
-	.Type = AsmCmdType::type, \
-	.Arg1 = AsmArgType::arg1, \
-	.Arg2 = AsmArgType::arg2, \
-	.Code = {.Code = {code}, .CodeSize = codeSize}},
-const AsmCmdDescr AsmCmdDescrs[] = 
+#define BYTE1(b1) {b1}
+#define BYTE2(b1, b2) {b1, b2}
+#define BYTE3(b1, b2, b3) {b1, b2, b3}
+#define BYTE4(b1, b2, b3, b4) {b1, b2, b3, b4}
+
+#define ASM_CMD(cmd, name,								   \
+				arg1, arg2,								   \
+				prefixes,								   \
+				prefixesSize,							   \
+				code,									   \
+				opcodeSize, modeRmSize, sibSize,		   \
+				immSize,								   \
+				opcodeLastByte,							   \
+				modeRmType)								   \
+	{													   \
+		.Type     = AsmCmdType::cmd,					   \
+		.Arg1Type = AsmArgType::arg1,					   \
+		.Arg2Type = AsmArgType::arg2,					   \
+														   \
+		.Prefixes     = prefixes,						   \
+		.PrefixesSize = prefixesSize,					   \
+														   \
+		.Code       = code,								   \
+		.OpcodeSize = opcodeSize,						   \
+		.ModeRmSize = modeRmSize,						   \
+		.SibSize    = sibSize,							   \
+														   \
+		.ImmSize = immSize,								   \
+														   \
+		.OpcodeLastByteType = AsmByteType::opcodeLastByte, \
+		.ModeRmType = AsmByteType::modeRmType,			   \
+	},
+
+// Массив кодировок команд.
+// Содержит записи о том, как перевести команду в машинный код.
+static const AsmCmdCode AsmCmdCodes[] = 
 {
-	{}
-//#include "_asm_cmd_descr.inc"
+	{
+		.Type = AsmCmdType::null
+	},
+#include "_asm_cmd_codes.inc"
 };
+// Количество записей в массиве кодировок команд.
+static const size_t AsmCmdCodesCount = sizeof(AsmCmdCodes) / sizeof(AsmCmdCode);
+static const size_t AsmCmdCodesNull  = 0;
 #undef ASM_CMD
 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
@@ -127,10 +162,7 @@ static void ToBin(uint8_t num, char** const buffer)
 	int st = 7;
 	while (st >= 0)
 	{
-		if (num % 2 > 0)
-			buf[st--] = '1';
-		else
-			buf[st--] = '0';
+		buf[st--] = '0' + (num % 2);
 		num /= 2;
 	}
 
@@ -148,7 +180,7 @@ static void ToHex(uint8_t num, char** const buffer)
 	int st = 1;
 	while (st >= 0)
 	{
-		buf[st--] = hexConvert[num% 16];
+		buf[st--] = hexConvert[num % 16];
 		num /= 16;
 	}
 
@@ -343,34 +375,14 @@ const char* AsmGetRegName(const AsmRegType type)
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 
-static uint8_t AsmGetRegEnc32W(const AsmRegType reg, uint8_t* out_w);
+static size_t AsmFindCmdCode(const AsmCmd* const cmd);
+static uint8_t AsmGetRegEnc32W(const AsmRegType reg, uint8_t* const out_w);
 static uint8_t AsmGetRegEnc32(const AsmRegType reg);
-static ProgramStatus AsmTranslateAddSub(AsmRep* const asmRep, AsmCmd* const cmd);
-static ProgramStatus AsmTranslateMulDiv(AsmRep* const asmRep, AsmCmd* const cmd);
-static ProgramStatus AsmTranslatePush(AsmRep* const asmRep, AsmCmd* const cmd);
-static ProgramStatus AsmTranslatePop(AsmRep* const asmRep, AsmCmd* const cmd);
-static ProgramStatus AsmTranslateMov(AsmRep* const asmRep, AsmCmd* const cmd);
-static ProgramStatus AsmTranslateXor(AsmRep* const asmRep, AsmCmd* const cmd);
-static ProgramStatus AsmTranslateNeg(AsmRep* const asmRep, AsmCmd* const cmd);
-static ProgramStatus AsmTranslateDecInc(AsmRep* const asmRep, AsmCmd* const cmd);
-static ProgramStatus AsmTranslateCmp(AsmRep* const asmRep, AsmCmd* const cmd);
-static ProgramStatus AsmTranslateCondJmp(AsmRep* const asmRep, AsmCmd* const cmd);
-static ProgramStatus AsmTranslateJmpCall(AsmRep* const asmRep, AsmCmd* const cmd);
-static ProgramStatus AsmTranslateRet(AsmRep* const asmRep, AsmCmd* const cmd);
-static ProgramStatus AsmTranslateCvtsi2sd(AsmRep* const asmRep, AsmCmd* const cmd);
-static ProgramStatus AsmTranslateMovsd(AsmRep* const asmRep, AsmCmd* const cmd);
-static ProgramStatus AsmTranslateCdq(AsmRep* const asmRep, AsmCmd* const cmd);
-static uint8_t AsmGetPopReg(const AsmRegType reg);
-
-static ProgramStatus AsmTranslateFchs(AsmRep* const asmRep, AsmCmd* const cmd);
-static ProgramStatus AsmTranslateFaddpFsubp(AsmRep* const asmRep, AsmCmd* const cmd);
-static ProgramStatus AsmTranslateFmulpFdivp(AsmRep* const asmRep, AsmCmd* const cmd);
-
-static ProgramStatus AsmTranslateFld(AsmRep* const asmRep, AsmCmd* const cmd);
-static ProgramStatus AsmTranslateFstp(AsmRep* const asmRep, AsmCmd* const cmd);
-static ProgramStatus AsmTranslateFcompp(AsmRep* const asmRep, AsmCmd* const cmd);
-static ProgramStatus AsmTranslateFrnd(AsmRep* const asmRep, AsmCmd* const cmd);
-static ProgramStatus AsmTranslateFistp(AsmRep* const asmRep, AsmCmd* const cmd);
+static uint8_t AsmGetModeRmByte(const AsmCmd* const cmd, const AsmCmdCode* const code, 
+								   const uint8_t modRmByte, uint8_t* const out_w);
+static ProgramStatus AsmCheckCmdCorrect(const AsmCmd* const cmd);
+static uint8_t AsmEncodeModeRegRm(const AsmArg* const mem, const AsmArg* const reg);
+static uint8_t AsmEncodeModeCodeRm(const AsmArg* const mem, const uint8_t code);
 
 ProgramStatus AsmTranslateCommands(x86Compiler* const comp)
 {
@@ -381,856 +393,155 @@ ProgramStatus AsmTranslateCommands(x86Compiler* const comp)
 	const ExtArray* const commands = &comp->AsmRep.Commands;
 	const size_t cmdCount = comp->AsmRep.Commands.Size;
 
-	for (size_t st = 0; st < cmdCount; st++)
+	for (size_t cmdIndex = 0; cmdIndex < cmdCount; cmdIndex++)
 	{
-		AsmCmd* cmd = (AsmCmd*)ExtArrayGetElemAt(commands, st);
+		AsmCmd* cmd = (AsmCmd*)ExtArrayGetElemAt(commands, cmdIndex);
 
-		switch (cmd->Type)
+		if (cmd->Type == AsmCmdType::label)
 		{
-			case AsmCmdType::label:
-				status = LabelTableAddLabel(&comp->AsmRep.LabelTable, cmd->Arg1.Label, comp->AsmRep.CurCmdOffset);
-				CHECK_STATUS;
-				break;
-
-			case AsmCmdType::add:
-			case AsmCmdType::sub:
-				status = AsmTranslateAddSub(&comp->AsmRep, cmd);
-				CHECK_STATUS;
-				break;
-
-			case AsmCmdType::faddp:
-			case AsmCmdType::fsubp:
-				status = AsmTranslateFaddpFsubp(&comp->AsmRep, cmd);
-				CHECK_STATUS;
-				break;
-
-			case AsmCmdType::mul:
-			case AsmCmdType::imul:
-			case AsmCmdType::div:
-			case AsmCmdType::idiv:
-				status = AsmTranslateMulDiv(&comp->AsmRep, cmd);
-				CHECK_STATUS;
-				break;
-
-			case AsmCmdType::fmulp:
-			case AsmCmdType::fdivp:
-				status = AsmTranslateFmulpFdivp(&comp->AsmRep, cmd);
-				CHECK_STATUS;
-				break;
-
-			case AsmCmdType::push:
-				status = AsmTranslatePush(&comp->AsmRep, cmd);
-				CHECK_STATUS;
-				break;
-
-			case AsmCmdType::pop:
-				status = AsmTranslatePop(&comp->AsmRep, cmd);
-				CHECK_STATUS;
-				break;
-
-			case AsmCmdType::mov:
-				status = AsmTranslateMov(&comp->AsmRep, cmd);
-				CHECK_STATUS;
-				break;
-
-			case AsmCmdType::neg:
-				status = AsmTranslateNeg(&comp->AsmRep, cmd);
-				CHECK_STATUS;
-				break;
-
-			case AsmCmdType::fchs:
-				status = AsmTranslateFchs(&comp->AsmRep, cmd);
-				CHECK_STATUS;
-				break;
-
-			case AsmCmdType::fld:
-				status = AsmTranslateFld(&comp->AsmRep, cmd);
-				CHECK_STATUS;
-				break;
-
-			case AsmCmdType::fstp:
-			case AsmCmdType::fstpd:
-				status = AsmTranslateFstp(&comp->AsmRep, cmd);
-				CHECK_STATUS;
-				break;
-
-			case AsmCmdType::fcompp:
-				status = AsmTranslateFcompp(&comp->AsmRep, cmd);
-				CHECK_STATUS;
-				break;
-
-			case AsmCmdType::_xor:
-				status = AsmTranslateXor(&comp->AsmRep, cmd);
-				CHECK_STATUS;
-				break;
-
-			case AsmCmdType::cmp:
-				status = AsmTranslateCmp(&comp->AsmRep, cmd);
-				CHECK_STATUS;
-				break;
-
-			case AsmCmdType::inc:
-			case AsmCmdType::dec:
-				assert(!"Not implemented");
-				break;
-
-			case AsmCmdType::ja:
-			case AsmCmdType::jae:
-			case AsmCmdType::jb:
-			case AsmCmdType::jbe:
-			case AsmCmdType::je:
-			case AsmCmdType::jne:
-			case AsmCmdType::jg:
-			case AsmCmdType::jge:
-			case AsmCmdType::jl:
-			case AsmCmdType::jle:
-				status = AsmTranslateCondJmp(&comp->AsmRep, cmd);
-				CHECK_STATUS;
-				break;
-
-			case AsmCmdType::jmp:
-			case AsmCmdType::call:
-				status = AsmTranslateJmpCall(&comp->AsmRep, cmd);
-				CHECK_STATUS;
-				break;
-
-			case AsmCmdType::ret:
-				status = AsmTranslateRet(&comp->AsmRep, cmd);
-				CHECK_STATUS;
-				break;
-
-			case AsmCmdType::cvtsi2sd:
-				status = AsmTranslateCvtsi2sd(&comp->AsmRep, cmd);
-				CHECK_STATUS;
-				break;
-
-			case AsmCmdType::movsd:
-				status = AsmTranslateMovsd(&comp->AsmRep, cmd);
-				CHECK_STATUS;
-				break;
-
-			case AsmCmdType::cdq:
-				status = AsmTranslateCdq(&comp->AsmRep, cmd);
-				CHECK_STATUS;
-				break;
-
-			case AsmCmdType::frnd:
-				status = AsmTranslateFrnd(&comp->AsmRep, cmd);
-				CHECK_STATUS;
-				break;
-
-			case AsmCmdType::fistp:
-				status = AsmTranslateFistp(&comp->AsmRep, cmd);
-				CHECK_STATUS;
-				break;
-
-			default:
-				assert(!"Error");
-				break;
+			if (LabelTableAddLabel(&comp->AsmRep.LabelTable, cmd->Arg1.Label, comp->AsmRep.CurCmdOffset) != ProgramStatus::Ok)
+				return ProgramStatus::Fault;
+			continue;
 		}
+
+		size_t  cmdCodeIndex = AsmFindCmdCode(cmd);
+
+		if (cmdCodeIndex == AsmCmdCodesNull)
+		{
+			assert(!"Error");
+			return ProgramStatus::Fault;
+		}
+		
+		if (AsmCheckCmdCorrect(cmd) != ProgramStatus::Ok)
+			return ProgramStatus::Fault;
+
+		const AsmCmdCode* const cmdCode = AsmCmdCodes + cmdCodeIndex;
+		size_t codeOutputIndex = 0;
+
+		const size_t prefixesSize = cmdCode->PrefixesSize;
+		assert(prefixesSize <= 4);
+		for (size_t st = 0; st < prefixesSize; st++)
+			cmd->Code.Code[codeOutputIndex++] = cmdCode->Prefixes[st];
+
+		size_t codeInputIndex = 0;
+
+		const size_t opcodeSize = cmdCode->OpcodeSize;
+		for (size_t st = 0; st < opcodeSize; st++)
+			cmd->Code.Code[codeOutputIndex++] = cmdCode->Code[codeInputIndex++];
+
+		size_t  lastOpcodeByte = codeOutputIndex - 1;
+		uint8_t w = 0;
+
+		assert(cmdCode->OpcodeLastByteType == AsmByteType::Code ||
+			   cmdCode->OpcodeLastByteType == AsmByteType::CodeW);
+
+		if (cmdCode->ModeRmSize > 0)
+		{
+			assert(cmdCode->ModeRmSize == 1);
+
+			uint8_t modeRmByte = AsmGetModeRmByte(cmd, cmdCode, cmdCode->Code[codeInputIndex++], &w);
+
+			cmd->Code.Code[codeOutputIndex++] = modeRmByte;
+		}
+
+		if (cmdCode->OpcodeLastByteType == AsmByteType::CodeW)
+		{
+			// CodeW байт:
+			//  7 6 5 4 3 2 1 0
+			// [-----code---- w ]
+			// По умолчанию w == 0.
+			// Если w == 1, то устанавливаем 0-ой бит.
+			cmd->Code.Code[lastOpcodeByte] += w;
+		}
+
+		assert(cmdCode->SibSize == 0);
+
+		if (cmdCode->ImmSize > 0)
+		{
+			assert(cmdCode->ImmSize == 1 || cmdCode->ImmSize == 2 || cmdCode->ImmSize == 4);
+
+			if (cmd->Arg1.Type == AsmArgType::Label)
+			{
+				uint32_t address = comp->AsmRep.CurCmdOffset + codeOutputIndex + cmdCode->ImmSize;
+				memcpy(cmd->Code.Code + codeOutputIndex, &address, cmdCode->ImmSize);
+
+				LabelTableAddInsert(&comp->AsmRep.LabelTable, cmd->Arg1.Label, (int*)(cmd->Code.Code + codeOutputIndex));
+			}
+			else if (cmd->Arg1.Type == AsmArgType::Imm || cmd->Arg1.Type == AsmArgType::Mem)
+			{
+				memcpy(cmd->Code.Code + codeOutputIndex, &cmd->Arg1.Imm, cmdCode->ImmSize);
+			}
+			else // if (cmd->Arg2.Type == AsmArgType::Imm)
+			{
+				assert(cmd->Arg2.Type == AsmArgType::Imm || cmd->Arg2.Type == AsmArgType::Mem);
+				memcpy(cmd->Code.Code + codeOutputIndex, &cmd->Arg2.Imm, cmdCode->ImmSize);
+			}
+
+			codeOutputIndex += cmdCode->ImmSize;
+		}
+
+		cmd->Code.CodeSize = codeOutputIndex;
+
+		comp->AsmRep.CurCmdOffset += cmd->Code.CodeSize;
 	}
 
 	comp->AsmRep.JitBufferSize = comp->AsmRep.CurCmdOffset;
 
-	return status;
+	return ProgramStatus::Ok;
 }
 
-static ProgramStatus AsmTranslateAddSub(AsmRep* const asmRep, AsmCmd* const cmd)
+/**
+ * @brief  Ищет запись для кодировки команды с аргументами в массиве кодировок AsmCmdCodes.
+ * 
+ * Записи с одинаковым типом команды в массиве кодировок лежат последовательно.
+ * Сначала находится начало записей с данным типом команд. 
+ * Затем находится команда с данными аргументами.
+ * 
+ * @param  type Искомый тип команды.
+ * 
+ * @return Индекс записи кодировки данной команды. Если запись не была найдена, то AsmCmdCodesNull.
+*/
+static size_t AsmFindCmdCode(const AsmCmd* const cmd)
 {
-	assert(asmRep);
 	assert(cmd);
 
-	if (ARG1_TYPE(Reg) && ARG2_TYPE(Reg))
+	size_t cmdRecordsStart = AsmCmdCodesNull;
+
+	for (size_t st = 0; st < AsmCmdCodesCount; st++)
 	{
-		uint8_t w1 = 0;
-		uint8_t reg1 = AsmGetRegEnc32W(cmd->Arg1.Reg, &w1);
-
-		uint8_t w2 = 0;
-		uint8_t reg2 = AsmGetRegEnc32W(cmd->Arg2.Reg, &w2);
-
-		assert(w1 == w2);
-
-		uint8_t code = 0;
-		switch (cmd->Type)
+		// Возвращаем указатель на первый 
+		if (AsmCmdCodes[st].Type == cmd->Type)
 		{
-			case AsmCmdType::add:
-				code = 0b0000001;
-				break;
-
-			case AsmCmdType::sub:
-				code = 0b0010101;
-				break;
-
-			default:
-				assert(!"Error");
-				break;
+			cmdRecordsStart = st;
+			break;
 		}
-
-		AsmCodeFirstByte fb  = {};
-		fb.FieldW.code       = code;
-		fb.FieldW.w          = w1;
-
-		AsmCodeSecondByte sb = {};
-		sb.RegReg.code       = 0b11;
-		sb.RegReg.reg1       = reg1;
-		sb.RegReg.reg2       = reg2;
-
-		cmd->Code.Code[0]    = fb.Int;
-		cmd->Code.Code[1]    = sb.Int;
-		cmd->Code.CodeSize   = 2;
-
-		asmRep->CurCmdOffset += cmd->Code.CodeSize;
-
-		return ProgramStatus::Ok;
 	}
-	else if (ARG1_TYPE(Reg) && ARG2_TYPE(Imm))
+
+	if (cmdRecordsStart == AsmCmdCodesNull)
+		return AsmCmdCodesNull;
+
+	for (size_t st = cmdRecordsStart; st < AsmCmdCodesCount; st++)
 	{
-		uint8_t w = 0;
-		uint8_t reg = AsmGetRegEnc32W(cmd->Arg1.Reg, &w);
+		if (AsmCmdCodes[st].Type != cmd->Type)
+			return AsmCmdCodesNull;
 
-		AsmCodeFirstByte fb  = {};
-		fb.FieldSW.code      = 0b100000;
-		fb.FieldSW.s         = 0;
-		fb.FieldSW.w         = w;
-
-		AsmCodeSecondByte sb = {};
-		sb.Reg.reg           = reg;
-		switch (cmd->Type)
-		{
-			case AsmCmdType::add:
-				sb.Reg.code = 0b11000;
-				break;
-
-			case AsmCmdType::sub:
-				sb.Reg.code = 0b11101;
-				break;
-		}
-
-		cmd->Code.Code[0] = fb.Int;
-		cmd->Code.Code[1] = sb.Int;
-		memcpy(cmd->Code.Code + 2, &cmd->Arg2.Imm, 4);
-		cmd->Code.CodeSize = 6;
-
-		asmRep->CurCmdOffset += cmd->Code.CodeSize;
-
-		return ProgramStatus::Ok;
+		if (AsmCmdCodes[st].Arg1Type == cmd->Arg1.Type &&
+			AsmCmdCodes[st].Arg2Type == cmd->Arg2.Type)
+			return st;
 	}
-	/*else if (ARG1_TYPE(Reg) && ARG2_TYPE(Mem))
-	{
-	}
-	else if (ARG1_TYPE(Mem) && ARG2_TYPE(Reg))
-	{
-	}
-	else if (ARG1_TYPE(Reg) && ARG2_TYPE(Imm))
-	{
-	}*/
 
-	assert(!"Not implemented");
-	return ProgramStatus::Fault;
+	return AsmCmdCodesNull;
 }
 
-static ProgramStatus AsmTranslateMulDiv(AsmRep* const asmRep, AsmCmd* const cmd)
-{
-	assert(asmRep);
-	assert(cmd);
-
-	if (ARG1_TYPE(Reg) && ARG2_TYPE(Null))
-	{
-		uint8_t w   = 0;
-		uint8_t reg = AsmGetRegEnc32W(cmd->Arg1.Reg, &w);
-
-		uint8_t code1 = 0;
-		uint8_t code2 = 0;
-		uint8_t mod   = 0;
-		switch (cmd->Type)
-		{
-			case AsmCmdType::mul:
-				code1 = 0b1111011;
-				code2 = 0b11100;
-				break;
-
-			case AsmCmdType::imul:
-				code1 = 0b1111011;
-				code2 = 0b11101;
-				break;
-
-			case AsmCmdType::div:
-				code1 = 0b1111011;
-				code2 = 0b11110;
-				break;
-
-			case AsmCmdType::idiv:
-				code1 = 0b1111011;
-				code2 = 0b11111;
-				break;
-
-			default:
-				assert(!"Error");
-				break;
-		}
-
-		AsmCodeFirstByte fb  = {};
-		fb.FieldW.code       = code1;
-		fb.FieldW.w          = w;
-
-		AsmCodeSecondByte sb = {};
-		sb.Reg.code          = code2;
-		sb.Reg.reg           = reg;
-
-		cmd->Code.Code[0]    = fb.Int;
-		cmd->Code.Code[1]    = sb.Int;
-		cmd->Code.CodeSize   = 2;
-
-		asmRep->CurCmdOffset += cmd->Code.CodeSize;
-
-		return ProgramStatus::Ok;
-	}
-	/*else if (ARG1_TYPE(Mem) && ARG2_TYPE(Null))
-	{
-
-	}*/
-
-	assert(!"Not implemented");
-	return ProgramStatus::Fault;
-}
-
-static ProgramStatus AsmTranslatePush(AsmRep* const asmRep, AsmCmd* const cmd)
-{
-	assert(asmRep);
-	assert(cmd);
-
-	if (ARG1_TYPE(Reg) && ARG2_TYPE(Null))
-	{
-		uint8_t reg = AsmGetRegEnc32(cmd->Arg1.Reg);
-
-		AsmCodeSecondByte sb = {};
-		sb.Reg.code          = 0b01010;
-		sb.Reg.reg           = reg;
-
-		cmd->Code.Code[0]  = sb.Int;
-		cmd->Code.CodeSize = 1;
-
-		asmRep->CurCmdOffset += cmd->Code.CodeSize;
-
-		return ProgramStatus::Ok;
-	}
-	else if (ARG1_TYPE(Imm) && ARG2_TYPE(Null))
-	{
-		AsmCodeFirstByte fb = {};
-		fb.FieldSW.code     = 0b011010;
-		fb.FieldSW.s        = 0;
-		fb.FieldW.w         = 0;
-
-		cmd->Code.Code[0]  = fb.Int;
-		memcpy(cmd->Code.Code + 1, &cmd->Arg1.Imm, 4);
-		cmd->Code.CodeSize = 5;
-
-		asmRep->CurCmdOffset += cmd->Code.CodeSize;
-
-		return ProgramStatus::Ok;
-	}
-	else if (ARG1_TYPE(Mem) && ARG2_TYPE(Null))
-	{
-		uint8_t fb = 0b11111111;
-
-		uint8_t rm = AsmGetPopReg(cmd->Arg1.Reg);
-
-		AsmCodeSecondByte sb = {};
-		sb.ModRM.mod         = 0b10;
-		sb.ModRM.reg         = 0b110;
-		sb.ModRM.rm          = rm;
-
-		cmd->Code.Code[0]    = fb;
-		cmd->Code.Code[1]    = sb.Int;
-
-		memcpy(cmd->Code.Code + 2, &cmd->Arg1.Imm, 4);
-
-		cmd->Code.CodeSize = 6;
-
-		asmRep->CurCmdOffset += cmd->Code.CodeSize;
-
-		return ProgramStatus::Ok;
-	}
-
-	assert(!"Not Implemented");
-	return ProgramStatus::Fault;
-}
-
-static ProgramStatus AsmTranslatePop(AsmRep* const asmRep, AsmCmd* const cmd)
-{
-	assert(asmRep);
-	assert(cmd);
-
-	if (ARG1_TYPE(Reg) && ARG2_TYPE(Null))
-	{
-		uint8_t reg = AsmGetRegEnc32(cmd->Arg1.Reg);
-
-		AsmCodeSecondByte sb = {};
-		sb.Reg.code          = 0b01011;
-		sb.Reg.reg           = reg;
-
-		cmd->Code.Code[0]  = sb.Int;
-		cmd->Code.CodeSize = 1;
-
-		asmRep->CurCmdOffset += cmd->Code.CodeSize;
-
-		return ProgramStatus::Ok;
-	}
-	else if (ARG1_TYPE(Mem) && ARG2_TYPE(Null))
-	{
-		AsmCodeFirstByte fb  = {};
-		fb.Int               = 0b10001111;
-
-		uint8_t rm = AsmGetPopReg(cmd->Arg1.Reg);
-
-		AsmCodeSecondByte sb = {};
-		sb.ModRM.mod         = 0b10;
-		sb.ModRM.reg         = 0b000;
-		sb.ModRM.rm          = rm;
-
-		cmd->Code.Code[0]  = fb.Int;
-		cmd->Code.Code[1]  = sb.Int;
-		
-		memcpy(cmd->Code.Code + 2, &cmd->Arg1.Imm, 4);
-
-		cmd->Code.CodeSize = 6;
-
-		asmRep->CurCmdOffset += cmd->Code.CodeSize;
-
-		return ProgramStatus::Ok;
-	}
-
-	assert(!"Not Implemented");
-	return ProgramStatus::Fault;
-}
-
-static ProgramStatus AsmTranslateMov(AsmRep* const asmRep, AsmCmd* const cmd)
-{
-	assert(asmRep);
-	assert(cmd);
-
-	if (ARG1_TYPE(Reg) && ARG2_TYPE(Reg))
-	{
-		uint8_t w1 = 0;
-		uint8_t reg1 = AsmGetRegEnc32W(cmd->Arg1.Reg, &w1);
-
-		uint8_t w2 = 0;
-		uint8_t reg2 = AsmGetRegEnc32W(cmd->Arg2.Reg, &w2);
-
-		assert(w1 == w2);
-
-		AsmCodeFirstByte fb = {};
-		fb.FieldW.code      = 0b1000101;
-		fb.FieldW.w         = w1;
-
-		AsmCodeSecondByte sb = {};
-		sb.RegReg.code       = 0b11;
-		sb.RegReg.reg1       = reg1;
-		sb.RegReg.reg2       = reg2;
-
-		cmd->Code.Code[0]    = fb.Int;
-		cmd->Code.Code[1]    = sb.Int;
-		cmd->Code.CodeSize   = 2;
-
-		asmRep->CurCmdOffset += cmd->Code.CodeSize;
-
-		return ProgramStatus::Ok;
-	}
-	else if (ARG1_TYPE(Reg) && ARG2_TYPE(Imm))
-	{
-		uint8_t w   = 0;
-		uint8_t reg = AsmGetRegEnc32W(cmd->Arg1.Reg, &w);
-
-		AsmCodeFirstByte fb  = {};
-		fb.FieldW.code       = 0b1100011;
-		fb.FieldW.w          = w;
-
-		AsmCodeSecondByte sb = {};
-		sb.Reg.code          = 0b11000;
-		sb.Reg.reg           = reg;
-
-		cmd->Code.Code[0]    = fb.Int;
-		cmd->Code.Code[1]    = sb.Int;
-		memcpy(cmd->Code.Code + 2, &cmd->Arg2.Imm, 4);
-		cmd->Code.CodeSize   = 6;
-
-		asmRep->CurCmdOffset += cmd->Code.CodeSize;
-
-		return ProgramStatus::Ok;
-	}
-
-	assert(!"Not Implemented");
-	return ProgramStatus::Fault;
-}
-
-static ProgramStatus AsmTranslateXor(AsmRep* const asmRep, AsmCmd* const cmd)
-{
-	assert(asmRep);
-	assert(cmd);
-
-	if (ARG1_TYPE(Reg) && ARG2_TYPE(Reg))
-	{
-		uint8_t w1   = 0;
-		uint8_t reg1 = AsmGetRegEnc32W(cmd->Arg1.Reg, &w1);
-
-		uint8_t w2   = 0;
-		uint8_t reg2 = AsmGetRegEnc32W(cmd->Arg2.Reg, &w2);
-
-		assert(w1 == w2);
-
-		AsmCodeFirstByte fb  = {};
-		fb.FieldW.code       = 0b0011001;
-		fb.FieldW.w          = w1;
-
-		AsmCodeSecondByte sb = {};
-		sb.RegReg.code       = 0b11;
-		sb.RegReg.reg1       = reg1;
-		sb.RegReg.reg2       = reg2;
-
-		cmd->Code.Code[0]  = fb.Int;
-		cmd->Code.Code[1]  = sb.Int;
-		cmd->Code.CodeSize = 2;
-
-		asmRep->CurCmdOffset += cmd->Code.CodeSize;
-
-		return ProgramStatus::Ok;
-	}
-
-	assert(!"Not Implemented");
-	return ProgramStatus::Fault;
-}
-
-static ProgramStatus AsmTranslateNeg(AsmRep* const asmRep, AsmCmd* const cmd)
-{
-	assert(asmRep);
-	assert(cmd);
-
-	if (ARG1_TYPE(Reg) && ARG2_TYPE(Null))
-	{
-		uint8_t w   = 0;
-		uint8_t reg = AsmGetRegEnc32W(cmd->Arg1.Reg, &w);
-
-		AsmCodeFirstByte fb  = {};
-		fb.FieldW.code       = 0b1111011;
-		fb.FieldW.w          = w;
-
-		AsmCodeSecondByte sb = {};
-		sb.Reg.code          = 0b11011;
-		sb.Reg.reg           = reg;
-
-		cmd->Code.Code[0]  = fb.Int;
-		cmd->Code.Code[1]  = sb.Int;
-		cmd->Code.CodeSize = 2;
-
-		asmRep->CurCmdOffset += cmd->Code.CodeSize;
-
-		return ProgramStatus::Ok;
-	}
-	
-	assert(!"Not Implemented");
-	return ProgramStatus::Fault;
-}
-
-static ProgramStatus AsmTranslateDecInc(AsmRep* const asmRep, AsmCmd* const cmd)
-{
-	assert(asmRep);
-	assert(cmd);
-
-	assert(!"Not Implemented");
-	return ProgramStatus::Fault;
-}
-
-static ProgramStatus AsmTranslateCmp(AsmRep* const asmRep, AsmCmd* const cmd)
-{
-	assert(asmRep);
-	assert(cmd);
-
-	if (ARG1_TYPE(Reg) && ARG2_TYPE(Reg))
-	{
-		uint8_t w1   = 0;
-		uint8_t reg1 = AsmGetRegEnc32W(cmd->Arg1.Reg, &w1);
-
-		uint8_t w2   = 0;
-		uint8_t reg2 = AsmGetRegEnc32W(cmd->Arg2.Reg, &w2);
-
-		assert(w1 == w2);
-
-		AsmCodeFirstByte fb  = {};
-		fb.FieldW.code       = 0b0011101;
-		fb.FieldW.w          = w1;
-
-		AsmCodeSecondByte sb = {};
-		sb.RegReg.code       = 0b11;
-		sb.RegReg.reg1       = reg1;
-		sb.RegReg.reg2       = reg2;
-
-		cmd->Code.Code[0]    = fb.Int;
-		cmd->Code.Code[1]    = sb.Int;
-		cmd->Code.CodeSize   = 2;
-
-		asmRep->CurCmdOffset += cmd->Code.CodeSize;
-
-		return ProgramStatus::Ok;
-	}
-	else if (ARG1_TYPE(Imm) && ARG2_TYPE(Reg))
-	{
-		uint8_t w   = 0;
-		uint8_t reg = AsmGetRegEnc32W(cmd->Arg2.Reg, &w);
-
-		AsmCodeFirstByte fb  = {};
-		fb.FieldSW.code      = 0b100000;
-		fb.FieldSW.s         = 0;
-		fb.FieldSW.w         = w;
-
-		AsmCodeSecondByte sb = {};
-		sb.Reg.code          = 0b11111;
-		sb.Reg.reg           = reg;
-
-		cmd->Code.Code[0]    = fb.Int;
-		cmd->Code.Code[1]    = sb.Int;
-		memcpy(cmd->Code.Code + 2, &cmd->Arg1.Imm, 4);
-		cmd->Code.CodeSize   = 6;
-
-		asmRep->CurCmdOffset += cmd->Code.CodeSize;
-
-		return ProgramStatus::Ok;
-	}
-
-	assert(!"Not Implemented");
-	return ProgramStatus::Fault;
-}
-
-static ProgramStatus AsmTranslateCondJmp(AsmRep* const asmRep, AsmCmd* const cmd)
-{
-	assert(asmRep);
-	assert(cmd);
-
-	if (!(ARG1_TYPE(Label) && ARG2_TYPE(Null)))
-	{
-		assert(!"Error");
-		return ProgramStatus::Fault;
-	}
-
-	uint8_t fb = 0b00001111;
-
-	AsmCodeSecondByte sb = {};
-	sb.CondJmp.code      = 0b1000;
-
-	switch (cmd->Type)
-	{
-		case AsmCmdType::ja:
-			sb.CondJmp.cond = 0b0111;
-			break;
-		case AsmCmdType::jae:
-			sb.CondJmp.cond = 0b0011;
-			break;
-		case AsmCmdType::jb:
-			sb.CondJmp.cond = 0b0010;
-			break;
-		case AsmCmdType::jbe:
-			sb.CondJmp.cond = 0b0110;
-			break;
-		case AsmCmdType::je:
-			sb.CondJmp.cond = 0b0100;
-			break;
-		case AsmCmdType::jne:
-			sb.CondJmp.cond = 0b0101;
-			break;
-		case AsmCmdType::jg:
-			sb.CondJmp.cond = 0b1111;
-			break;
-		case AsmCmdType::jge:
-			sb.CondJmp.cond = 0b1101;
-			break;
-		case AsmCmdType::jl:
-			sb.CondJmp.cond = 0b1100;
-			break;
-		case AsmCmdType::jle:
-			sb.CondJmp.cond = 0b1110;
-			break;
-	}
-
-	cmd->Code.Code[0]  = fb;
-	cmd->Code.Code[1]  = sb.Int;
-	cmd->Code.CodeSize = 6;
-
-	asmRep->CurCmdOffset += cmd->Code.CodeSize;
-
-	memcpy(cmd->Code.Code + 2, &asmRep->CurCmdOffset, 4);
-
-	LabelTableAddInsert(&asmRep->LabelTable, cmd->Arg1.Label, (int*)(cmd->Code.Code + 2));
-
-	return ProgramStatus::Ok;
-}
-
-static ProgramStatus AsmTranslateJmpCall(AsmRep* const asmRep, AsmCmd* const cmd)
-{
-	assert(asmRep);
-	assert(cmd);
-
-	if (!(ARG1_TYPE(Label) && ARG2_TYPE(Null)))
-	{
-		assert(!"Error");
-		return ProgramStatus::Fault;
-	}
-
-	uint8_t fb = 0;
-	switch (cmd->Type)
-	{
-		case AsmCmdType::call:
-			fb = 0b11101000;
-			break;
-		case AsmCmdType::jmp:
-			fb = 0b11101001;
-			break;
-	}
-
-	cmd->Code.Code[0]  = fb;
-	cmd->Code.CodeSize = 5;
-
-	asmRep->CurCmdOffset += cmd->Code.CodeSize;
-
-	memcpy(cmd->Code.Code + 1, &asmRep->CurCmdOffset, 4);
-
-	LabelTableAddInsert(&asmRep->LabelTable, cmd->Arg1.Label, (int*)(cmd->Code.Code + 1));
-
-	return ProgramStatus::Ok;
-}
-
-static ProgramStatus AsmTranslateRet(AsmRep* const asmRep, AsmCmd* const cmd)
-{
-	assert(asmRep);
-	assert(cmd);
-
-	if (!(ARG1_TYPE(Null) && ARG2_TYPE(Null)))
-	{
-		assert(!"Error");
-		return ProgramStatus::Fault;
-	}
-
-	cmd->Code.Code[0]  = 0b11000011;
-	cmd->Code.CodeSize = 1;
-
-	asmRep->CurCmdOffset += cmd->Code.CodeSize;
-
-	return ProgramStatus::Ok;
-}
-
-static ProgramStatus AsmTranslateCvtsi2sd(AsmRep* const asmRep, AsmCmd* const cmd)
-{
-	assert(asmRep);
-	assert(cmd);
-
-	if (ARG1_TYPE(Reg) && ARG2_TYPE(Reg))
-	{
-		uint8_t xmmReg = AsmGetRegEnc32(cmd->Arg1.Reg);
-		uint8_t genReg = AsmGetRegEnc32(cmd->Arg2.Reg);
-
-		uint8_t b1 = 0b11110011;
-		uint8_t b2 = 0b00001111;
-		uint8_t b3 = 0b00101010;
-
-		AsmCodeSecondByte b4 = {};
-		b4.ModRM.mod         = 0b11;
-		b4.ModRM.reg         = xmmReg;
-		b4.ModRM.rm          = genReg;
-
-		cmd->Code.Code[0]    = b1;
-		cmd->Code.Code[1]    = b2;
-		cmd->Code.Code[2]    = b3;
-		cmd->Code.Code[3]    = b4.Int;
-		cmd->Code.CodeSize   = 4;
-
-		asmRep->CurCmdOffset += cmd->Code.CodeSize;
-
-		return ProgramStatus::Ok;
-	}
-
-	assert(!"Not implemented");
-	return ProgramStatus::Fault;
-}
-
-static ProgramStatus AsmTranslateMovsd(AsmRep* const asmRep, AsmCmd* const cmd)
-{
-	assert(asmRep);
-	assert(cmd);
-
-	if (ARG1_TYPE(Mem) && ARG2_TYPE(Reg))
-	{
-		uint8_t xmmReg = AsmGetRegEnc32(cmd->Arg2.Reg);
-		uint8_t genReg = AsmGetRegEnc32(cmd->Arg1.Reg);
-
-		uint8_t b1 = 0b11110011;
-		uint8_t b2 = 0b00001111;
-		uint8_t b3 = 0b00010001;
-
-		AsmCodeSecondByte b4 = {};
-		b4.ModRM.mod         = 0b10;
-		b4.ModRM.reg         = xmmReg;
-		b4.ModRM.rm          = genReg;
-
-		cmd->Code.Code[0]    = b1;
-		cmd->Code.Code[1]    = b2;
-		cmd->Code.Code[2]    = b3;
-		cmd->Code.Code[3]    = b4.Int;
-		memcpy(cmd->Code.Code + 4, &cmd->Arg2.Imm, 4);
-		cmd->Code.CodeSize   = 8;
-
-		asmRep->CurCmdOffset += cmd->Code.CodeSize;
-
-		return ProgramStatus::Ok;
-	}
-
-	assert(!"Not implemented");
-	return ProgramStatus::Fault;
-}
-
-static ProgramStatus AsmTranslateCdq(AsmRep* const asmRep, AsmCmd* const cmd)
-{
-	assert(asmRep);
-	assert(cmd);
-
-	if (!(ARG1_TYPE(Null) && ARG2_TYPE(Null)))
-	{
-		assert(!"Error");
-		return ProgramStatus::Fault;
-	}
-
-	cmd->Code.Code[0]  = 0b10011001;
-	cmd->Code.CodeSize = 1;
-
-	asmRep->CurCmdOffset += cmd->Code.CodeSize;
-
-	return ProgramStatus::Ok;
-}
-
-static uint8_t AsmGetPopReg(const AsmRegType reg)
-{
-	switch (reg)
-	{
-		case AsmRegType::eax:
-			return 0b000;
-		case AsmRegType::ebx:
-			return 0b011;
-		case AsmRegType::ecx:
-			return 0b001;
-		case AsmRegType::edx:
-			return 0b010;
-		case AsmRegType::null:
-			return 0b100;
-		case AsmRegType::ebp:
-			return 0b101;
-		case AsmRegType::esi:
-			return 0b110;
-		case AsmRegType::edi:
-			return 0b111;
-		default:
-			assert(!"Error");
-			return 0;
-	}
-}
-
-static uint8_t AsmGetRegEnc32W(const AsmRegType reg, uint8_t* out_w)
+/**
+ * @brief  Получить кодировку регистра. В Opcode последний байт типа CodeW.
+ * 
+ * @param  reg   Тип кодируемого регистра.
+ * @param  out_w Выходной бит w. Показывает, занимают данные 1 байт или являются полноразмерными (2 или 4 байта).
+ * 
+ * @return Кодировка регистра (3 младших бита).
+*/
+static uint8_t AsmGetRegEnc32W(const AsmRegType reg, uint8_t* const out_w)
 {
 	assert(out_w);
 
@@ -1287,11 +598,18 @@ static uint8_t AsmGetRegEnc32W(const AsmRegType reg, uint8_t* out_w)
 			return 0b111;
 
 		default:
-			assert(!"Error");
+			assert(!"Not implemented");
 			return 0;
 	}
 }
 
+/**
+ * @brief  Получить кодировку регистра. В Opcode только байты типа Code.
+ * 
+ * @param reg Тип кодируемого регистра.
+ * 
+ * @return Кодировка регистра (3 младших бита).
+*/
 static uint8_t AsmGetRegEnc32(const AsmRegType reg)
 {
 	switch (reg)
@@ -1332,6 +650,158 @@ static uint8_t AsmGetRegEnc32(const AsmRegType reg)
 			assert(!"Error");
 			return 0;
 	}
+}
+
+/**
+ * @brief  Закодировать байт ModR/M.
+ * 
+ * @param cmd       Кодируемая команда в ассемблере.
+ * @param code      Правила перевода команды в машинный код.
+ * @param modRmByte Установленное стандартное значение в правилах перевода.
+ * @param out_w     Выходной бит w. Показывает, занимают данные 1 байт или являются полноразмерными (2 или 4 байта).
+ * 
+ * @return Закодированный байт ModR/M.
+*/
+static uint8_t AsmGetModeRmByte(const AsmCmd* const cmd, const AsmCmdCode* const code, 
+								  const uint8_t modRmByte, uint8_t* const out_w)
+{
+	assert(cmd);
+	assert(code);
+	assert(out_w);
+
+	AsmModRmByte modeRmByte = {.Value = modRmByte};
+
+	switch (code->ModeRmType)
+	{
+		case AsmByteType::CodeReg:
+		{
+			uint8_t    reg     = 0;
+			AsmRegType regType = AsmRegType::null;
+
+			if (cmd->Arg1.Type == AsmArgType::Reg)
+				regType = cmd->Arg1.Reg;
+			else
+			{
+				assert(cmd->Arg2.Type == AsmArgType::Reg);
+				regType = cmd->Arg2.Reg;
+			}
+			
+			if (code->OpcodeLastByteType == AsmByteType::Code)
+				reg = AsmGetRegEnc32(cmd->Arg1.Reg);
+			else
+			{
+				assert(code->OpcodeLastByteType == AsmByteType::CodeW);
+				reg = AsmGetRegEnc32W(cmd->Arg1.Reg, out_w);
+			}
+			
+			modeRmByte.CodeReg.reg = reg;
+			break;
+		}
+		case AsmByteType::CodeRegReg:
+		{
+			assert(cmd->Arg1.Type == AsmArgType::Reg);
+			assert(cmd->Arg2.Type == AsmArgType::Reg);
+
+			uint8_t reg1 = 0, reg2 = 0;
+			if (code->OpcodeLastByteType == AsmByteType::Code)
+			{
+				reg1 = AsmGetRegEnc32(cmd->Arg1.Reg);
+				reg2 = AsmGetRegEnc32(cmd->Arg2.Reg);
+			}
+			else // if (cmdCode->OpcodeLastByteType == AsmByteType::CodeW)
+			{
+				uint8_t w2 = 0;
+				reg1 = AsmGetRegEnc32W(cmd->Arg1.Reg, &w2);
+				reg2 = AsmGetRegEnc32W(cmd->Arg2.Reg, out_w);
+				assert(w2 == *out_w);
+			}
+
+			modeRmByte.CodeRegReg.reg1 = reg1;
+			modeRmByte.CodeRegReg.reg2 = reg2;
+			break;
+		}
+		case AsmByteType::ModeCodeRm:
+		{
+			assert(cmd->Arg1.Type == AsmArgType::Mem);
+			assert(cmd->Arg2.Type == AsmArgType::Null);
+			modeRmByte.Value = AsmEncodeModeCodeRm(&cmd->Arg1, modeRmByte.Value);
+			break;
+		}
+		case AsmByteType::ModeRegRm:
+		{
+			assert(cmd->Arg1.Type == AsmArgType::Mem);
+			assert(cmd->Arg2.Type == AsmArgType::Reg);
+			modeRmByte.Value = AsmEncodeModeRegRm(&cmd->Arg1, &cmd->Arg2);
+			break;
+		}
+		default:
+		{
+			assert(!"Not implemented");
+			break;
+		}
+	}
+
+	return modeRmByte.Value;
+}
+
+static uint8_t AsmEncodeModeCodeRm(const AsmArg* const mem, const uint8_t code)
+{
+	assert(mem);
+	assert(mem->Type == AsmArgType::Mem);
+
+	AsmModRmByte byte = {.Value = code};
+
+	byte.ModeRegRm.mode = 0b10;
+	if (mem->Reg != AsmRegType::null)
+		byte.ModeRegRm.rm   = AsmGetRegEnc32(mem->Reg);
+
+	return byte.Value;
+}
+
+static uint8_t AsmEncodeModeRegRm(const AsmArg* const mem, const AsmArg* const reg)
+{
+	assert(mem);
+	assert(mem->Type == AsmArgType::Mem);
+	assert(reg);
+	assert(reg->Type == AsmArgType::Reg);
+
+	AsmModRmByte byte = {};
+
+	if (reg->Reg != AsmRegType::null)
+		byte.ModeRegRm.reg = AsmGetRegEnc32(reg->Reg);
+
+	byte.ModeRegRm.mode = 0b10;
+	if (mem->Reg != AsmRegType::null)
+		byte.ModeRegRm.rm   = AsmGetRegEnc32(mem->Reg);
+
+	return byte.Value;
+}
+
+/**
+ * @brief  Проверяет правильность записи ассемблерной команды.
+ * 
+ * @param cmd Ассемблерная команда.
+ * 
+ * @return ProgramStatus::Fault в случае ошибки, иначе ProgramStatus::Ok.
+*/
+static ProgramStatus AsmCheckCmdCorrect(const AsmCmd* const cmd)
+{
+	// Процессор intel не поддерживает команды:
+	// pop  [esp + disp]
+	// push [esp + disp]
+	// fld  [esp + disp]
+	if ((cmd->Type == AsmCmdType::pop || 
+		 cmd->Type == AsmCmdType::push ||
+		 cmd->Type == AsmCmdType::fld) &&
+		(cmd->Arg1.Type == AsmArgType::Reg ||
+		 cmd->Arg1.Type == AsmArgType::Mem) &&
+		 cmd->Arg1.Reg == AsmRegType::esp)
+	{
+		assert(!"Error");
+		return ProgramStatus::Fault;
+	}
+
+	return ProgramStatus::Ok;
 }
 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
@@ -1429,255 +899,6 @@ void LabelTableDestructor(AsmLabelTable* const table)
 
 	ExtArrayDestructor(&table->Labels);
 	ExtArrayDestructor(&table->Inserts);
-}
-
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
-
-static ProgramStatus AsmTranslateFaddpFsubp(AsmRep* const asmRep, AsmCmd* const cmd)
-{
-	assert(asmRep);
-	assert(cmd);
-
-	if (ARG1_TYPE(Null) && ARG2_TYPE(Null))
-	{
-		uint8_t fb = 0b11011110;
-		uint8_t sb = 0b11000000;
-
-		switch (cmd->Type)
-		{
-			case AsmCmdType::faddp:
-				sb = 0b11000001;
-				break;
-
-			case AsmCmdType::fsubp:
-				sb = 0b11101001;
-				break;
-
-			default:
-				assert(!"Error");
-				break;
-		}
-
-		cmd->Code.Code[0]  = fb;
-		cmd->Code.Code[1]  = sb;
-		cmd->Code.CodeSize = 2;
-
-		asmRep->CurCmdOffset += cmd->Code.CodeSize;
-
-		return ProgramStatus::Ok;
-	}
-
-	assert(!"Not implemented");
-	return ProgramStatus::Fault;
-}
-
-static ProgramStatus AsmTranslateFmulpFdivp(AsmRep* const asmRep, AsmCmd* const cmd)
-{
-	assert(asmRep);
-	assert(cmd);
-
-	if (ARG1_TYPE(Null) && ARG2_TYPE(Null))
-	{
-		uint8_t fb = 0b11011110;
-		uint8_t sb = 0b11001001;
-
-		switch (cmd->Type)
-		{
-			case AsmCmdType::fmulp:
-				sb = 0b11001001;
-				break;
-
-			case AsmCmdType::fdivp:
-				sb = 0b11111001;
-				break;
-
-			default:
-				assert(!"Error");
-				break;
-		}
-
-		cmd->Code.Code[0]  = fb;
-		cmd->Code.Code[1]  = sb;
-		cmd->Code.CodeSize = 2;
-
-		asmRep->CurCmdOffset += cmd->Code.CodeSize;
-
-		return ProgramStatus::Ok;
-	}
-
-	assert(!"Not implemented");
-	return ProgramStatus::Fault;
-}
-
-static ProgramStatus AsmTranslateFchs(AsmRep* const asmRep, AsmCmd* const cmd)
-{
-	assert(asmRep);
-	assert(cmd);
-
-	if (ARG1_TYPE(Null) && ARG2_TYPE(Null))
-	{
-		uint8_t fb = 0b11011001;
-		uint8_t sb = 0b11100000;
-
-		cmd->Code.Code[0]  = fb;
-		cmd->Code.Code[1]  = sb;
-		cmd->Code.CodeSize = 2;
-
-		asmRep->CurCmdOffset += cmd->Code.CodeSize;
-
-		return ProgramStatus::Ok;
-	}
-
-	assert(!"Not Implemented");
-	return ProgramStatus::Fault;
-}
-
-static ProgramStatus AsmTranslateFld(AsmRep* const asmRep, AsmCmd* const cmd)
-{
-	assert(asmRep);
-	assert(cmd);
-
-	if (ARG1_TYPE(Mem) && ARG2_TYPE(Null))
-	{
-		uint8_t fb = 0b11011001;
-
-		uint8_t rm = AsmGetPopReg(cmd->Arg1.Reg);
-
-		AsmCodeSecondByte sb = {};
-		sb.ModRM.mod         = 0b10;
-		sb.ModRM.reg         = 0b000;
-		sb.ModRM.rm          = rm;
-
-		cmd->Code.Code[0]    = fb;
-		cmd->Code.Code[1]    = sb.Int;
-
-		memcpy(cmd->Code.Code + 2, &cmd->Arg1.Imm, 4);
-
-		cmd->Code.CodeSize   = 6;
-
-		asmRep->CurCmdOffset += cmd->Code.CodeSize;
-
-		return ProgramStatus::Ok;
-	}
-
-	assert(!"Not Implemented");
-	return ProgramStatus::Fault;
-}
-
-static ProgramStatus AsmTranslateFstp(AsmRep* const asmRep, AsmCmd* const cmd)
-{
-	assert(asmRep);
-	assert(cmd);
-
-	if (ARG1_TYPE(Mem) && ARG2_TYPE(Null))
-	{
-		uint8_t fb = 0b11011001;
-
-		if (cmd->Type == AsmCmdType::fstpd)
-			fb = 0b11011101;
-
-		uint8_t rm = AsmGetPopReg(cmd->Arg1.Reg);
-
-		AsmCodeSecondByte sb = {};
-		sb.ModRM.mod         = 0b10;
-		sb.ModRM.reg         = 0b011;
-		sb.ModRM.rm          = rm;
-
-		cmd->Code.Code[0]    = fb;
-		cmd->Code.Code[1]    = sb.Int;
-
-		memcpy(cmd->Code.Code + 2, &cmd->Arg1.Imm, 4);
-
-		cmd->Code.CodeSize   = 6;
-
-		asmRep->CurCmdOffset += cmd->Code.CodeSize;
-
-		return ProgramStatus::Ok;
-	}
-
-	assert(!"Not Implemented");
-	return ProgramStatus::Fault;
-}
-
-static ProgramStatus AsmTranslateFistp(AsmRep* const asmRep, AsmCmd* const cmd)
-{
-	assert(asmRep);
-	assert(cmd);
-
-	if (ARG1_TYPE(Mem) && ARG2_TYPE(Null))
-	{
-		uint8_t fb = 0b11011011;
-
-		uint8_t rm = AsmGetPopReg(cmd->Arg1.Reg);
-
-		AsmCodeSecondByte sb = {};
-		sb.ModRM.mod         = 0b10;
-		sb.ModRM.reg         = 0b011;
-		sb.ModRM.rm          = rm;
-
-		cmd->Code.Code[0]    = fb;
-		cmd->Code.Code[1]    = sb.Int;
-
-		memcpy(cmd->Code.Code + 2, &cmd->Arg1.Imm, 4);
-
-		cmd->Code.CodeSize   = 6;
-
-		asmRep->CurCmdOffset += cmd->Code.CodeSize;
-
-		return ProgramStatus::Ok;
-	}
-
-	assert(!"Not Implemented");
-	return ProgramStatus::Fault;
-}
-
-static ProgramStatus AsmTranslateFcompp(AsmRep* const asmRep, AsmCmd* const cmd)
-{
-	assert(asmRep);
-	assert(cmd);
-
-	if (ARG1_TYPE(Null) && ARG2_TYPE(Null))
-	{
-		// fcompp
-		cmd->Code.Code[0]     = 0b11011110;
-		cmd->Code.Code[1]     = 0b11011001;
-		// fstsw ax
-		cmd->Code.Code[2]     = 0b11011111;
-		cmd->Code.Code[3]     = 0b11100000;
-		// sahf
-		cmd->Code.Code[4]     = 0b10011110;
-
-		cmd->Code.CodeSize    = 5;
-		asmRep->CurCmdOffset += cmd->Code.CodeSize;
-
-		return ProgramStatus::Ok;
-	}
-
-	assert(!"Not Implemented");
-	return ProgramStatus::Fault;
-}
-
-static ProgramStatus AsmTranslateFrnd(AsmRep* const asmRep, AsmCmd* const cmd)
-{
-	assert(asmRep);
-	assert(cmd);
-
-	if (ARG1_TYPE(Null) && ARG2_TYPE(Null))
-	{
-		// frnd
-		cmd->Code.Code[0]    = 0b11011001;
-		cmd->Code.Code[1]    = 0b11111100;
-
-		cmd->Code.CodeSize   = 2;
-
-		asmRep->CurCmdOffset += cmd->Code.CodeSize;
-
-		return ProgramStatus::Ok;
-	}
-
-	assert(!"Not Implemented");
-	return ProgramStatus::Fault;
 }
 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 

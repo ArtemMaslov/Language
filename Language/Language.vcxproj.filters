@@ -266,5 +266,8 @@
     <None Include="Back end\x86\_asm_regs.inc">
       <Filter>Back end\x86</Filter>
     </None>
+    <None Include="Back end\x86\_asm_cmd_codes.inc">
+      <Filter>Back end\x86</Filter>
+    </None>
   </ItemGroup>
 </Project>

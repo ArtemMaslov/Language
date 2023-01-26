@@ -231,6 +231,7 @@
     <ClInclude Include="Modules\Text\Text.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Back end\x86\_asm_cmd_codes.inc" />
     <None Include="Back end\x86\_asm_cmd_names.inc" />
     <None Include="Back end\x86\_asm_regs.inc" />
     <None Include="LanguageGrammar\English\Keywords.inc" />

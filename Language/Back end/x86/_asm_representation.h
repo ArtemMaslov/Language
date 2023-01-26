@@ -43,15 +43,15 @@ struct AsmArg
 {
 	AsmArgType  Type;
 	AsmRegType  Reg;
-	int         Imm;
+	int32_t     Imm;
 	const char* Label;
 };
 
 struct AsmCode
 {
 	// Бинарное представление команды. Размер массива вмещает самую длинную команду.
-	// Opcode[1|2] + MemRM[0|1] + SIB[0|1] + Displacement[0|1|2|4] + Immediate[0|1|2|4].
-	uint8_t Code[2 + 1 + 1 + 4 + 4];
+	// Prefixes[0|1|2|3|4] + Opcode[1|2] + MemRM[0|1] + SIB[0|1] + Displacement[0|1|2|4] + Immediate[0|1|2|4].
+	uint8_t Code[4 + 2 + 1 + 1 + 4 + 4];
 	// Актуальный размер команды в байтах.
 	size_t  CodeSize;
 };
@@ -116,53 +116,100 @@ struct AsmRep
 
 extern const AsmCmdDescr AsmCmdDescrs[];
 
+enum class AsmByteType
+{
+	// Данный байт не используется.
+	Null,
+	// 8-ь бит указаны.
+	Code,
+	// 7-ь бит указаны, 8-ой бит выбирается автоматически.
+	CodeW,
+	// 2-а бита указаны, 3 и 3 бита выбираются автоматически.
+	CodeRegReg,
+	// Все биты выбираются автоматически.
+	ModeRegRm,
+	// 5-ь бит указаны, 3 бита выбираются автоматически.
+	CodeReg,
+	// 2 бита выбираются автоматически, 3 бита указаны, 3 бита выбираются автоматически.
+	ModeCodeRm,
+	// 1 байт, константа.
+	Imm8,
+	// 2 байта, константа.
+	Imm16,
+	// 4 байта, константа.
+	Imm32,
+};
+
+struct AsmCmdCode
+{
+	// Тип команды. Мнемоническое название.
+	AsmCmdType Type;
+	// Тип 1 аргумента.
+	AsmArgType Arg1Type;
+	// Тип 2 аргумента.
+	AsmArgType Arg2Type;
+
+	// Массив байт, кодирующих префиксы.
+	uint8_t Prefixes[4];
+	// [0-4] Количество записанных в Prefixes байт.
+	uint8_t PrefixesSize;
+
+	// Массив байт, кодирующих команду.
+	// Opcode[1|2] + ModeR/M[0|1] + SIB[0|1]
+	uint8_t Code[4];
+	// [1|2] Размер Opcode.
+	uint8_t OpcodeSize;
+	// [0|1] Есть ли ModeR/M байт в команде.
+	uint8_t ModeRmSize;
+	// [0|1] Есть ли SIB байт в команде.
+	uint8_t SibSize;
+
+	// [0|1|2|4] Размер непосредственного значения в команде.
+	uint8_t ImmSize;
+
+	// [Code|CodeW] Тип последнего байта Opcode.
+	AsmByteType OpcodeLastByteType;
+	// [CodeRegReg|ModeRegRm|CodeReg|ModeCodeRm] Тип байта ModeR/M.
+	AsmByteType ModeRmType;
+};
+
 struct AsmListingType
 {
 	int Commands : 1;
 	int Codes    : 1;
 };
 
-union AsmCodeFirstByte
+union AsmModRmByte
 {
-	uint8_t Int;
-
-	struct
-	{
-		uint8_t w    : 1;
-		uint8_t code : 7;
-	} FieldW;
-
-	struct
-	{
-		uint8_t w    : 1;
-		uint8_t s    : 1;
-		uint8_t code : 6;
-	} FieldSW;
-};
-
-union AsmCodeSecondByte
-{
-	uint8_t Int;
+	uint8_t Value;
 
 	struct
 	{
 		uint8_t reg2 : 3;
 		uint8_t reg1 : 3;
 		uint8_t code : 2;
-	} RegReg;
+	} CodeRegReg;
 
 	struct
 	{
-		uint8_t rm  : 3;
-		uint8_t reg : 3;
-		uint8_t mod : 2;
-	} ModRM;
+		uint8_t rm   : 3;
+		uint8_t reg  : 3;
+		uint8_t mode : 2;
+	} ModeRegRm;
+
+	struct
+	{
+		uint8_t rm   : 3;
+		uint8_t code : 3;
+		uint8_t mode : 2;
+	} ModeCodeRm;
+
 
 	struct
 	{
 		uint8_t reg  : 3;
 		uint8_t code : 5;
-	} Reg;
+	} CodeReg;
 
 	struct
 	{
