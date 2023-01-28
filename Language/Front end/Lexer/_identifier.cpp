@@ -9,8 +9,8 @@
 	if (status != ProgramStatus::Ok) \
 		return status
 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
 ProgramStatus IdentifierTableConstructor(IdentifierTable* table)
 {
@@ -30,18 +30,18 @@ ProgramStatus IdentifierTableDestructor(IdentifierTable* table)
 	assert(table);
 
 	ProgramStatus status = ProgramStatus::Ok;
-	status = ExtArrayDestructor(&table->Table);
+	ExtArrayDestructor(&table->Table);
 	CHECK_STATUS;
 
-	status = ExtHeapDestructor(&table->_identifierNames);
+	ExtHeapDestructor(&table->_identifierNames);
 
 	memset(table, 0, sizeof(IdentifierTable));
 
 	return status;
 }
 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
 ProgramStatus IdentifierTableAddElem(IdentifierTable* table, const char* name, const size_t nameLength, int* outId)
 {
@@ -98,7 +98,7 @@ const Identifier* IdentifierGetById(const IdentifierTable* table, const int id)
 	return nullptr;
 }
 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
 #undef CHECK_STATUS

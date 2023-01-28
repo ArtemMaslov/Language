@@ -7,15 +7,15 @@
 #include "../../Modules/ErrorsHandling.h"
 #include "../../Modules/Logs/Logs.h"
 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
 #define CHECK_STATUS \
 	if (status != ProgramStatus::Ok) \
 		return status
 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
 static KeywordType CheckKeyword(const char* name, const size_t nameLength);
 
@@ -23,8 +23,8 @@ static OperatorType CheckOperator(const char** text);
 
 static SpecialSymbolType CheckSpecSymbol(const char** text);
 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
 ProgramStatus LexerConstructor(Lexer* lexer)
 {
@@ -32,8 +32,6 @@ ProgramStatus LexerConstructor(Lexer* lexer)
 
 	ProgramStatus status = ProgramStatus::Ok;
 
-	status = TextConstructor(&lexer->Text);
-	CHECK_STATUS;
 	status = ExtArrayConstructor(&lexer->Commands, sizeof(Token));
 	CHECK_STATUS;
 	status = IdentifierTableConstructor(&lexer->IdentifierTable);
@@ -47,22 +45,22 @@ ProgramStatus LexerDestructor(Lexer* lexer)
 
 	ProgramStatus status = ProgramStatus::Ok;
 
-	status = TextDestructor(&lexer->Text);
-	CHECK_STATUS;
-	status = ExtArrayDestructor(&lexer->Commands);
+	TextDestructor(&lexer->Text);
+
+	ExtArrayDestructor(&lexer->Commands);
 	CHECK_STATUS;
 	status = IdentifierTableDestructor(&lexer->IdentifierTable);
 
 	return status;
 }
 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
 ProgramStatus LexerGetTokens(Lexer* lexer)
 {
 	assert(lexer);
-	assert(&lexer->Text.Readed);
+	assert(&lexer->Text.Data);
 
 	ProgramStatus status = ProgramStatus::Ok;
 
@@ -84,8 +82,8 @@ ProgramStatus LexerGetTokens(Lexer* lexer)
 		{
 			// —читываем число.
 			double number = 0;
-			size_t readed = 0;
-			int scaned = sscanf(text, "%lf%zn", &number, &readed);
+			int readed = 0;
+			int scaned = sscanf(text, "%lf%n", &number, &readed);
 
 			if (scaned != 1)
 			{
@@ -184,8 +182,8 @@ ProgramStatus LexerGetTokens(Lexer* lexer)
 	return status;
 }
 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
 ProgramStatus LexerReadFile(Lexer* lexer, const char* fileName)
 {
@@ -193,14 +191,15 @@ ProgramStatus LexerReadFile(Lexer* lexer, const char* fileName)
 
 	ProgramStatus status = ProgramStatus::Ok;
 
-	status = TextReadFile(&lexer->Text, fileName);
+	if (TextConstructor(&lexer->Text, fileName) != TextError::NoErrors)
+		return ProgramStatus::Fault;
 
 	return status;
 }
 
 ProgramStatus LexerLogDump(Lexer* lexer)
 {
-	FILE* file = LogBeginDump(LOG_SIG_GENERAL, LOG_LVL_DEBUG);
+	FILE* file = LogBeginDump(LogSignature::General, LogLevel::Debug);
 
 	char buffer[1024] = "";
 
@@ -253,13 +252,13 @@ ProgramStatus LexerLogDump(Lexer* lexer)
 		fputs(buffer, file);
 	}
 
-	LogEndDump(LOG_SIG_GENERAL);
+	LogEndDump(LogSignature::General);
 
 	return ProgramStatus::Ok;
 }
 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
 static KeywordType CheckKeyword(const char* word, const size_t wordLength)
 {
@@ -320,7 +319,7 @@ static SpecialSymbolType CheckSpecSymbol(const char** text)
 	return SpecialSymbolType::Null;
 }
 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
 #undef CHECK_STATUS

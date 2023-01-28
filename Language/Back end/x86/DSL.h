@@ -124,26 +124,26 @@
 #define FSTPD(...) \
 	AsmCreateCommand(asmRep, AsmCmdType::fstpd, __VA_ARGS__)
 
-#define FADDP(...) \
-	AsmCreateCommand(asmRep, AsmCmdType::faddp, __VA_ARGS__)
+#define FADDP() \
+	AsmCreateCommand(asmRep, AsmCmdType::faddp)
 
-#define FSUBP(...) \
-	AsmCreateCommand(asmRep, AsmCmdType::fsubp, __VA_ARGS__)
+#define FSUBP() \
+	AsmCreateCommand(asmRep, AsmCmdType::fsubp)
 
-#define FMULP(...) \
-	AsmCreateCommand(asmRep, AsmCmdType::fmulp, __VA_ARGS__)
+#define FMULP() \
+	AsmCreateCommand(asmRep, AsmCmdType::fmulp)
 
-#define FDIVP(...) \
-	AsmCreateCommand(asmRep, AsmCmdType::fdivp, __VA_ARGS__)
+#define FDIVP() \
+	AsmCreateCommand(asmRep, AsmCmdType::fdivp)
 
-#define FCHS(...) \
-	AsmCreateCommand(asmRep, AsmCmdType::fchs, __VA_ARGS__)
+#define FCHS() \
+	AsmCreateCommand(asmRep, AsmCmdType::fchs)
 
-#define FCOMPP(...) \
-	AsmCreateCommand(asmRep, AsmCmdType::fcompp, __VA_ARGS__)
+#define FCOMPP() \
+	AsmCreateCommand(asmRep, AsmCmdType::fcompp)
 
-#define FRND(...) \
-	AsmCreateCommand(asmRep, AsmCmdType::frnd, __VA_ARGS__)
+#define FRND() \
+	AsmCreateCommand(asmRep, AsmCmdType::frnd)
 
 #define FISTP(...) \
 	AsmCreateCommand(asmRep, AsmCmdType::fistp, __VA_ARGS__)

@@ -1,75 +1,86 @@
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+// Модуль чтения файлов.
+// 
+// Файл с исходным кодом.
+// 
+// Версия: 1.0.0.2
+// Дата последнего изменения: 17:54 28.01.2023
+// 
+// Автор: Маслов А.С. (https://github.com/ArtemMaslov).
+//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\
+
 #include <assert.h>
 #include <stdlib.h>
+#include <string.h>
+
+#include "../FilesIO/FilesIO.h"
 
 #include "../ErrorsHandling.h"
-#include "../FilesIO/FilesIO.h"
+#include "../Logs/Logs.h"
 
 #include "Text.h"
 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
+#if MODULE_TEXT_DISABLE_LOGS
+#include "../DisableLogs.h"
+#endif
 
-ProgramStatus TextConstructor(Text* text)
-{
-	assert(text);
-	
-	assert(text->Data   == nullptr);
-	assert(text->Size   == 0);
-	assert(text->Readed == false);
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
-	return ProgramStatus::Ok;
-}
-
-ProgramStatus TextDestructor(Text* text)
-{
-	assert(text);
-
-	free(text->Data);
-	
-	text->Data   = nullptr;
-	text->Size   = 0;
-	text->Readed = false;
-
-	return ProgramStatus::Ok;
-}
-
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
-
-ProgramStatus TextReadFile(Text* text, const char* fileName)
+TextError TextConstructor(Text* const text, const char* const fileName, FileReadMode mode)
 {
 	assert(text);
 	assert(fileName);
 
-	FILE* file = fopen(fileName, "r");
+	char modeStr[3] = "r";
+	if (mode == FileReadMode::Binary)
+		modeStr[1] = 'b';
 
+	FILE* file = fopen(fileName, modeStr);
 	if (!file)
 	{
-		assert(!"error");
-		return ProgramStatus::Fault;
+		assert(!"Ошибка открытия файла");
+		LOG_F_ERR("Ошибка открытия файла \"%s\".", fileName);
+		return TextError::FileOpen;
 	}
 
 	const size_t fileSize   = GetFileSize(file);
-	const size_t bufferSize = fileSize + 1;
+	const size_t BufferSize = fileSize + 1;
 
-	char* buffer = (char*)calloc(bufferSize, sizeof(char));
-
+	char* buffer = (char*)calloc(BufferSize, sizeof(char));
 	if (!buffer)
 	{
-		assert(!"error");
-		return ProgramStatus::Fault;
+		LOG_ERR_MEMORY(BufferSize * sizeof(char));
+		return TextError::Memory;
 	}
 
-	size_t readed = fread(buffer, sizeof(char), fileSize, file);
+	size_t read = fread(buffer, sizeof(char), fileSize, file);
+
+	// Если файл читается как текстовый, то read <= fileSize, так как, например, '\r\n' заменяются на '\n'.
+	// Если файл читается как бинарный, то read == fileSize, в случае чтения файла без ошибок.
+	if (mode == FileReadMode::Binary && read != fileSize)
+	{
+		LOG_F_ERR("Ошибка чтения файла \"%s\" в бинарном виде. read != fileSize.\n"
+				  "read = %zd, fileSize = %zd.",
+				  fileName, read, fileSize);
+		return TextError::FileRead;
+	}
 
 	fclose(file);
 
 	text->Data   = buffer;
-	text->Size   = bufferSize;
-	text->Readed = true;
+	text->Size   = BufferSize;
 
-	return ProgramStatus::Ok;
+	return TextError::NoErrors;
 }
 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
+void TextDestructor(Text* const text)
+{
+	assert(text);
+
+	free(text->Data);
+	memset(text, 0, sizeof(Text));
+}
+
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///

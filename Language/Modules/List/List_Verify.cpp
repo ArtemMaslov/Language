@@ -26,11 +26,8 @@ struct ListNodeCheck
 
 int ListVerify(List* list)
 {
-    LOG_LIST_TRACE_VERIFY;
-
+    TRACE_VERIFY();
     assert(list);
-
-    //LIST_ASSERT_STATUS;
 
     //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
 
@@ -69,7 +66,7 @@ int ListVerify(List* list)
 
     for (size_t st = 1; st <= capacity; st++)
     {
-        if (! CHECK_FREE_ELEM(list, st))
+        if (!CHECK_FREE_ELEM(list, st))
             fillCount++;
     }
 
@@ -81,7 +78,7 @@ int ListVerify(List* list)
     {
         for (size_t st = 0; st <= size + 1; st++)
         {
-            if (! CHECK_FREE_ELEM(list, nextIndex))
+            if (!CHECK_FREE_ELEM(list, nextIndex))
             {
                 nextIndex = nodes[st].Next;
 
@@ -96,7 +93,7 @@ int ListVerify(List* list)
                 nextCount++;
             }
 
-            if (! CHECK_FREE_ELEM(list, prevIndex))
+            if (!CHECK_FREE_ELEM(list, prevIndex))
             {
                 prevIndex = nodes[st].Prev;
 
@@ -136,11 +133,8 @@ int ListVerify(List* list)
 
 void ListDump(List* list, size_t dataStartIndex, size_t dataEndIndex)
 {
-    LOG_LIST_TRACE_VERIFY;
-
+    TRACE_VERIFY();
     assert(list);
-
-    //LIST_ASSERT_STATUS;
 
     //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
     
@@ -153,7 +147,7 @@ void ListDump(List* list, size_t dataStartIndex, size_t dataEndIndex)
 
     char buffer[bufferSize] = "";
 
-    FILE* log = LOG_LIST_BEGIN_DUMP;
+    FILE* log = LogBeginDump(LOG_SIG_GENERAL, LOG_LVL_DEBUG);
 
     //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
     
@@ -207,7 +201,7 @@ void ListDump(List* list, size_t dataStartIndex, size_t dataEndIndex)
 
     //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
 
-    LOG_LIST_END_DUMP;
+    LogEndDump(LOG_SIG_GENERAL);
 }
 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
@@ -283,11 +277,8 @@ const char* NodeEnd   = " }|{ <l1> prev \\n %zd | <l2> next \\n %zd }}\"];\n";
 
 int ListGraphicDump(List* list)
 {
-    LOG_LIST_TRACE_VERIFY;
-
+    TRACE_VERIFY();
     assert(list);
-
-    //LIST_ASSERT_STATUS;
 
     //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
 
@@ -302,7 +293,7 @@ int ListGraphicDump(List* list)
     if (!DirectoryExist(folder) &&
         !CreateDirectoryA(folder, nullptr))
     {
-        LOG_F_LIST_ERR("Ошибка создания папки \"%s\"", folder);
+        LOG_F_ERR("Ошибка создания папки \"%s\"", folder);
 
         list->Status |= LIST_ERR_FOLDER;
 
@@ -323,7 +314,7 @@ int ListGraphicDump(List* list)
 
     if (!outGraphFile)
     {
-        LOG_F_LIST_ERR("Ошибка создания файла \"%s\"", fileGraphvizPath);
+        LOG_F_ERR("Ошибка создания файла \"%s\"", fileGraphvizPath);
 
         list->Status |= LIST_ERR_FILE;
 
@@ -418,7 +409,7 @@ int ListGraphicDump(List* list)
     {
         snprintf(fileImagePath, filePathSize, LIST_LOG_IMAGE_FOLDER "listDump%zd." LIST_GRAPH_TYPE, imageIndex);
 
-        LogAddImage(LOG_SIG_LIST, fileImagePath);
+        LogAddImage(LOG_SIG_GENERAL, fileImagePath);
     }
 
     imageIndex++;

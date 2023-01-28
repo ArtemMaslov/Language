@@ -169,12 +169,12 @@
       <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">All</AssemblerOutput>
     </ClCompile>
     <ClCompile Include="Modules\ExtArray\ExtArray.cpp" />
-    <ClCompile Include="Modules\ExtHeap\ExtHeap.cpp" />
+    <ClCompile Include="Modules\ExtHeap\ExtHeap.cpp">
+      <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AssemblyAndSourceCode</AssemblerOutput>
+    </ClCompile>
     <ClCompile Include="Modules\FilesIO\FilesIO.cpp" />
-    <ClCompile Include="Modules\List\List.cpp" />
-    <ClCompile Include="Modules\List\List_UnitTests.cpp" />
-    <ClCompile Include="Modules\List\List_Verify.cpp" />
     <ClCompile Include="Modules\Logs\Logs.cpp" />
+    <ClCompile Include="Modules\Logs\logs_config_private.h" />
     <ClCompile Include="Modules\Text\Text.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -217,15 +217,11 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="LanguageGrammar\LanguageGrammar.h" />
+    <ClInclude Include="Modules\DisableLogs.h" />
     <ClInclude Include="Modules\ErrorsHandling.h" />
     <ClInclude Include="Modules\ExtArray\ExtArray.h" />
     <ClInclude Include="Modules\ExtHeap\ExtHeap.h" />
     <ClInclude Include="Modules\FilesIO\FilesIO.h" />
-    <ClInclude Include="Modules\List\List.h" />
-    <ClInclude Include="Modules\List\List_Config.h" />
-    <ClInclude Include="Modules\List\List_Logs.h" />
-    <ClInclude Include="Modules\List\List_UnitTests.h" />
-    <ClInclude Include="Modules\List\_list_private.h" />
     <ClInclude Include="Modules\Logs\Logs.h" />
     <ClInclude Include="Modules\Logs\LogsConfig.h" />
     <ClInclude Include="Modules\Text\Text.h" />

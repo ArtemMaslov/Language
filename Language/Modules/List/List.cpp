@@ -11,17 +11,17 @@
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 
-static int ListResize(List* list);
+static int ListResize(List* const list);
+
+static void ListInitFreeElemts(List* const list);
 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 
-int ListConstructor(List* list, const size_t capacity)
+int ListConstructor(List* const list, const size_t capacity)
 {
-    LOG_LIST_TRACE_CTOR;
-
+    TRACE_CTOR();
     assert(list);
-
     LIST_ASSERT_STATUS;
 
     //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
@@ -38,13 +38,10 @@ int ListConstructor(List* list, const size_t capacity)
     //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
 
     list->Nodes = (ListNode*)calloc(capacity + 1, sizeof(ListNode));
-
     if (!list->Nodes)
     {
-        LOG_LIST_ERR_MEMORY;
-
+        LOG_ERR_MEMORY((capacity + 1) * sizeof(ListNode));
         list->Status |= LIST_ERR_MEMORY;
-
         return list->Status;
     }
 
@@ -52,37 +49,25 @@ int ListConstructor(List* list, const size_t capacity)
 
     ListNode* nodes = list->Nodes;
 
-    for (size_t st = 1; st < capacity; st++)
-        nodes[st].Next = st + 1;
-
-    nodes[capacity].Next = 0;
-
-    //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
+    ListInitFreeElemts(list);
 
     return list->Status;
 }
 
-void ListDestructor(List* list)
+void ListDestructor(List* const list)
 {
-    LOG_LIST_TRACE_CTOR;
-
+    TRACE_CTOR();
     assert(list);
-
     LIST_ASSERT_STATUS;
 
-    //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
-
     free(list->Nodes);
-
     memset(list, 0, sizeof(List));
 }
 
-void ClearList(List* list)
+void ClearList(List* const list)
 {
-    LOG_LIST_TRACE_CTOR;
-
+    TRACE_CTOR();
     assert(list);
-
     LIST_ASSERT_STATUS;
 
     //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
@@ -103,40 +88,31 @@ void ClearList(List* list)
     // Обнуляем массивы
     memset(nodes, 0, (capacity + 1) * sizeof(ListType));
 
-    // Создаём список пустых элементов.
-    for (int st = 0; st <= capacity; st++)
-        nodes[st].Next = st + 1;
-
-    // Закольцовываем массив.
-    nodes[capacity].Next = 0;
+    ListInitFreeElemts(list);
 }
 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 
-int ListAddElemAfter(List* list, const ListType* value, const size_t dataIndex)
+int ListAddElemAfter(List* const list, const ListType* const value, const size_t dataIndex)
 {
-    LOG_LIST_TRACE_FUNC_0;
-
+    TRACE_FUNCT0();
     assert(list);
     assert(value);
-
     LIST_ASSERT_STATUS;
 
     //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
 
     if (list->Size > list->Capacity)
     {
-        LOG_F_LIST_ERR("Размер списка = %zd больше вместимости = %zd", list->Size, list->Capacity);
-
+        LOG_F_ERR("Размер списка = %zd больше вместимости = %zd.", list->Size, list->Capacity);
         list->Status |= LIST_ERR_SIZE;
-
         return list->Status;
     }
 
     if (CHECK_FREE_ELEM(list, dataIndex))
     {
-        LOG_F_LIST_ERR("Попытка добавить элемент после пустого. dataIndex = %zd.", dataIndex);
+        LOG_F_ERR("Попытка добавить элемент после пустого. dataIndex = %zd.", dataIndex);
 
         list->Status |= LIST_ERR_ADD_FREE;
 
@@ -147,7 +123,10 @@ int ListAddElemAfter(List* list, const ListType* value, const size_t dataIndex)
     if (CHECK_LIST_FULL(list))
     {
         if (ListResize(list) != LIST_ERR_NO_ERRORS)
+        {
+            TRACE_ERROR();
             return list->Status;
+        }
     }
 
     //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
@@ -198,32 +177,26 @@ int ListAddElemAfter(List* list, const ListType* value, const size_t dataIndex)
     return list->Status;
 }
 
-int ListAddElemBefore(List* list, const ListType* value, const size_t dataIndex)
+int ListAddElemBefore(List* const list, const ListType* const value, const size_t dataIndex)
 {
-    LOG_LIST_TRACE_FUNC_0;
-
+    TRACE_FUNCT0();
     assert(list);
     assert(value);
-
     LIST_ASSERT_STATUS;
 
     //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
 
     if (list->Size > list->Capacity)
     {
-        LOG_F_LIST_ERR("Размер списка = %zd больше вместимости = %zd", list->Size, list->Capacity);
-
+        LOG_F_ERR("Размер списка = %zd больше вместимости = %zd.", list->Size, list->Capacity);
         list->Status |= LIST_ERR_SIZE;
-
         return list->Status;
     }
 
     if (CHECK_FREE_ELEM(list, dataIndex))
     {
-        LOG_F_LIST_ERR("Попытка добавить элемент перед пустым. dataIndex = %zd.", dataIndex);
-
+        LOG_F_ERR("Попытка добавить элемент перед пустым. dataIndex = %zd.", dataIndex);
         list->Status |= LIST_ERR_ADD_FREE;
-
         return list->Status;
     }
 
@@ -231,7 +204,10 @@ int ListAddElemBefore(List* list, const ListType* value, const size_t dataIndex)
     if (CHECK_LIST_FULL(list))
     {
         if (ListResize(list) != LIST_ERR_NO_ERRORS)
+        {
+            TRACE_ERROR();
             return list->Status;
+        }
     }
 
     //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
@@ -278,31 +254,25 @@ int ListAddElemBefore(List* list, const ListType* value, const size_t dataIndex)
     return list->Status;
 }
 
-int ListRemoveElem(List* list, const size_t dataIndex)
+int ListRemoveElem(List* const list, const size_t dataIndex)
 {
-    LOG_LIST_TRACE_FUNC_0;
-
+    TRACE_FUNCT0();
     assert(list);
-
     LIST_ASSERT_STATUS;
 
     //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
 
     if (list->Size <= 0)
     {
-        LOG_LIST_ERR("Попытка удалить элемент из пустого списка.");
-
+        LOG_ERR("Попытка удалить элемент из пустого списка.");
         list->Status |= LIST_ERR_REMOVE_EMPTY;
-
         return list->Status;
     }
 
     if (CHECK_FREE_ELEM(list, dataIndex))
     {
-        LOG_F_LIST_ERR("Попытка удалить пустой элемент. dataIndex = %zd.", dataIndex);
-
+        LOG_F_ERR("Попытка удалить пустой элемент. dataIndex = %zd.", dataIndex);
         list->Status |= LIST_ERR_REMOVE_FREE;
-
         return list->Status;
     }
 
@@ -345,23 +315,19 @@ int ListRemoveElem(List* list, const size_t dataIndex)
     return list->Status;
 }
 
-ListType* ListGetElemAt(List* list, const size_t logicalIndex)
+ListType* ListGetElemAt(List* const list, const size_t logicalIndex)
 {
-    LOG_LIST_TRACE_FUNC_0;
-
+    TRACE_FUNCT0();
     assert(list);
-
     LIST_ASSERT_STATUS;
 
     //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
 
     if (logicalIndex > list->Size)
     {
-        LOG_F_LIST_ERR("Попытка получить доступ к не существующему элементу списка. "
-                     "logicalIndex = %zd, list->Size = %zd", logicalIndex, list->Size);
-
+        LOG_F_ERR("Попытка получить доступ к не существующему элементу списка. "
+                  "logicalIndex = %zd, list->Size = %zd.", logicalIndex, list->Size);
         list->Status |= LIST_ERR_SELECT_FREE;
-
         return nullptr;
     }
 
@@ -391,34 +357,26 @@ ListType* ListGetElemAt(List* list, const size_t logicalIndex)
         }
     }
 
-    // Данный код физически не может исполниться.
-    LOG_LIST_ERR("Непредвиденная ошибка. Исполнение не возможного кода. "
-                 "Логический элемент не был найден в списке.");
+    LOG_ERR("Нарушены связи между элементами списка.");
 
-    list->Status |= LIST_ERR_SELECT_FREE;
-
-    //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
+    list->Status |= LIST_ERR_DATA;
 
     return nullptr;
 }
 
-size_t GetPhysicalIndex(List* list, const size_t logicalIndex)
+size_t GetPhysicalIndex(List* const list, const size_t logicalIndex)
 {
-    LOG_LIST_TRACE_FUNC_0;
-
+    TRACE_FUNCT0();
     assert(list);
-
     LIST_ASSERT_STATUS;
 
     //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
 
     if (logicalIndex > list->Size)
     {
-        LOG_F_LIST_ERR("Попытка получить доступ к не существующему элементу списка. "
+        LOG_F_ERR("Попытка получить доступ к не существующему элементу списка. "
                        "logicalIndex = %zd, list->Size = %zd", logicalIndex, list->Size);
-
         list->Status |= LIST_ERR_SELECT_FREE;
-
         return 0;
     }
 
@@ -434,20 +392,16 @@ size_t GetPhysicalIndex(List* list, const size_t logicalIndex)
     for (size_t st = 0; st < logicalIndex; st++)
         cur = list->Nodes[cur].Next;
 
-    //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
-
     return cur;
 }
 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 
-int ListSort(List* list)
+int ListSort(List* const list)
 {
-    LOG_LIST_TRACE_FUNC_0;
-
+    TRACE_FUNCT0();
     assert(list);
-
     LIST_ASSERT_STATUS;
 
     //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
@@ -458,7 +412,6 @@ int ListSort(List* list)
     size_t       nextIndex    = 0;
 
     ListNode     tmp          = {};
-
     ListNode*    nodes        = list->Nodes;
 
     //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
@@ -519,20 +472,16 @@ int ListSort(List* list)
         nodes[listCapacity].Next = 0;
     }
     else
-        list->Free = 0;            // Список полон.
-
-    //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
+        list->Free = 0; // Список полон.
 
     return list->Status;
 }
 
-size_t ListFind(const List* list, const ListType* element)
+size_t ListFind(const List* const list, const ListType* const element)
 {
-    LOG_LIST_TRACE_FUNC_0;
-
+    TRACE_FUNCT0();
     assert(list);
     assert(element);
-
     LIST_ASSERT_STATUS;
 
     //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
@@ -559,14 +508,11 @@ size_t ListFind(const List* list, const ListType* element)
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 
-static int ListResize(List* list)
+static int ListResize(List* const list)
 {
-    LOG_LIST_TRACE_FUNC_1;
-
+    TRACE_FUNCT1();
     assert(list);
-
     LIST_ASSERT_STATUS;
-    
     // Перед вызовом функции нужно проверять, что список полон.
     assert(CHECK_LIST_FULL(list));
 
@@ -577,10 +523,9 @@ static int ListResize(List* list)
 
     if (newCapacity <= oldCapacity)
     {
-        LOG_LIST_ERR_MEMORY;
-
+        LOG_F_ERR("Память на компьютере закончилась. newCapacity <= oldCapacity. newCapacity = %zd, oldCapacity = %zd.",
+                  newCapacity, oldCapacity);
         list->Status |= LIST_ERR_MEMORY;
-
         return list->Status;
     }
 
@@ -590,10 +535,8 @@ static int ListResize(List* list)
 
     if (!nodes)
     {
-        LOG_LIST_ERR_MEMORY;
-
+        LOG_ERR_MEMORY(newCapacity * sizeof(ListType));
         list->Status |= LIST_ERR_MEMORY;
-
         return list->Status;
     }
 
@@ -618,6 +561,25 @@ static int ListResize(List* list)
     //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
     
     return list->Status;
+}
+
+//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
+//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
+
+/**
+ * @brief Инициализирует список пустых элементов.
+*/
+static void ListInitFreeElemts(List* const list)
+{
+    assert(list);
+
+    const size_t    capacity = list->Capacity;
+    ListNode* const nodes    = list->Nodes;
+
+    for (size_t st = 1; st < capacity; st++)
+        nodes[st].Next = st + 1;
+
+    nodes[capacity].Next = 0;
 }
 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 

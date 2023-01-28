@@ -10,8 +10,8 @@
 
 #include "DSL.h"
 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
 #define CHECK_STATUS \
 	assert(status == ProgramStatus::Ok)
@@ -77,13 +77,13 @@ static const size_t AsmCmdCodesCount = sizeof(AsmCmdCodes) / sizeof(AsmCmdCode);
 static const size_t AsmCmdCodesNull  = 0;
 #undef ASM_CMD
 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
-static void AsmWriteArg(const AsmArg* const arg, char* const buffer, const size_t bufferSize);
+static void AsmWriteArg(const AsmArg* const arg, char* const buffer, const size_t BufferSize);
 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
 ProgramStatus AsmRepConstructor(AsmRep* const asmRep)
 {
@@ -116,8 +116,8 @@ void AsmRepDestructor(AsmRep* const asmRep)
 	VirtualFree(asmRep->JitBuffer, 0, MEM_RELEASE);
 }
 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
 ProgramStatus AsmCreateCommand(AsmRep* const asmRep, const AsmCmdType type, const AsmArg* const arg1, const AsmArg* const arg2)
 {
@@ -146,8 +146,8 @@ ProgramStatus AsmCreateCommand(AsmRep* const asmRep, const AsmCmdType type, cons
 	return status;
 }
 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
 const int    AsmListingAddressSize   = 7;
 const size_t AsmListingCommandsStart = 40;
@@ -297,7 +297,7 @@ ProgramStatus x86WriteListingFile(const x86Compiler* const comp, const char* con
 	return status;
 }
 
-static void AsmWriteArg(const AsmArg* const arg, char* const buffer, const size_t bufferSize)
+static void AsmWriteArg(const AsmArg* const arg, char* const buffer, const size_t BufferSize)
 {
 	assert(arg);
 	assert(buffer);
@@ -308,30 +308,30 @@ static void AsmWriteArg(const AsmArg* const arg, char* const buffer, const size_
 	switch (arg->Type)
 	{
 		case AsmArgType::Imm:
-			snprintf(buffer, bufferSize, "%d", imm);
+			snprintf(buffer, BufferSize, "%d", imm);
 			break;
 
 		case AsmArgType::Mem:
 			if (imm != 0 && reg != AsmRegType::null)
 			{
-				snprintf(buffer, bufferSize, "[%s + %d]", AsmGetRegName(reg), imm);
+				snprintf(buffer, BufferSize, "[%s + %d]", AsmGetRegName(reg), imm);
 			}
 			else if (reg != AsmRegType::null)
 			{
-				snprintf(buffer, bufferSize, "[%s]", AsmGetRegName(reg));
+				snprintf(buffer, BufferSize, "[%s]", AsmGetRegName(reg));
 			}
 			else
 			{
-				snprintf(buffer, bufferSize, "[%d]", imm);
+				snprintf(buffer, BufferSize, "[%d]", imm);
 			}
 			break;
 
 		case AsmArgType::Reg:
-			snprintf(buffer, bufferSize, "%s", AsmGetRegName(reg));
+			snprintf(buffer, BufferSize, "%s", AsmGetRegName(reg));
 			break;
 
 		case AsmArgType::Label:
-			snprintf(buffer, bufferSize, "%s", arg->Label);
+			snprintf(buffer, BufferSize, "%s", arg->Label);
 			break;
 
 		default:
@@ -340,8 +340,8 @@ static void AsmWriteArg(const AsmArg* const arg, char* const buffer, const size_
 	}
 }
 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
 const char* AsmGetCommandName(const AsmCmdType type)
 {
@@ -372,8 +372,8 @@ const char* AsmGetRegName(const AsmRegType type)
 	}
 }
 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
 static size_t AsmFindCmdCode(const AsmCmd* const cmd);
 static uint8_t AsmGetRegEnc32W(const AsmRegType reg, uint8_t* const out_w);
@@ -804,8 +804,8 @@ static ProgramStatus AsmCheckCmdCorrect(const AsmCmd* const cmd)
 	return ProgramStatus::Ok;
 }
 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
 ProgramStatus LabelTableConstructor(AsmLabelTable* const table)
 {
@@ -901,5 +901,5 @@ void LabelTableDestructor(AsmLabelTable* const table)
 	ExtArrayDestructor(&table->Inserts);
 }
 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
-//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///

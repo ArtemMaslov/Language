@@ -13,9 +13,6 @@
     <Filter Include="Modules\Logs">
       <UniqueIdentifier>{c8509c92-b73d-413a-8ca1-875b87378a47}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Modules\List">
-      <UniqueIdentifier>{4753dfe3-aba4-4e3b-a9ae-e310fafd6190}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Modules\FilesIO">
       <UniqueIdentifier>{08bb178e-95ae-477f-97bd-01bab8951b30}</UniqueIdentifier>
     </Filter>
@@ -56,15 +53,6 @@
   <ItemGroup>
     <ClCompile Include="Modules\Logs\Logs.cpp">
       <Filter>Modules\Logs</Filter>
-    </ClCompile>
-    <ClCompile Include="Modules\List\List.cpp">
-      <Filter>Modules\List</Filter>
-    </ClCompile>
-    <ClCompile Include="Modules\List\List_UnitTests.cpp">
-      <Filter>Modules\List</Filter>
-    </ClCompile>
-    <ClCompile Include="Modules\List\List_Verify.cpp">
-      <Filter>Modules\List</Filter>
     </ClCompile>
     <ClCompile Include="Modules\Text\Text.cpp">
       <Filter>Modules\Text</Filter>
@@ -130,6 +118,9 @@
     <ClCompile Include="Back end\x86\_asm_representation.cpp">
       <Filter>Back end\x86</Filter>
     </ClCompile>
+    <ClCompile Include="Modules\Logs\logs_config_private.h">
+      <Filter>Modules\Logs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Modules\Logs\Logs.h">
@@ -137,21 +128,6 @@
     </ClInclude>
     <ClInclude Include="Modules\Logs\LogsConfig.h">
       <Filter>Modules\Logs</Filter>
-    </ClInclude>
-    <ClInclude Include="Modules\List\_list_private.h">
-      <Filter>Modules\List</Filter>
-    </ClInclude>
-    <ClInclude Include="Modules\List\List.h">
-      <Filter>Modules\List</Filter>
-    </ClInclude>
-    <ClInclude Include="Modules\List\List_Config.h">
-      <Filter>Modules\List</Filter>
-    </ClInclude>
-    <ClInclude Include="Modules\List\List_Logs.h">
-      <Filter>Modules\List</Filter>
-    </ClInclude>
-    <ClInclude Include="Modules\List\List_UnitTests.h">
-      <Filter>Modules\List</Filter>
     </ClInclude>
     <ClInclude Include="Modules\Text\Text.h">
       <Filter>Modules\Text</Filter>
@@ -248,6 +224,9 @@
     </ClInclude>
     <ClInclude Include="Back end\x86\_compiler_config.h">
       <Filter>Back end\x86</Filter>
+    </ClInclude>
+    <ClInclude Include="Modules\DisableLogs.h">
+      <Filter>Modules</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

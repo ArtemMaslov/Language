@@ -13,11 +13,9 @@
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 
-const size_t MaximumWordSize = 16;
-
 /// @brief Тип элементов списка
 /// Заменить на тип элементов, которые будет использовать список
-typedef __m128i ListType;
+typedef int ListType;
 
 /// Папка, в которую будут записаны изображения при графическом дампе.
 #define LIST_LOG_IMAGE_FOLDER "_listImgs\\"
@@ -50,7 +48,7 @@ static inline bool ListComparator(const ListType val1, const ListType val2)
 }
 
 /// Размер буфера преобразования элемента в строку.
-const size_t ListToStringSize = 17;
+const size_t ListToStringSize = 32;
 
 /**
  * @brief        Преобразовать в строку элемент списка.
@@ -60,9 +58,9 @@ const size_t ListToStringSize = 17;
 */
 static inline void ListElementToString(char* buffer, const size_t bufferSize, const ListType* value)
 {
-	snprintf(buffer, bufferSize, "%*s", (unsigned int)MaximumWordSize, (char*)value);
+	snprintf(buffer, bufferSize, "%d", *value);
 
-	buffer[MaximumWordSize + 1] = '\0';
+	buffer[bufferSize - 1] = '\0';
 }
 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 

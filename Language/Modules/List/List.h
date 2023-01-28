@@ -97,21 +97,21 @@ struct List
  * 
  * @return list->Status.
 */
-int ListConstructor(List* list, const size_t capacity);
+int ListConstructor(List* const list, const size_t capacity);
 
 /**
  * @brief Деструктор списка.
  * 
  * @param list Указатель на список.
 */
-void ListDestructor(List* list);
+void ListDestructor(List* const list);
 
 /**
  * @brief Очищает список. Сбрасывает состояния списка для дальнейшего использования.
  * 
  * @param list Указатель на список.
 */
-void ClearList(List* list);
+void ClearList(List* const list);
 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
@@ -125,7 +125,7 @@ void ClearList(List* list);
  * 
  * @return list->Status.
 */
-int ListAddElemAfter(List* list, const ListType* value, const size_t dataIndex);
+int ListAddElemAfter(List* const list, const ListType* const value, const size_t dataIndex);
 
 /**
  * @brief Добавить элемент в список перед элементом data[dataIndex].
@@ -136,7 +136,7 @@ int ListAddElemAfter(List* list, const ListType* value, const size_t dataIndex);
  * 
  * @return list->Status.
 */
-int ListAddElemBefore(List* list, const ListType* value, const size_t dataIndex);
+int ListAddElemBefore(List* const list, const ListType* const value, const size_t dataIndex);
 
 /**
  * @brief Удалить элемент data[dataIndex] из списка.
@@ -146,7 +146,7 @@ int ListAddElemBefore(List* list, const ListType* value, const size_t dataIndex)
  * 
  * @return list->Status.
 */
-int ListRemoveElem(List* list, const size_t dataIndex);
+int ListRemoveElem(List* const list, const size_t dataIndex);
 
 /**
  * @brief Работает быстро, если список отсортирован, иначе работает медленно.
@@ -156,7 +156,7 @@ int ListRemoveElem(List* list, const size_t dataIndex);
  * 
  * @return Указатель на элемент списка. nullptr, если logicalIndex > lst->size.
 */
-ListType* ListGetElemAt(List* list, const size_t logicalIndex);
+ListType* ListGetElemAt(List* const list, const size_t logicalIndex);
 
 /**
  * @brief Работает быстро, если список отсортирован, иначе работает медленно.
@@ -166,7 +166,7 @@ ListType* ListGetElemAt(List* list, const size_t logicalIndex);
  *
  * @return Физические индекс элемента списка. 0, если logicalIndex > list->Size.
 */
-size_t GetPhysicalIndex(List* list, const size_t logicalIndex);
+size_t GetPhysicalIndex(List* const list, const size_t logicalIndex);
 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
@@ -181,7 +181,7 @@ size_t GetPhysicalIndex(List* list, const size_t logicalIndex);
  * 
  * @return list->Status.
 */
-int ListSort(List* list);
+int ListSort(List* const list);
 
 /**
  * @brief Поиск элемента в списке.
@@ -191,7 +191,7 @@ int ListSort(List* list);
  * 
  * @return Индекс значения. 0, если элемент не был найден.
 */
-size_t ListFind(const List* list, const ListType* element);
+size_t ListFind(const List* const list, const ListType* const element);
 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
@@ -203,7 +203,7 @@ size_t ListFind(const List* list, const ListType* element);
  * 
  * @return list->Status.
 */
-int ListVerify(List* list);
+int ListVerify(List* const list);
 
 /**
  * @brief Выводит состояние списка в файл логов.
@@ -212,7 +212,7 @@ int ListVerify(List* list);
  * @param dataOffset Начальный индекс, с которого нужно выводить данные (считая с 1). 0 - зарезервированный элемент.
  * @param dataSize   Количество выводимых данных в файл логов.
 */
-void ListDump(List* list, size_t dataStartIndex, size_t dataEndIndex);
+void ListDump(const List* const list, const size_t dataStartIndex, const size_t dataEndIndex);
 
 /**
  * @brief Выводит состояние списка в виде графа.
@@ -223,7 +223,7 @@ void ListDump(List* list, size_t dataStartIndex, size_t dataEndIndex);
  * 
  * @return list->Status.
 */
-int ListGraphicDump(List* list);
+int ListGraphicDump(List* const list);
 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
 //***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\ 
