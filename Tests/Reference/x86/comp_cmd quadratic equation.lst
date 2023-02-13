@@ -1,0 +1,349 @@
+	call main
+	ret
+main:
+	push ebp
+	mov ebp, esp
+	sub esp, 12
+	push 0
+	pop [ebp + -4]
+	push 0
+	pop [ebp + -8]
+	push 0
+	pop [ebp + -12]
+	mov eax, ebp
+	add eax, -4
+	push eax
+	push 9797660
+	call scanf
+	add esp, 8
+	mov eax, ebp
+	add eax, -8
+	push eax
+	push 9797660
+	call scanf
+	add esp, 8
+	mov eax, ebp
+	add eax, -12
+	push eax
+	push 9797660
+	call scanf
+	add esp, 8
+	push [ebp + -12]
+	push [ebp + -8]
+	push [ebp + -4]
+	call SolveQuadraticEquation
+	add esp, 12
+	mov esp, ebp
+	pop ebp
+	ret
+SolveQuadraticEquation:
+	push ebp
+	mov ebp, esp
+	sub esp, 4
+	push [ebp + 8]
+	push 0
+	mov eax, esp
+	fld [eax]
+	fld [eax + 4]
+	add esp, 8
+	fcompp
+	jne l_equal_false_1
+	push 1
+	jmp l_equal_end_1
+l_equal_false_1:
+	push 0
+l_equal_end_1:
+	pop eax
+	cmp 1, eax
+	jne l_if_false_0
+	push [ebp + 12]
+	push 0
+	mov eax, esp
+	fld [eax]
+	fld [eax + 4]
+	add esp, 8
+	fcompp
+	jne l_equal_false_3
+	push 1
+	jmp l_equal_end_3
+l_equal_false_3:
+	push 0
+l_equal_end_3:
+	pop eax
+	cmp 1, eax
+	jne l_if_false_2
+	push [ebp + 16]
+	push 0
+	mov eax, esp
+	fld [eax]
+	fld [eax + 4]
+	add esp, 8
+	fcompp
+	jne l_equal_false_5
+	push 1
+	jmp l_equal_end_5
+l_equal_false_5:
+	push 0
+l_equal_end_5:
+	pop eax
+	cmp 1, eax
+	jne l_if_false_4
+	push 1065353216
+	mov eax, esp
+	fld [eax]
+	fchs
+	fstp [eax]
+	mov eax, esp
+	fld [eax]
+	sub esp, 4
+	fstpd [eax + -4]
+	push 9797656
+	call printf
+	add esp, 12
+	jmp l_if_end_4
+l_if_false_4:
+	push 0
+	mov eax, esp
+	fld [eax]
+	sub esp, 4
+	fstpd [eax + -4]
+	push 9797656
+	call printf
+	add esp, 12
+l_if_end_4:
+	jmp l_if_end_2
+l_if_false_2:
+	push 1065353216
+	mov eax, esp
+	fld [eax]
+	sub esp, 4
+	fstpd [eax + -4]
+	push 9797656
+	call printf
+	add esp, 12
+	push [ebp + 16]
+	mov eax, esp
+	fld [eax]
+	fchs
+	fstp [eax]
+	push [ebp + 12]
+	mov eax, esp
+	fld [eax + 4]
+	fld [eax]
+	fdivp
+	fstp [eax + 4]
+	add esp, 4
+	mov eax, esp
+	fld [eax]
+	sub esp, 4
+	fstpd [eax + -4]
+	push 9797656
+	call printf
+	add esp, 12
+l_if_end_2:
+	jmp l_if_end_0
+l_if_false_0:
+	push [ebp + 12]
+	push [ebp + 12]
+	mov eax, esp
+	fld [eax + 4]
+	fld [eax]
+	fmulp
+	fstp [eax + 4]
+	add esp, 4
+	push 1082130432
+	push [ebp + 8]
+	mov eax, esp
+	fld [eax + 4]
+	fld [eax]
+	fmulp
+	fstp [eax + 4]
+	add esp, 4
+	push [ebp + 16]
+	mov eax, esp
+	fld [eax + 4]
+	fld [eax]
+	fmulp
+	fstp [eax + 4]
+	add esp, 4
+	mov eax, esp
+	fld [eax + 4]
+	fld [eax]
+	fsubp
+	fstp [eax + 4]
+	add esp, 4
+	pop [ebp + -4]
+	push [ebp + -4]
+	push 0
+	mov eax, esp
+	fld [eax]
+	fld [eax + 4]
+	add esp, 8
+	fcompp
+	jbe l_greater_false_7
+	push 1
+	jmp l_greater_end_7
+l_greater_false_7:
+	push 0
+l_greater_end_7:
+	pop eax
+	cmp 1, eax
+	jne l_if_false_6
+	push [ebp + -4]
+	call sqrtf
+	mov eax, esp
+	fstp [eax]
+	pop eax
+	push eax
+	pop [ebp + -4]
+	push 1073741824
+	mov eax, esp
+	fld [eax]
+	sub esp, 4
+	fstpd [eax + -4]
+	push 9797656
+	call printf
+	add esp, 12
+	push 0
+	push [ebp + 12]
+	mov eax, esp
+	fld [eax + 4]
+	fld [eax]
+	fsubp
+	fstp [eax + 4]
+	add esp, 4
+	push [ebp + -4]
+	mov eax, esp
+	fld [eax + 4]
+	fld [eax]
+	faddp
+	fstp [eax + 4]
+	add esp, 4
+	push 1073741824
+	push [ebp + 8]
+	mov eax, esp
+	fld [eax + 4]
+	fld [eax]
+	fmulp
+	fstp [eax + 4]
+	add esp, 4
+	mov eax, esp
+	fld [eax + 4]
+	fld [eax]
+	fdivp
+	fstp [eax + 4]
+	add esp, 4
+	mov eax, esp
+	fld [eax]
+	sub esp, 4
+	fstpd [eax + -4]
+	push 9797656
+	call printf
+	add esp, 12
+	push 0
+	push [ebp + 12]
+	mov eax, esp
+	fld [eax + 4]
+	fld [eax]
+	fsubp
+	fstp [eax + 4]
+	add esp, 4
+	push [ebp + -4]
+	mov eax, esp
+	fld [eax + 4]
+	fld [eax]
+	fsubp
+	fstp [eax + 4]
+	add esp, 4
+	push 1073741824
+	push [ebp + 8]
+	mov eax, esp
+	fld [eax + 4]
+	fld [eax]
+	fmulp
+	fstp [eax + 4]
+	add esp, 4
+	mov eax, esp
+	fld [eax + 4]
+	fld [eax]
+	fdivp
+	fstp [eax + 4]
+	add esp, 4
+	mov eax, esp
+	fld [eax]
+	sub esp, 4
+	fstpd [eax + -4]
+	push 9797656
+	call printf
+	add esp, 12
+	jmp l_if_end_6
+l_if_false_6:
+	push [ebp + -4]
+	push 0
+	mov eax, esp
+	fld [eax]
+	fld [eax + 4]
+	add esp, 8
+	fcompp
+	jne l_equal_false_9
+	push 1
+	jmp l_equal_end_9
+l_equal_false_9:
+	push 0
+l_equal_end_9:
+	pop eax
+	cmp 1, eax
+	jne l_if_false_8
+	push 1065353216
+	mov eax, esp
+	fld [eax]
+	sub esp, 4
+	fstpd [eax + -4]
+	push 9797656
+	call printf
+	add esp, 12
+	push 0
+	push [ebp + 12]
+	mov eax, esp
+	fld [eax + 4]
+	fld [eax]
+	fsubp
+	fstp [eax + 4]
+	add esp, 4
+	push 1073741824
+	push [ebp + 8]
+	mov eax, esp
+	fld [eax + 4]
+	fld [eax]
+	fmulp
+	fstp [eax + 4]
+	add esp, 4
+	mov eax, esp
+	fld [eax + 4]
+	fld [eax]
+	fdivp
+	fstp [eax + 4]
+	add esp, 4
+	mov eax, esp
+	fld [eax]
+	sub esp, 4
+	fstpd [eax + -4]
+	push 9797656
+	call printf
+	add esp, 12
+	jmp l_if_end_8
+l_if_false_8:
+	push 0
+	mov eax, esp
+	fld [eax]
+	sub esp, 4
+	fstpd [eax + -4]
+	push 9797656
+	call printf
+	add esp, 12
+l_if_end_8:
+l_if_end_6:
+l_if_end_0:
+	mov esp, ebp
+	pop ebp
+	ret

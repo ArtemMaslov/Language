@@ -1,0 +1,499 @@
+digraph G
+{
+	graph[dpi = 100];
+	bgcolor   = "#303030";
+
+	edge
+	[
+		penwidth = 3,
+		color    = "green"
+	];
+
+	node
+	[
+		shape     = "record",
+		style     = "rounded, filled",
+		fillcolor = "#404040",
+		fontsize  = 18,
+		penwidth  = 1,
+		color     = "#F9D423",
+		fontcolor = "#E1F5C4"
+	]
+
+	astNode1[label = "
+	{
+		{ AstRoot } |
+		{ Nodes\nextArray\<constr\>\n }
+	}"];
+
+	functDefNode3 [label = "
+	{
+		{ FunctDef } |
+		{ main } |
+		{ Params\nextArr\<functParamDef\> } |
+		{ Body\nextArr\<instr\> }
+	}"];
+
+	variableNode4 [label = "
+	{
+		{ Variable } |
+		{ n } |
+		{ InitValue }
+	}"];
+
+	exprNode5 [label = "
+	{
+		{ Expression } |
+		{ Number\n0.000000 }
+	}"];
+
+	variableNode4 -> exprNode5;
+	instrNode6[label = "
+	{
+		{ Instruction } |
+		{ Variable }
+	}"];
+
+	instrNode6 -> variableNode4;
+	functDefNode3 -> instrNode6;
+	inputNode7 [label = "
+	{
+	{ Input } |
+	{ Variable }
+	}"];
+
+	variableNode8 [label = "
+	{
+		{ Variable } |
+		{ n } |
+		{ InitValue }
+	}"];
+
+	inputNode7 -> variableNode8;
+	instrNode9[label = "
+	{
+		{ Instruction } |
+		{ Input }
+	}"];
+
+	instrNode9 -> inputNode7;
+	instrNode6 -> instrNode9;
+	variableNode10 [label = "
+	{
+		{ Variable } |
+		{ fact } |
+		{ InitValue }
+	}"];
+
+	functCallNode12 [label = "
+	{
+		{ FunctCall } |
+		{ Factorial } |
+		{ Params\nextArr\<functParamDef\> }
+	}"];
+
+	functParamNode13 [label = "
+	{
+		{ FunctParam } |
+		{ main } |
+		{ Value }
+	}"];
+
+	variableNode15 [label = "
+	{
+		{ Variable } |
+		{ n } |
+		{ InitValue }
+	}"];
+
+	exprNode14 [label = "
+	{
+		{ Expression } |
+		{ Variable }
+	}"];
+
+	exprNode14 -> variableNode15;
+	functParamNode13 -> exprNode14;
+	functCallNode12 -> functParamNode13;
+	exprNode11 [label = "
+	{
+		{ Expression } |
+		{ FunctCall }
+	}"];
+
+	exprNode11 -> functCallNode12;
+	variableNode10 -> exprNode11;
+	instrNode16[label = "
+	{
+		{ Instruction } |
+		{ Variable }
+	}"];
+
+	instrNode16 -> variableNode10;
+	instrNode9 -> instrNode16;
+	outputNode17 [label = "
+	{
+	{ Output } |
+	{ Expression }
+	}"];
+
+	variableNode19 [label = "
+	{
+		{ Variable } |
+		{ fact } |
+		{ InitValue }
+	}"];
+
+	exprNode18 [label = "
+	{
+		{ Expression } |
+		{ Variable }
+	}"];
+
+	exprNode18 -> variableNode19;
+	outputNode17 -> exprNode18;
+	instrNode20[label = "
+	{
+		{ Instruction } |
+		{ Output }
+	}"];
+
+	instrNode20 -> outputNode17;
+	instrNode16 -> instrNode20;
+	constrNode2[label = "
+	{
+		{ Construction } |
+		{ FunctDef }
+	}"];
+
+	constrNode2 -> functDefNode3;
+	astNode1 -> constrNode2;
+	functDefNode22 [label = "
+	{
+		{ FunctDef } |
+		{ Factorial } |
+		{ Params\nextArr\<functParamDef\> } |
+		{ Body\nextArr\<instr\> }
+	}"];
+
+	functParamNode23 [label = "
+	{
+		{ FunctParam } |
+		{ n } |
+		{ Value }
+	}"];
+
+	functDefNode22 -> functParamNode23;
+	ifNode24 [label = "
+	{
+	{ If } |
+	{ Condition } |
+	{ True\nextArr\<instr\> } |
+	{ False\nextArr\<instr\> }
+	}"];
+
+	binOperNode26 [label = "
+	{
+		{ BinaryOperator } |
+		{ < } |
+		{ {Left} | {Right} }
+	}"];
+
+	variableNode28 [label = "
+	{
+		{ Variable } |
+		{ n } |
+		{ InitValue }
+	}"];
+
+	exprNode27 [label = "
+	{
+		{ Expression } |
+		{ Variable }
+	}"];
+
+	exprNode27 -> variableNode28;
+	binOperNode26 -> exprNode27;
+	exprNode29 [label = "
+	{
+		{ Expression } |
+		{ Number\n0.000000 }
+	}"];
+
+	binOperNode26 -> exprNode29;
+	exprNode25 [label = "
+	{
+		{ Expression } |
+		{ BinaryOper }
+	}"];
+
+	exprNode25 -> binOperNode26;
+	ifNode24 -> exprNode25;
+	returnNode30 [label = "
+	{
+	{ Return } |
+	{ Value }
+	}"];
+
+	unarOperNode32 [label = "
+	{
+		{ UnaryOperator } |
+		{ - } |
+		{ Operand }
+	}"];
+
+	exprNode33 [label = "
+	{
+		{ Expression } |
+		{ Number\n1.000000 }
+	}"];
+
+	unarOperNode32 -> exprNode33;
+	exprNode31 [label = "
+	{
+		{ Expression } |
+		{ UnaryOper }
+	}"];
+
+	exprNode31 -> unarOperNode32;
+	returnNode30 -> exprNode31;
+	instrNode34[label = "
+	{
+		{ Instruction } |
+		{ Return }
+	}"];
+
+	instrNode34 -> returnNode30;
+	ifNode24 -> instrNode34;
+	instrNode35[label = "
+	{
+		{ Instruction } |
+		{ If }
+	}"];
+
+	instrNode35 -> ifNode24;
+	functDefNode22 -> instrNode35;
+	variableNode36 [label = "
+	{
+		{ Variable } |
+		{ fact } |
+		{ InitValue }
+	}"];
+
+	exprNode37 [label = "
+	{
+		{ Expression } |
+		{ Number\n1.000000 }
+	}"];
+
+	variableNode36 -> exprNode37;
+	instrNode38[label = "
+	{
+		{ Instruction } |
+		{ Variable }
+	}"];
+
+	instrNode38 -> variableNode36;
+	instrNode35 -> instrNode38;
+	whileNode39 [label = "
+	{
+		{ While } |
+		{ Condition } |
+		{ Body\nextArr\<instr\> }
+	}"];
+
+	binOperNode41 [label = "
+	{
+		{ BinaryOperator } |
+		{ > } |
+		{ {Left} | {Right} }
+	}"];
+
+	variableNode43 [label = "
+	{
+		{ Variable } |
+		{ n } |
+		{ InitValue }
+	}"];
+
+	exprNode42 [label = "
+	{
+		{ Expression } |
+		{ Variable }
+	}"];
+
+	exprNode42 -> variableNode43;
+	binOperNode41 -> exprNode42;
+	exprNode44 [label = "
+	{
+		{ Expression } |
+		{ Number\n1.000000 }
+	}"];
+
+	binOperNode41 -> exprNode44;
+	exprNode40 [label = "
+	{
+		{ Expression } |
+		{ BinaryOper }
+	}"];
+
+	exprNode40 -> binOperNode41;
+	whileNode39 -> exprNode40;
+	variableNode45 [label = "
+	{
+		{ Variable } |
+		{ fact } |
+		{ InitValue }
+	}"];
+
+	binOperNode47 [label = "
+	{
+		{ BinaryOperator } |
+		{ * } |
+		{ {Left} | {Right} }
+	}"];
+
+	variableNode49 [label = "
+	{
+		{ Variable } |
+		{ fact } |
+		{ InitValue }
+	}"];
+
+	exprNode48 [label = "
+	{
+		{ Expression } |
+		{ Variable }
+	}"];
+
+	exprNode48 -> variableNode49;
+	binOperNode47 -> exprNode48;
+	variableNode51 [label = "
+	{
+		{ Variable } |
+		{ n } |
+		{ InitValue }
+	}"];
+
+	exprNode50 [label = "
+	{
+		{ Expression } |
+		{ Variable }
+	}"];
+
+	exprNode50 -> variableNode51;
+	binOperNode47 -> exprNode50;
+	exprNode46 [label = "
+	{
+		{ Expression } |
+		{ BinaryOper }
+	}"];
+
+	exprNode46 -> binOperNode47;
+	variableNode45 -> exprNode46;
+	instrNode52[label = "
+	{
+		{ Instruction } |
+		{ Variable }
+	}"];
+
+	instrNode52 -> variableNode45;
+	whileNode39 -> instrNode52;
+	variableNode53 [label = "
+	{
+		{ Variable } |
+		{ n } |
+		{ InitValue }
+	}"];
+
+	binOperNode55 [label = "
+	{
+		{ BinaryOperator } |
+		{ - } |
+		{ {Left} | {Right} }
+	}"];
+
+	variableNode57 [label = "
+	{
+		{ Variable } |
+		{ n } |
+		{ InitValue }
+	}"];
+
+	exprNode56 [label = "
+	{
+		{ Expression } |
+		{ Variable }
+	}"];
+
+	exprNode56 -> variableNode57;
+	binOperNode55 -> exprNode56;
+	exprNode58 [label = "
+	{
+		{ Expression } |
+		{ Number\n1.000000 }
+	}"];
+
+	binOperNode55 -> exprNode58;
+	exprNode54 [label = "
+	{
+		{ Expression } |
+		{ BinaryOper }
+	}"];
+
+	exprNode54 -> binOperNode55;
+	variableNode53 -> exprNode54;
+	instrNode59[label = "
+	{
+		{ Instruction } |
+		{ Variable }
+	}"];
+
+	instrNode59 -> variableNode53;
+	instrNode52 -> instrNode59;
+	instrNode60[label = "
+	{
+		{ Instruction } |
+		{ While }
+	}"];
+
+	instrNode60 -> whileNode39;
+	instrNode38 -> instrNode60;
+	returnNode61 [label = "
+	{
+	{ Return } |
+	{ Value }
+	}"];
+
+	variableNode63 [label = "
+	{
+		{ Variable } |
+		{ fact } |
+		{ InitValue }
+	}"];
+
+	exprNode62 [label = "
+	{
+		{ Expression } |
+		{ Variable }
+	}"];
+
+	exprNode62 -> variableNode63;
+	returnNode61 -> exprNode62;
+	instrNode64[label = "
+	{
+		{ Instruction } |
+		{ Return }
+	}"];
+
+	instrNode64 -> returnNode61;
+	instrNode60 -> instrNode64;
+	constrNode21[label = "
+	{
+		{ Construction } |
+		{ FunctDef }
+	}"];
+
+	constrNode21 -> functDefNode22;
+	constrNode2 -> constrNode21;
+}

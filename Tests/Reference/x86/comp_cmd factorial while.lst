@@ -1,0 +1,109 @@
+	call main
+	ret
+main:
+	push ebp
+	mov ebp, esp
+	sub esp, 8
+	push 0
+	pop [ebp + -4]
+	mov eax, ebp
+	add eax, -4
+	push eax
+	push 9797660
+	call scanf
+	add esp, 8
+	push [ebp + -4]
+	call Factorial
+	add esp, 4
+	push eax
+	pop [ebp + -8]
+	push [ebp + -8]
+	mov eax, esp
+	fld [eax]
+	sub esp, 4
+	fstpd [eax + -4]
+	push 9797656
+	call printf
+	add esp, 12
+	mov esp, ebp
+	pop ebp
+	ret
+Factorial:
+	push ebp
+	mov ebp, esp
+	sub esp, 4
+	push [ebp + 8]
+	push 0
+	mov eax, esp
+	fld [eax]
+	fld [eax + 4]
+	add esp, 8
+	fcompp
+	jae l_less_false_1
+	push 1
+	jmp l_less_end_1
+l_less_false_1:
+	push 0
+l_less_end_1:
+	pop eax
+	cmp 1, eax
+	jne l_if_false_0
+	push 1065353216
+	mov eax, esp
+	fld [eax]
+	fchs
+	fstp [eax]
+	pop eax
+	mov esp, ebp
+	pop ebp
+	ret
+	jmp l_if_end_0
+l_if_false_0:
+l_if_end_0:
+	push 1065353216
+	pop [ebp + -4]
+l_while_cond_2:
+	push [ebp + 8]
+	push 1065353216
+	mov eax, esp
+	fld [eax]
+	fld [eax + 4]
+	add esp, 8
+	fcompp
+	jbe l_greater_false_3
+	push 1
+	jmp l_greater_end_3
+l_greater_false_3:
+	push 0
+l_greater_end_3:
+	pop eax
+	cmp 1, eax
+	jne l_while_end_2
+	push [ebp + -4]
+	push [ebp + 8]
+	mov eax, esp
+	fld [eax + 4]
+	fld [eax]
+	fmulp
+	fstp [eax + 4]
+	add esp, 4
+	pop [ebp + -4]
+	push [ebp + 8]
+	push 1065353216
+	mov eax, esp
+	fld [eax + 4]
+	fld [eax]
+	fsubp
+	fstp [eax + 4]
+	add esp, 4
+	pop [ebp + 8]
+	jmp l_while_cond_2
+l_while_end_2:
+	push [ebp + -4]
+	pop eax
+	mov esp, ebp
+	pop ebp
+	ret
+	mov esp, ebp
+	pop ebp
+	ret
