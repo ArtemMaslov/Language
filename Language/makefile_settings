@@ -1,0 +1,28 @@
+# x86 | x64
+PLATFORM   := x86
+# Debug | Release
+BUILD_MODE := Debug
+# LINUX | WINDOWS
+TARGET_OS  := LINUX
+TARGET_NAME := Language.out
+TARGET_PATH  = $(BIN)/$(TARGET_NAME)
+
+FLAGS  := -O0 -DEBUG -Wall -Werror -Wno-unused-function -Wno-unused-variable -Wno-unused-but-set-variable \
+          -fno-permissive -Wno-comment
+AFLAGS := -fsanitize=address -fsanitize=undefined
+
+COMP_FLAGS := $(FLAGS) -D$(TARGET_OS) -c -g -m32
+LINK_FLAGS := -m32
+
+ifeq ($(PLATFORM), x86)
+    BIN_PLATFORM_DIR = $(PROJECT_DIR)/../x86
+    OBJ_PLATFORM_DIR = $(PROJECT_DIR)/x86
+else
+    msg := $(shell echo "\033[31mНе верная платформа\033[0m")
+    $(error $(msg))
+endif
+
+BIN = $(BIN_PLATFORM_DIR)/$(BUILD_MODE)
+OBJ = $(OBJ_PLATFORM_DIR)/$(BUILD_MODE)
+
+COMP = g++

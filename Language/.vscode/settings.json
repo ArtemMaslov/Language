@@ -1,0 +1,9 @@
+{
+    "files.exclude": {
+        "Language.vcxproj": true,
+        "Language.vcxproj.filters": true,
+        "Language.vcxproj.user": true
+        "Modules/List": true,
+        "AST/AST_GraphvizSamples.gv" : true,
+    }
+}

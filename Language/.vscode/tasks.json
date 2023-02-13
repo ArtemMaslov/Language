@@ -1,0 +1,28 @@
+{
+    "tasks": [
+        {
+            "label":   "Build Language",
+            "type":    "shell",
+            "command": "make",
+            "group": 
+            {
+                "kind":      "build",
+                "isDefault": true
+            },
+            "detail": "Сборка основной программы."
+        },
+        {
+            "label":   "Build LexerTests",
+            "type":    "shell",
+            "command": "make",
+            "group": 
+            {
+                "kind":      "build",
+                "isDefault": true
+            },
+            "args": ["lexer_test"],
+            "detail": "Сборка модульного тестирования лексического анализатора."
+        }
+    ],
+    "version": "2.0.0"
+}

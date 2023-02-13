@@ -1,0 +1,21 @@
+run:
+	cd $(BIN) && ./$(TARGET_NAME)
+
+dir_bin:
+	$(if $(wildcard $(BIN)), , mkdir -p $(BIN))
+dir_obj:
+	$(if $(wildcard $(OBJ)), , mkdir -p $(OBJ))
+
+clear_obj:
+	$(if $(wildcard ./x64/Debug),   rm -r ./x64/Debug   , )
+	$(if $(wildcard ./x64/Release), rm -r ./x64/Release , )
+	$(if $(wildcard ./x86/Debug),   rm -r ./x86/Debug   , )
+	$(if $(wildcard ./x86/Release), rm -r ./x86/Release , )
+
+clear_bin:
+	$(if $(wildcard ../x64/Debug),   rm -r ../x64/Debug   , )
+	$(if $(wildcard ../x64/Release), rm -r ../x64/Release , )
+	$(if $(wildcard ../x86/Debug),   rm -r ../x86/Debug   , )
+	$(if $(wildcard ../x86/Release), rm -r ../x86/Release , )
+
+.PHONY: dir_bin dir_obj clear_obj clear_bin
