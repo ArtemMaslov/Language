@@ -31,8 +31,8 @@
 // 8. Чтобы отключить поддержку логов нужно добавить в проект файл "Modules/DisableLogs.h",
 //    и в этом файле установить значение true дефайна MODULE_EXT_ARRAY_DISABLE_LOGS.
 // 
-// Версия: 1.0.0.1
-// Дата последнего изменения: 17:30 28.01.2023
+// Версия: 1.0.1.1
+// Дата последнего изменения: 11:11 03.02.2023
 // 
 // Автор: Маслов А.С. (https://github.com/ArtemMaslov).
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
@@ -41,6 +41,7 @@
 #define EXT_ARRAY_H
 
 #include "../ErrorsHandling.h"
+#include "../TargetOS.h"
 
 /// Чтобы отключить поддержку логов в модуле, нужно установить значение true.
 #define MODULE_EXT_ARRAY_DISABLE_LOGS false
@@ -117,17 +118,19 @@ void ExtArrayDestructor(ExtArray* extArray,
 						const char* const funct, const char* const file, const size_t line);
 
 /**
-* @brief  Деструктор расширяющегося массива.
-* 
-* Если в ходе работы ExtArray были перевыделения памяти, то сообщение об
-* этом будет записано в файл логов.
-* 
-* @param extArray Указатель на структуру ExtArray.
-* 
-* @return void.
+ * @brief  Деструктор расширяющегося массива.
+ * 
+ * Если в ходе работы ExtArray были перевыделения памяти, то сообщение об
+ * этом будет записано в файл логов.
+ * 
+ * После вызова деструктора структуру можно повторно использовать.
+ * 
+ * @param extArray Указатель на структуру ExtArray.
+ * 
+ * @return void.
 */
 #define ExtArrayDestructor(extArray) \
-	ExtArrayDestructor(extArray, __FUNCSIG__, __FILE__, __LINE__)
+	ExtArrayDestructor(extArray, FUNCT_SIG, __FILE__, __LINE__)
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
@@ -178,7 +181,7 @@ void ExtArrayDump(const ExtArray* const extArray,
 * @return void.
 */
 #define ExtArrayDump(extArray) \
-	ExtArrayDump(extArray, __FUNCSIG__, __FILE__, __LINE__)
+	ExtArrayDump(extArray, FUNCT_SIG, __FILE__, __LINE__)
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///

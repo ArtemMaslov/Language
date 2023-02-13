@@ -3,8 +3,11 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "../../Modules/Logs/Logs.h"
+#include "../../Modules/ErrorsHandling.h"
+
 #include "SoftCpuCompiler.h"
-#include "../../Front end/Lexer/_identifier.h"
+#include "../../Front end/Lexer/Identifier.h"
 
 #include "_compiler_config.h"
 #include "_intrinsic_funct.h"
@@ -27,7 +30,7 @@ struct x86Compiler
 	FILE* File;
 	AST*  Ast;
 
-	/// Óçåë ôóíêöèè, êîòîðàÿ ñåé÷àñ êîìïèëèðóåòñÿ.
+	/// Ð£Ð·ÐµÐ» Ñ„ÑƒÐ½ÐºÑ†Ð¸Ð¸, ÐºÐ¾Ñ‚Ð¾Ñ€Ð°Ñ ÑÐµÐ¹Ñ‡Ð°Ñ ÐºÐ¾Ð¼Ð¿Ð¸Ð»Ð¸Ñ€ÑƒÐµÑ‚ÑÑ.
 	const FunctDefNode* CurrentFunction;
 
 	IdentifierTable CurrentVariablesScope;
@@ -94,7 +97,7 @@ ProgramStatus SoftCpuCompileFile(AST* ast, const char* outFile)
 	fputs("\tcall main\n\thlt\n\n", file);
 
 	ProgramStatus status = CompileConstrNodes(&comp);
-
+	CHECK_STATUS;
 	fclose(file);
 
 	return ProgramStatus::Ok;
@@ -109,8 +112,11 @@ static ProgramStatus CompileFunctDef(x86Compiler* comp, const FunctDefNode* func
 
 	comp->CurrentFunction = functNode;
 
-	status = IdentifierTableConstructor(&comp->CurrentVariablesScope);
-	CHECK_STATUS;
+	if (IdentifierTableConstructor(&comp->CurrentVariablesScope) != IdentifierError::NoErrors)
+	{
+		TRACE_ERROR();
+		return ProgramStatus::Fault;
+	}
 
 	const Identifier* const id = IdentifierGetById(&comp->Ast->IdentififerTable, functNode->NameId);
 	if (!id)
@@ -126,8 +132,7 @@ static ProgramStatus CompileFunctDef(x86Compiler* comp, const FunctDefNode* func
 
 	fputs(CompFunctDefEnd, comp->File);
 
-	status = IdentifierTableDestructor(&comp->CurrentVariablesScope);
-	CHECK_STATUS;
+	IdentifierTableDestructor(&comp->CurrentVariablesScope);
 
 	return status;
 }
@@ -327,7 +332,7 @@ static ProgramStatus CompileUnaryOperator(x86Compiler* comp, const UnaryOperator
 			break;
 
 		case OperatorType::Addition:
-			// Èãíîðèðóåì óíàðíûé ïëþñ.
+			// Ð˜Ð³Ð½Ð¾Ñ€Ð¸Ñ€ÑƒÐµÐ¼ ÑƒÐ½Ð°Ñ€Ð½Ñ‹Ð¹ Ð¿Ð»ÑŽÑ.
 			break;
 
 		default:
@@ -484,7 +489,7 @@ static int IdentifierGetMemoryOffset(x86Compiler* comp, const int varId, bool* o
 
 	IdentifierTable* const table = &comp->CurrentVariablesScope;
 
-	// Ïðîâåðÿåì, ÿâëÿåòñÿ ëè ïåðåìåííàÿ ïàðàìåòðîì ôóíêöèè.
+	// ÐŸÑ€Ð¾Ð²ÐµÑ€ÑÐµÐ¼, ÑÐ²Ð»ÑÐµÑ‚ÑÑ Ð»Ð¸ Ð¿ÐµÑ€ÐµÐ¼ÐµÐ½Ð½Ð°Ñ Ð¿Ð°Ñ€Ð°Ð¼ÐµÑ‚Ñ€Ð¾Ð¼ Ñ„ÑƒÐ½ÐºÑ†Ð¸Ð¸.
 	const ExtArray* const params = &comp->CurrentFunction->Params;
 	const size_t paramsCount = comp->CurrentFunction->Params.Size;
 
@@ -501,9 +506,9 @@ static int IdentifierGetMemoryOffset(x86Compiler* comp, const int varId, bool* o
 		}
 	}
 
-	// Ïðîâåðÿåì ÿâëÿåòñÿ ëè ïåðåìåííàÿ ëîêàëüíîé â ôóíêöèè, à íå å¸ ïàðàìåòðîì.
-	const ExtArray* const identifiers = &table->Table;
-	const size_t identifiersCount = table->Table.Size;
+	// ÐŸÑ€Ð¾Ð²ÐµÑ€ÑÐµÐ¼ ÑÐ²Ð»ÑÐµÑ‚ÑÑ Ð»Ð¸ Ð¿ÐµÑ€ÐµÐ¼ÐµÐ½Ð½Ð°Ñ Ð»Ð¾ÐºÐ°Ð»ÑŒÐ½Ð¾Ð¹ Ð² Ñ„ÑƒÐ½ÐºÑ†Ð¸Ð¸, Ð° Ð½Ðµ ÐµÑ‘ Ð¿Ð°Ñ€Ð°Ð¼ÐµÑ‚Ñ€Ð¾Ð¼.
+	const ExtArray* const identifiers = &table->Records;
+	const size_t identifiersCount = table->Records.Size;
 
 	for (size_t st = 0; st < identifiersCount; st++)
 	{
@@ -518,7 +523,7 @@ static int IdentifierGetMemoryOffset(x86Compiler* comp, const int varId, bool* o
 		}
 	}
 
-	// Ïåðåìåííàÿ ðàíüøå íå âñòðå÷àëàñü. Ñîçäà¸ì íîâóþ çàïèñü è âûäåëÿåì ïàìÿòü.
+	// ÐŸÐµÑ€ÐµÐ¼ÐµÐ½Ð½Ð°Ñ Ñ€Ð°Ð½ÑŒÑˆÐµ Ð½Ðµ Ð²ÑÑ‚Ñ€ÐµÑ‡Ð°Ð»Ð°ÑÑŒ. Ð¡Ð¾Ð·Ð´Ð°Ñ‘Ð¼ Ð½Ð¾Ð²ÑƒÑŽ Ð·Ð°Ð¿Ð¸ÑÑŒ Ð¸ Ð²Ñ‹Ð´ÐµÐ»ÑÐµÐ¼ Ð¿Ð°Ð¼ÑÑ‚ÑŒ.
 
 	const int offset = (int)(table->CompileIdentInited++);
 
@@ -526,7 +531,7 @@ static int IdentifierGetMemoryOffset(x86Compiler* comp, const int varId, bool* o
 	newIdent.CompileMemoryOffset = offset;
 	newIdent.Id                  = varId;
 
-	ProgramStatus status = ExtArrayAddElem(&table->Table, &newIdent);
+	ProgramStatus status = ExtArrayAddElem(&table->Records, &newIdent);
 	CHECK_STATUS;
 
 	if (outVarInitialization)

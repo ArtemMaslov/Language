@@ -1,147 +1,61 @@
+//***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+// Модуль синтаксического анализатора. Основные функции.
+// 
+// Файл с исходным кодом.
+// 
+// Версия: 1.0.1.0
+// Дата последнего изменения: 13:08 30.01.2023
+// 
+// Автор: Маслов А.С. (https://github.com/ArtemMaslov).
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+
 #include <assert.h>
 #include <stdlib.h>
 
-#include "Parser.h"
-#include "Lexer/Lexer.h"
-#include "../AST/AST.h"
+#include "../Modules/Logs/Logs.h"
 #include "../Modules/ErrorsHandling.h"
 
-///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
-///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+#include "Lexer/Lexer.h"
+#include "../AST/AST.h"
 
-#define CHECK_STATUS \
-	assert(status == ProgramStatus::Ok)
-//if (status != ProgramStatus::Ok) \
-//		return status
+#include "Parser.h"
+#include "parser_private.h"
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
-static ExpressionNode* ParseExpression(Parser* parser);
-
-static ExpressionNode* ParseOr(Parser* parser);
-
-static ExpressionNode* ParseAnd(Parser* parser);
-
-static ExpressionNode* ParseNot(Parser* parser);
-
-static ExpressionNode* ParseEqual(Parser* parser);
-
-static ExpressionNode* ParseCompare(Parser* parser);
-
-static ExpressionNode* ParseAddSub(Parser* parser);
-
-static ExpressionNode* ParseMulDiv(Parser* parser);
-
-static ExpressionNode* ParseUnaryAddSub(Parser* parser);
-
-static ExpressionNode* Parse_Num_Var_Funct(Parser* parser);
-
-static ExpressionNode* ParseParentheses(Parser* parser);
-
-///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
-
-static ExpressionNode* ParseCondition(Parser* parser);
-
-static FunctCallNode* ParseFunctionCall(Parser* parser);
-
-static ProgramStatus ParseFunctionCallParams(Parser* parser, ExtArray* outParams);
-
-static ProgramStatus ParseFunctionDefParams(Parser* parser, ExtArray* outParams);
-
-static FunctDefNode* ParseFunctionDef(Parser* parser);
-
-static VariableNode* ParseVariable(Parser* parser);
-
-static InputNode* ParseInput(Parser* parser);
-
-static OutputNode* ParseOutput(Parser* parser);
-
-static ReturnNode* ParseReturn(Parser* parser);
-
-static WhileNode* ParseWhile(Parser* parser);
-
-static IfNode* ParseIf(Parser* parser);
-
-static ProgramStatus ParseProgramBlock(Parser* parser, ExtArray* instrBlock);
-
-///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
-///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
-
-ProgramStatus ParserConstructor(Parser* parser)
+ParserError ParserParseFile(Lexer* const lexer, AST* const outAst)
 {
-	assert(parser);
-
-	ProgramStatus status = ProgramStatus::Ok;
-
-	status = LexerConstructor(&parser->Lexer);
-	CHECK_STATUS;
-
-	return status;
-}
-
-ProgramStatus ParserDestructor(Parser* parser)
-{
-	assert(parser);
-
-	ProgramStatus status = ProgramStatus::Ok;
-
-	status = LexerDestructor(&parser->Lexer);
-	CHECK_STATUS;
-
-	return status;
-}
-
-///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
-///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
-
-ProgramStatus ParserParseFile(Parser* parser, AST* outAst, const char* fileName)
-{
-	assert(parser);
+	assert(lexer);
 	assert(outAst);
-	assert(fileName);
-	
-	ProgramStatus status = ProgramStatus::Ok;
 
-	status = LexerReadFile(&parser->Lexer, fileName);
-	CHECK_STATUS;
-
-	status = LexerGetTokens(&parser->Lexer);
-	CHECK_STATUS;
-	
-	outAst->IdentififerTable = parser->Lexer.IdentifierTable;
-
-	parser->outAst = outAst;
-	parser->Commands = (Token*)parser->Lexer.Commands.Array;
-	parser->CurrentToken = 0;
-	parser->TokensCount  = parser->Lexer.Commands.Size;
-
-	while (parser->CurrentToken < parser->TokensCount)
+	Parser parser = 
 	{
-		FunctDefNode* functNode = ParseFunctionDef(parser);
+		.Tokens       = &lexer->Tokens,
+		.CurrentToken = 0,
+		.TokensCount  = lexer->Tokens.Size,
+		.OutAst       = outAst
+	};
+	outAst->Identifiers = lexer->Identifiers;
+
+	while (parser.CurrentToken < parser.TokensCount)
+	{
+		FunctDefNode* functNode = ParseFunctionDef(&parser);
 
 		if (functNode)
 		{
-			ConstructionNode* node = AstCreateConstrNode(parser->outAst, functNode);
+			ConstructionNode* node = AstCreateConstrNode(parser.OutAst, functNode);
 
-			ExtArrayAddElem(&parser->outAst->ConstrNodes, node);
+			ExtArrayAddElem(&parser.OutAst->ConstrNodes, node);
 			continue;
 		}
 
-		assert(!"Error");
-		return ProgramStatus::Fault;
+		LOG_ERR("Не верная синтаксическая конструкция.");
+		return ParserError::SyntaxError;
 	}
 
-	return ProgramStatus::Ok;
+	return ParserError::NoErrors;
 }
-
-///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
-///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
-
-#include "_parse_expr.h"
-#include "_parse_funct.h"
-#include "_parse_keyword.h"
-#include "_parse_aux.h"
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///

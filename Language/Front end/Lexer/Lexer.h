@@ -1,55 +1,140 @@
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+// Модуль лексического анализатора.
+// 
+// Версия: 1.0.1.0
+// Дата последнего изменения: 20:43 29.01.2023
+// 
+// Автор: Маслов А.С. (https://github.com/ArtemMaslov).
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+
 #ifndef LEXER_H
 #define LEXER_H
-
-///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
-///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
 #include "../../Modules/ErrorsHandling.h"
 #include "../../Modules/Text/Text.h"
 #include "../../Modules/ExtArray/ExtArray.h"
 #include "../../LanguageGrammar/LanguageGrammar.h"
-#include "_identifier.h"
+#include "Identifier.h"
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
+/// Структура представления лексемы, которая встретилась в коде программы.
 struct Token
 {
+	/// Класс лексемы.
 	LngTokenType Type;
 
 	union
 	{
-		// Числовое значение лексемы. 
-		int                Int;
+		/// Ключевое слово.
 		KeywordType       Keyword;
+		/// Оператор.
 		OperatorType      Operator;
-		int                Identifier;
+		/// Номер идентификатора в таблице идентификаторов.
+		size_t            Identifier;
+		/// Специальный символ.
 		SpecialSymbolType SpecialSymbol;
-		double             Number;
+		/// Число с плавающей точкой.
+		double            Number;
 	} Value;
 };
 
+/// Структура лексического анализатора.
 struct Lexer
 {
-	ExtArray Commands;
+	/**
+	 * @brief Массив лексем текста программы.
+	 * ExtArray<Token>
+	*/
+	ExtArray Tokens;
 
-	Text Text;
-
-	IdentifierTable IdentifierTable;
+	/// Таблица идентификаторов.
+	IdentifierTable* Identifiers;
 };
 
+/// Особые ситуации при работе лексического анализатора.
+enum class LexerError
+{
+	/// Нет ошибок.
+	NoErrors,
+	/// Ошибка при выполнении конструктора ExtArray.
+	ExtArray,
+	/// Ошибка при выполнении конструктора IdentifierTable.
+	IdentififerTable,
+	/// Ошибка при выполнении конструктора Text.
+	Text,
+	/// Ошибка при добавлении лексемы в ExtArray.
+	AddToken,
+	/// Последовательность символов не является допустимой лексемой.
+	TokenError,
+	/// Внутреннее состояние. Лексема не является числом.
+	NotNumber,
+	/// Внутреннее состояние. Лексема была успешно прочитана как число.
+	NumberRead,
+	/// Внутреннее состояние. Лексема не является идентификатором.
+	NotIdentifier,
+	/// Внутреннее состояние. Лексема была успешно прочитана как идентификатор.
+	IdentifierRead,
+	/// Внутреннее состояние. Лексема не является оператором.
+	NotOperator,
+	/// Внутреннее состояние. Лексема была успешно прочитана как оператор.
+	OperatorRead,
+	/// Внутреннее состояние. Лексема не является специальным символом.
+	NotSpecSymbol,
+	/// Внутреннее состояние. Лексема была успешно прочитана как специальный символ.
+	SpecSymbolRead,
+};
+
+/// Размер буфера форматирования текста функции LexerDump().
+static const size_t LexerDumpBufferSize = 4096;
+
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
-ProgramStatus LexerConstructor(Lexer* lexer);
+/**
+ * @brief  Конструктор лексического анализатора.
+ * 
+ * @param lexer Указатель на проинициализированную нулем структуру лексического анализатора.
+ * @param table Указатель на таблицу идентификаторов. Для неё должен быть вызван конструктор.
+ * 
+ * @return LexerError::ExtArray,
+ *         LexerError::NoErrors.
+*/
+LexerError LexerConstructor(Lexer* const lexer, IdentifierTable* const table);
 
-ProgramStatus LexerDestructor(Lexer* lexer);
+/**
+ * @brief  Деструктор лексического анализатора.
+ * 
+ * После вызова деструктора структуру можно повторно использовать.
+ * 
+ * @param lexer Указатель на структуру Lexer.
+*/
+void LexerDestructor(Lexer* const lexer);
 
-ProgramStatus LexerGetTokens(Lexer* lexer);
+/**
+ * @brief  Лексический анализ файла.
+ * 
+ * @param lexer    Указатель на структуру лексического анализатора.
+ *                 Содержит результат анализа файла.
+ * @param fileName Путь к файлу.
+ * 
+ * @return LexerError::Text,
+ *         LexerError::AddToken,
+ *         LexerError::TokenError,
+ *         LexerError::NoErrors.
+*/
+LexerError LexerAnalyseFile(Lexer* const lexer, const char* const fileName);
 
-ProgramStatus LexerReadFile(Lexer* lexer, const char* fileName);
-
-ProgramStatus LexerLogDump(Lexer* lexer);
+/**
+ * @brief  Вывести состояние структуры лексического анализатора в файл логов.
+ * 
+ * LexerLogDump выводит в лог файл результат работы функции LexerAnalyseFile,
+ * который хранится в структуре Lexer.
+ * 
+ * @param lexer Указатель на структуру лексического анализатора.
+*/
+void LexerLogDump(const Lexer* const lexer);
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///

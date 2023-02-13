@@ -1,28 +1,28 @@
+#include "UnitTests.h"
+#if not ENABLE_UNIT_TESTS
+
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+
 #include <stdio.h>
 #include <Windows.h>
 
 #include "Modules/Logs/Logs.h"
-#include "Front end/Lexer/LexerUnitTests.h"
-#include "Front end/ParserUnitTests.h"
 #include "Back end/x86/x86CompilerUnitTests.h"
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
-int main(int argc, char* argv[])
+int main()
 {
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
 
 	if (LogsConstructor() != LogError::NoErrors)
 	{
-		puts("Ошибка открытия файла логов.");
+		puts("РћС€РёР±РєР° РѕС‚РєСЂС‹С‚РёСЏ С„Р°Р№Р»Р° Р»РѕРіРѕРІ.");
 		return 1;
 	}
-
-	//LexerTest1();
-	//ParserTest1();
-	x86CompilerTest1();
 
 	LogsDestructor();
 	return 0;
@@ -30,3 +30,5 @@ int main(int argc, char* argv[])
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+
+#endif //!(not ENABLE_UNIT_TESTS)

@@ -1,32 +1,85 @@
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
-// Модуль работы с файловой системой.
+// РњРѕРґСѓР»СЊ СЂР°Р±РѕС‚С‹ СЃ С„Р°Р№Р»РѕРІРѕР№ СЃРёСЃС‚РµРјРѕР№.
 // 
-// Файл с исходным кодом.
+// Р¤Р°Р№Р» СЃ РёСЃС…РѕРґРЅС‹Рј РєРѕРґРѕРј.
 // 
-// Версия: 1.0.0.0
-// Дата последнего изменения: 12:02 28.01.2023
+// Р’РµСЂСЃРёСЏ: 1.0.1.0
+// Р”Р°С‚Р° РїРѕСЃР»РµРґРЅРµРіРѕ РёР·РјРµРЅРµРЅРёСЏ: 20:44 03.02.2023
 // 
-// Автор: Маслов А.С. (https://github.com/ArtemMaslov).
+// РђРІС‚РѕСЂ: РњР°СЃР»РѕРІ Рђ.РЎ. (https://github.com/ArtemMaslov).
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
 #include <assert.h>
 
-#include <windows.h>
+#include "../Logs/Logs.h"
+#if MODULE_FILES_IO_DISABLE_LOGS
+#include "../DisableLogs.h"
+#endif
+
+#include "../TargetOS.h"
 
 #include "FilesIO.h"
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
-bool DirectoryExist(const char* const path)
+#if defined(WINDOWS)
+
+#include <windows.h>
+
+FilesIoError DirectoryExist(const char* const path)
 {
+	assert(path);
+
 	DWORD attr = GetFileAttributesA(path);
 
 	if (attr == INVALID_FILE_ATTRIBUTES)
-		return false;
+		return FilesIoError::NotExist;
 
-	return (attr & FILE_ATTRIBUTE_DIRECTORY);
+	if (attr & FILE_ATTRIBUTE_DIRECTORY)
+		return FilesIoError::Exist;
+	else
+		return FilesIoError::NotExist;
 }
+
+FilesIoError DirectoryCreate(const char* const path)
+{
+	if (!CreateDirectoryA(path, nullptr))
+		return FilesIoError::DirectoryCreate;
+	return FilesIoError::NoErrors;
+}
+
+#elif defined(LINUX)
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+FilesIoError DirectoryExist(const char* const path)
+{
+    assert(path);
+
+	struct stat statInfo = {};
+	if (stat(path, &statInfo) == -1) 
+		return FilesIoError::NotExist;
+	else
+		return FilesIoError::Exist;
+}
+
+FilesIoError DirectoryCreate(const char* const path)
+{
+	assert(path);
+
+    if (mkdir(path, 0766) == -1)
+		return FilesIoError::DirectoryCreate;
+	
+	return FilesIoError::NoErrors;
+}
+
+#endif
+
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
 size_t GetFileSize(FILE* const file)
 {

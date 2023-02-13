@@ -1,3 +1,14 @@
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+// Файл грамматики языка. 
+// 
+// Определение грамматических массивов и функций для работы с ними.
+//
+// Версия: 1.0.1.1
+// Дата последнего изменения: 11:21 03.02.2023
+// 
+// Автор: Маслов А.С. (https://github.com/ArtemMaslov).
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+
 #include <assert.h>
 
 #include "LanguageGrammar.h"
@@ -5,54 +16,65 @@
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
-#define GRAMMAR(type, grammar, oper, name)					\
-	{														\
-		.Type           = type,								\
-		.Grammar        = grammar,							\
-		.Value          = {.Operator = oper},				\
-		.Name           = name,								\
-		.NameSize       = sizeof(name) / sizeof(char) - 1	\
+#define GRAMMAR(type, grammar, oper, name, ...)					\
+	{															\
+		.Type           = LngTokenType::type,					\
+		.Grammar        = GrammarType::grammar,					\
+		.Value          = {.Operator = OperatorType::oper},		\
+		.Name           = name,									\
+		.NameSize       = sizeof(name) / sizeof(char) - 1		\
 	},
 
 GrammarToken Operators[] =
 {
-#include "Universal/Operators.inc"
+#include "operators.inc"
+};
+
+#undef GRAMMAR
+
+#define GRAMMAR(type, grammar, oper, name, nameGV)				\
+	nameGV,
+
+/// Название оператора для GraphViz.
+static const char* const OperatorsGV[] =
+{
+#include "operators.inc"
 };
 
 #undef GRAMMAR
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
-#define GRAMMAR(type, grammar, specSym, name)					\
-	{															\
-		.Type                = type,							\
-		.Grammar             = grammar,							\
-		.Value               = {.SpecialSymbol = specSym},		\
-		.Name                = name,							\
-		.NameSize            = sizeof(name) / sizeof(char) - 1	\
+#define GRAMMAR(type, grammar, specSym, name)									\
+	{																			\
+		.Type                = LngTokenType::type,								\
+		.Grammar             = GrammarType::grammar,							\
+		.Value               = {.SpecialSymbol = SpecialSymbolType::specSym},	\
+		.Name                = name,											\
+		.NameSize            = sizeof(name) / sizeof(char) - 1					\
 	},
 
 GrammarToken SpecialSymbols[] =
 {
-#include "Universal/SpecialSymbols.inc"
+#include "special_symbols.inc"
 };
 
 #undef GRAMMAR
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
-#define GRAMMAR(type, grammar, keyword, name)				\
-	{														\
-		.Type           = type,								\
-		.Grammar        = grammar,							\
-		.Value          = {.Keyword = keyword},				\
-		.Name           = name,								\
-		.NameSize       = sizeof(name) / sizeof(char)- 1	\
+#define GRAMMAR(type, grammar, keyword, name)					\
+	{															\
+		.Type           = LngTokenType::type,					\
+		.Grammar        = GrammarType::grammar,					\
+		.Value          = {.Keyword = KeywordType::keyword},	\
+		.Name           = name,									\
+		.NameSize       = sizeof(name) / sizeof(char)- 1		\
 	},
 
 GrammarToken Keywords[] =
 {
-#include "English/Keywords.inc"
+#include "keywords.inc"
 };
 
 #undef GRAMMAR
@@ -66,42 +88,32 @@ const size_t OperatorsSize      = sizeof(Operators)      / sizeof(GrammarToken);
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
-const GrammarToken* GrammarGetName(LngTokenType type, int id)
+const GrammarToken* GrammarGetToken(const KeywordType keyword)
 {
-	switch (type)
-	{
-		case LngTokenType::Keyword:
-			for (size_t st = 0; st < KeywordsSize; st++)
-			{
-				if (Keywords[st].Value.Int == id)
-					return Keywords + st;
-			}
-			break;
+	assert((size_t)keyword < KeywordsSize);
 
-		case LngTokenType::Operator:
-			for (size_t st = 0; st < OperatorsSize; st++)
-			{
-				if (Operators[st].Value.Int == id)
-					return Operators + st;
-			}
-			break;
+	return Keywords + (size_t)keyword;
+}
 
-		case LngTokenType::SpecialSymbol:
-			for (size_t st = 0; st < SpecialSymbolsSize; st++)
-			{
-				if (SpecialSymbols[st].Value.Int == id)
-					return SpecialSymbols + st;
-			}
-			break;
+const GrammarToken* GrammarGetToken(const OperatorType oper)
+{
+	assert((size_t)oper < OperatorsSize);
 
-		//case LngTokenType::Number:
-		//case LngTokenType::Identifier:
-		default:
-			break;
-	}
+	return Operators + (size_t)oper;
+}
 
-	assert(!"�� ������� ���� ������� ������ �������� ���!");
-	return nullptr;
+const GrammarToken* GrammarGetToken(const SpecialSymbolType specSym)
+{
+	assert((size_t)specSym < SpecialSymbolsSize);
+
+	return SpecialSymbols + (size_t)specSym;
+}
+
+const char* const GrammarGetGraphVizName(const OperatorType oper)
+{
+	assert((size_t)oper < OperatorsSize);
+
+	return OperatorsGV[(size_t)oper];
 }
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///

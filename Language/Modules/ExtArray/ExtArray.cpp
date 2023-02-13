@@ -1,12 +1,12 @@
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
-// Модуль выделителя памяти расширяющийся массив ExtArray.
+// РњРѕРґСѓР»СЊ РІС‹РґРµР»РёС‚РµР»СЏ РїР°РјСЏС‚Рё СЂР°СЃС€РёСЂСЏСЋС‰РёР№СЃСЏ РјР°СЃСЃРёРІ ExtArray.
 // 
-// Файлы с исходным кодом.
+// Р¤Р°Р№Р»С‹ СЃ РёСЃС…РѕРґРЅС‹Рј РєРѕРґРѕРј.
 // 
-// Версия: 1.0.0.1
-// Дата последнего изменения: 17:38 28.01.2023
+// Р’РµСЂСЃРёСЏ: 1.0.1.0
+// Р”Р°С‚Р° РїРѕСЃР»РµРґРЅРµРіРѕ РёР·РјРµРЅРµРЅРёСЏ: 17:38 28.01.2023
 // 
-// Автор: Маслов А.С. (https://github.com/ArtemMaslov).
+// РђРІС‚РѕСЂ: РњР°СЃР»РѕРІ Рђ.РЎ. (https://github.com/ArtemMaslov).
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
 #include <assert.h>
@@ -26,12 +26,12 @@
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
 /**
- * @brief Увеличить размер массива.
+ * @brief РЈРІРµР»РёС‡РёС‚СЊ СЂР°Р·РјРµСЂ РјР°СЃСЃРёРІР°.
  * 
- * @param extArray Указатель на ExtArray.
+ * @param extArray РЈРєР°Р·Р°С‚РµР»СЊ РЅР° ExtArray.
  * 
- * @return ProgramStatus::Fault, если не удалось выделить память.
- *         ProgramStatus::Ok, если нет ошибок.
+ * @return ProgramStatus::Fault, РµСЃР»Рё РЅРµ СѓРґР°Р»РѕСЃСЊ РІС‹РґРµР»РёС‚СЊ РїР°РјСЏС‚СЊ.
+ *         ProgramStatus::Ok, РµСЃР»Рё РЅРµС‚ РѕС€РёР±РѕРє.
 */
 static ProgramStatus ExtArrayResize(ExtArray* const extArray);
 
@@ -72,9 +72,9 @@ void ExtArrayDestructor(ExtArray* const extArray,
 
 	if (extArray->ReallocCounter > 0)
 	{
-		LOG_F_WRN("В процессе работы ExtArray были перевыделения памяти.\n"
-				  "Не эффективный начальный размер capacity.\n"
-				  "Функция ExtArrayDestructor вызвана %s из файла %s в строке %zd.",
+		LOG_F_WRN("Р’ РїСЂРѕС†РµСЃСЃРµ СЂР°Р±РѕС‚С‹ ExtArray Р±С‹Р»Рё РїРµСЂРµРІС‹РґРµР»РµРЅРёСЏ РїР°РјСЏС‚Рё.\n"
+				  "РќРµ СЌС„С„РµРєС‚РёРІРЅС‹Р№ РЅР°С‡Р°Р»СЊРЅС‹Р№ СЂР°Р·РјРµСЂ capacity.\n"
+				  "Р¤СѓРЅРєС†РёСЏ ExtArrayDestructor РІС‹Р·РІР°РЅР° %s РёР· С„Р°Р№Р»Р° %s РІ СЃС‚СЂРѕРєРµ %zd.",
 				  funct, file, line);
 		ExtArrayDump(extArray);
 	}
@@ -97,7 +97,7 @@ ProgramStatus ExtArrayAddElem(ExtArray* const extArray, const void* const elem)
 
 	if (size == capacity)
 	{
-		LOG_WRN("Выделение дополнительный памяти ExtArray. Не эффективный начальный размер capacity.");
+		LOG_WRN("Р’С‹РґРµР»РµРЅРёРµ РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Р№ РїР°РјСЏС‚Рё ExtArray. РќРµ СЌС„С„РµРєС‚РёРІРЅС‹Р№ РЅР°С‡Р°Р»СЊРЅС‹Р№ СЂР°Р·РјРµСЂ capacity.");
 		ExtArrayDump(extArray);
 
 		ProgramStatus status = ExtArrayResize(extArray);
@@ -131,9 +131,9 @@ static ProgramStatus ExtArrayResize(ExtArray* const extArray)
 	assert(extArray->Capacity > 0);
 	assert(extArray->Resize   > 1);
 
-	// Новое количество элементов массива.
+	// РќРѕРІРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ СЌР»РµРјРµРЅС‚РѕРІ РјР°СЃСЃРёРІР°.
 	size_t newCapacity = (size_t)((float)extArray->Capacity * extArray->Resize);
-	// Новый размер блока памяти в байтах.
+	// РќРѕРІС‹Р№ СЂР°Р·РјРµСЂ Р±Р»РѕРєР° РїР°РјСЏС‚Рё РІ Р±Р°Р№С‚Р°С….
 	size_t newDataSize = newCapacity * extArray->ElemSize;
 
 	void* resized = realloc(extArray->Array, newDataSize);
@@ -143,7 +143,7 @@ static ProgramStatus ExtArrayResize(ExtArray* const extArray)
 		return ProgramStatus::Fault;
 	}
 
-	// Если выделение памяти произошло с ошибкой, то состояние структуры не меняется.
+	// Р•СЃР»Рё РІС‹РґРµР»РµРЅРёРµ РїР°РјСЏС‚Рё РїСЂРѕРёР·РѕС€Р»Рѕ СЃ РѕС€РёР±РєРѕР№, С‚Рѕ СЃРѕСЃС‚РѕСЏРЅРёРµ СЃС‚СЂСѓРєС‚СѓСЂС‹ РЅРµ РјРµРЅСЏРµС‚СЃСЏ.
 	extArray->Array    = resized;
 	extArray->Capacity = newCapacity;
 	extArray->ReallocCounter++;
@@ -162,14 +162,14 @@ void ExtArrayDump(const ExtArray* const extArray,
 	assert(funct);
 	assert(file);
 
-	LOG_F_DBG("Состояние ExtArray [%p]:\n"
+	LOG_F_DBG("РЎРѕСЃС‚РѕСЏРЅРёРµ ExtArray [%p]:\n"
 			  "Array          = %p;\n"
 			  "ElemSize       = %zd;\n"
 			  "Size           = %zd;\n"
 			  "Capacity       = %zd;\n"
 			  "Resize         = %f;\n"
 			  "ReallocCounter = %zd.\n"
-			  "Функция ExtArrayDump вызвана %s из файла %s в строке %zd.",
+			  "Р¤СѓРЅРєС†РёСЏ ExtArrayDump РІС‹Р·РІР°РЅР° %s РёР· С„Р°Р№Р»Р° %s РІ СЃС‚СЂРѕРєРµ %zd.",
 			  extArray, extArray->Array, extArray->ElemSize, extArray->Size, extArray->Capacity, 
 			  extArray->Resize, extArray->ReallocCounter, funct, file, line);
 }

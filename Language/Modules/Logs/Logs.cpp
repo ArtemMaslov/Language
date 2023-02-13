@@ -1,12 +1,12 @@
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
-// Модуль для создания файлов-логов работы программы.
+// РњРѕРґСѓР»СЊ РґР»СЏ СЃРѕР·РґР°РЅРёСЏ С„Р°Р№Р»РѕРІ-Р»РѕРіРѕРІ СЂР°Р±РѕС‚С‹ РїСЂРѕРіСЂР°РјРјС‹.
 // 
-// Файл с исходным кодом модуля.
+// Р¤Р°Р№Р» СЃ РёСЃС…РѕРґРЅС‹Рј РєРѕРґРѕРј РјРѕРґСѓР»СЏ.
 // 
-// Версия: 1.0.0.2
-// Дата последнего изменения: 18:11 28.01.2023
+// Р’РµСЂСЃРёСЏ: 1.0.1.0
+// Р”Р°С‚Р° РїРѕСЃР»РµРґРЅРµРіРѕ РёР·РјРµРЅРµРЅРёСЏ: 18:11 28.01.2023
 // 
-// Автор: Маслов А.С. (https://github.com/ArtemMaslov).
+// РђРІС‚РѕСЂ: РњР°СЃР»РѕРІ Рђ.РЎ. (https://github.com/ArtemMaslov).
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
 #include <assert.h>
@@ -15,6 +15,8 @@
 #include <string.h>
 #include <time.h>
 #include <stdarg.h>
+
+#include "../TargetOS.h"
 
 #include "Logs.h"
 #include "logs_config_private.h"
@@ -31,21 +33,21 @@
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
 /**
- * @brief Структура файла логов.
+ * @brief РЎС‚СЂСѓРєС‚СѓСЂР° С„Р°Р№Р»Р° Р»РѕРіРѕРІ.
 */
 struct LogFile
 {
-    /// Указатель на файл.
+    /// РЈРєР°Р·Р°С‚РµР»СЊ РЅР° С„Р°Р№Р».
     FILE* file;
-    /// Сигнатура файла.
+    /// РЎРёРіРЅР°С‚СѓСЂР° С„Р°Р№Р»Р°.
     LogSignature sig;
-    /// Заголовок.
+    /// Р—Р°РіРѕР»РѕРІРѕРє.
     const char* caption;
-    /// Имя файла.
+    /// РРјСЏ С„Р°Р№Р»Р°.
     const char* fileName;
 };
 
-/// Сообщения о уровне логирования.
+/// РЎРѕРѕР±С‰РµРЅРёСЏ Рѕ СѓСЂРѕРІРЅРµ Р»РѕРіРёСЂРѕРІР°РЅРёСЏ.
 static const char* const LogLevelMessages[] =
 {
     "TRACE",
@@ -58,52 +60,52 @@ static const char* const LogLevelMessages[] =
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
-/// Размер буфера для форматирования даты и времени сообщения логов.
+/// Р Р°Р·РјРµСЂ Р±СѓС„РµСЂР° РґР»СЏ С„РѕСЂРјР°С‚РёСЂРѕРІР°РЅРёСЏ РґР°С‚С‹ Рё РІСЂРµРјРµРЅРё СЃРѕРѕР±С‰РµРЅРёСЏ Р»РѕРіРѕРІ.
 static const size_t BufferTimeSize  = 40;
 
-/// Количество лог-файлов.
+/// РљРѕР»РёС‡РµСЃС‚РІРѕ Р»РѕРі-С„Р°Р№Р»РѕРІ.
 static const size_t LogFilesSize    = (size_t)LogSignature::Reserved;
-/// Массив файловых дескрипторов.
+/// РњР°СЃСЃРёРІ С„Р°Р№Р»РѕРІС‹С… РґРµСЃРєСЂРёРїС‚РѕСЂРѕРІ.
 static LogFile      LogFiles[LogFilesSize];
-/// Был ли вызван конструктор логов.
+/// Р‘С‹Р» Р»Рё РІС‹Р·РІР°РЅ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ Р»РѕРіРѕРІ.
 static bool         LogFilesCreated = false;
 
-/// В конце файла логов находятся закрывающие html-теги. Сообщения в файл пишутся не в конец, а перед этими тегами.
+/// Р’ РєРѕРЅС†Рµ С„Р°Р№Р»Р° Р»РѕРіРѕРІ РЅР°С…РѕРґСЏС‚СЃСЏ Р·Р°РєСЂС‹РІР°СЋС‰РёРµ html-С‚РµРіРё. РЎРѕРѕР±С‰РµРЅРёСЏ РІ С„Р°Р№Р» РїРёС€СѓС‚СЃСЏ РЅРµ РІ РєРѕРЅРµС†, Р° РїРµСЂРµРґ СЌС‚РёРјРё С‚РµРіР°РјРё.
 static int          TextOffset      = 0;
 
-/// Номер записанной в файл логов строки.
-/// Общий для всех файлов.
-/// Так можно отследить порядок сообщений в разных файлах.
+/// РќРѕРјРµСЂ Р·Р°РїРёСЃР°РЅРЅРѕР№ РІ С„Р°Р№Р» Р»РѕРіРѕРІ СЃС‚СЂРѕРєРё.
+/// РћР±С‰РёР№ РґР»СЏ РІСЃРµС… С„Р°Р№Р»РѕРІ.
+/// РўР°Рє РјРѕР¶РЅРѕ РѕС‚СЃР»РµРґРёС‚СЊ РїРѕСЂСЏРґРѕРє СЃРѕРѕР±С‰РµРЅРёР№ РІ СЂР°Р·РЅС‹С… С„Р°Р№Р»Р°С….
 static size_t       AbsoluteLogLineIndex = 0;
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
 /**
- * @brief  Конструктор отдельного файла логов. Вызывается внутри LogsConstructor().
+ * @brief  РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РѕС‚РґРµР»СЊРЅРѕРіРѕ С„Р°Р№Р»Р° Р»РѕРіРѕРІ. Р’С‹Р·С‹РІР°РµС‚СЃСЏ РІРЅСѓС‚СЂРё LogsConstructor().
  * 
- * @param logFileName Имя выходного файла логов (включая путь к нему).
- * @param caption     Текстовый заголовок в начале файла логов.
- * @param sig         Сигнатура файла логов.
+ * @param logFileName РРјСЏ РІС‹С…РѕРґРЅРѕРіРѕ С„Р°Р№Р»Р° Р»РѕРіРѕРІ (РІРєР»СЋС‡Р°СЏ РїСѓС‚СЊ Рє РЅРµРјСѓ).
+ * @param caption     РўРµРєСЃС‚РѕРІС‹Р№ Р·Р°РіРѕР»РѕРІРѕРє РІ РЅР°С‡Р°Р»Рµ С„Р°Р№Р»Р° Р»РѕРіРѕРІ.
+ * @param sig         РЎРёРіРЅР°С‚СѓСЂР° С„Р°Р№Р»Р° Р»РѕРіРѕРІ.
  * 
- * @return LogError::FileOpen, если не удалось создать файл. 
- *         LogError::NoErrors, если нет ошибок.
+ * @return LogError::FileOpen, РµСЃР»Рё РЅРµ СѓРґР°Р»РѕСЃСЊ СЃРѕР·РґР°С‚СЊ С„Р°Р№Р». 
+ *         LogError::NoErrors, РµСЃР»Рё РЅРµС‚ РѕС€РёР±РѕРє.
 */
 static LogError LogConstructor(const char* const logFileName, const char* const caption, const LogSignature sig);
 
 /**
- * @brief  Возвращает указатель на цвет данного уровня логирования.
+ * @brief  Р’РѕР·РІСЂР°С‰Р°РµС‚ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° С†РІРµС‚ РґР°РЅРЅРѕРіРѕ СѓСЂРѕРІРЅСЏ Р»РѕРіРёСЂРѕРІР°РЅРёСЏ.
  * 
- * @param level Уровень логирования.
+ * @param level РЈСЂРѕРІРµРЅСЊ Р»РѕРіРёСЂРѕРІР°РЅРёСЏ.
  * 
- * @return Указатель на цвет текста.
+ * @return РЈРєР°Р·Р°С‚РµР»СЊ РЅР° С†РІРµС‚ С‚РµРєСЃС‚Р°.
 */
 static const char* const GetLogLevelColor(const LogLevel level);
 
 /**
- * @brief  Выводит в буфер отформатированное текущее время.
+ * @brief  Р’С‹РІРѕРґРёС‚ РІ Р±СѓС„РµСЂ РѕС‚С„РѕСЂРјР°С‚РёСЂРѕРІР°РЅРЅРѕРµ С‚РµРєСѓС‰РµРµ РІСЂРµРјСЏ.
  * 
- * @param buffer Выходное отформатированное время. Размер буфера должен быть не меньше BufferTimeSize.
+ * @param buffer Р’С‹С…РѕРґРЅРѕРµ РѕС‚С„РѕСЂРјР°С‚РёСЂРѕРІР°РЅРЅРѕРµ РІСЂРµРјСЏ. Р Р°Р·РјРµСЂ Р±СѓС„РµСЂР° РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РЅРµ РјРµРЅСЊС€Рµ BufferTimeSize.
 */
 static void FormatCurrentTime(char* const buffer);
 
@@ -113,23 +115,28 @@ static void FormatCurrentTime(char* const buffer);
 LogError LogsConstructor()
 {
     LogFilesCreated = true;
-    
+
+#if defined(WINDOWS)
     system("rd " LOGS_FOLDER "/s /q");
     system("md " LOGS_FOLDER);
+#elif defined(LINUX)
+    system("rm -r ./" LOGS_FOLDER);
+    system("mkdir " LOGS_FOLDER);
+#endif
 
     LogError status = LogError::NoErrors;
 
-    status = LogConstructor(LOGS_FOLDER "log_general.html", "Общий лог программы.", LogSignature::General);
+    status = LogConstructor(LOGS_FOLDER "log_general.html", "РћР±С‰РёР№ Р»РѕРі РїСЂРѕРіСЂР°РјРјС‹.", LogSignature::General);
     if (status != LogError::NoErrors)
     {
         return status;
     }
 
     ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
-    // Добавить ещё один файл логов здесь. В случае ошибки не забыть закрыть уже открытые файлы с логами.
+    // Р”РѕР±Р°РІРёС‚СЊ РµС‰С‘ РѕРґРёРЅ С„Р°Р№Р» Р»РѕРіРѕРІ Р·РґРµСЃСЊ. Р’ СЃР»СѓС‡Р°Рµ РѕС€РёР±РєРё РЅРµ Р·Р°Р±С‹С‚СЊ Р·Р°РєСЂС‹С‚СЊ СѓР¶Рµ РѕС‚РєСЂС‹С‚С‹Рµ С„Р°Р№Р»С‹ СЃ Р»РѕРіР°РјРё.
     ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
-    // В деструкторе есть проверка на повторный вызов.
+    // Р’ РґРµСЃС‚СЂСѓРєС‚РѕСЂРµ РµСЃС‚СЊ РїСЂРѕРІРµСЂРєР° РЅР° РїРѕРІС‚РѕСЂРЅС‹Р№ РІС‹Р·РѕРІ.
     atexit(LogsDestructor);
 
     return status;
@@ -143,7 +150,7 @@ static LogError LogConstructor(const char* const logFileName, const char* const 
     const size_t logIndex = (size_t)sig;
     assert(logIndex < LogFilesSize);
 
-    //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
+    ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
     FILE* const file = fopen(logFileName, "w");
     if (!file)
@@ -151,10 +158,10 @@ static LogError LogConstructor(const char* const logFileName, const char* const 
         return LogError::FileOpen;
     }
 
-    // Делаем вывод небуферизованным.
+    // Р”РµР»Р°РµРј РІС‹РІРѕРґ РЅРµР±СѓС„РµСЂРёР·РѕРІР°РЅРЅС‹Рј.
     setbuf(file, nullptr);
 
-    //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
+    ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
     
     LogFiles[logIndex].file     = file;
     LogFiles[logIndex].fileName = logFileName;
@@ -165,7 +172,7 @@ static LogError LogConstructor(const char* const logFileName, const char* const 
     char bufferTime[BufferTimeSize] = "";
     FormatCurrentTime(bufferTime);
 
-    //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
+    ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
     snprintf(buffer, BufferSize, 
              "<html>\n"
@@ -182,7 +189,7 @@ static LogError LogConstructor(const char* const logFileName, const char* const 
     
     fputs(buffer, file);
 
-    //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
+    ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
     TextOffset = ftell(file);
 
@@ -227,7 +234,7 @@ void LogLine(const char* const message, const LogLevel logLevel, const LogSignat
     const size_t logIndex = (size_t)sig;
     assert(logIndex < LogFilesSize);
 
-    //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
+    ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
     
     char  buffer[BufferSize]         = "";
     char  bufferTime[BufferTimeSize] = "";
@@ -235,7 +242,7 @@ void LogLine(const char* const message, const LogLevel logLevel, const LogSignat
 
     const char* const logLevelColor  = GetLogLevelColor(logLevel);
     
-    //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
+    ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
     fseek(LogFiles[logIndex].file, TextOffset, SEEK_END);
 
@@ -254,7 +261,7 @@ void LogLine(const char* const message, const LogLevel logLevel, const LogSignat
 
     fputs(buffer, LogFiles[logIndex].file);
 
-    //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
+    ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
     if (dublicateToConsole)
     {
@@ -278,7 +285,7 @@ void LogFLine(const LogLevel logLevel, const LogSignature sig, const bool dublic
     const size_t logIndex = (size_t)sig;
     assert(logIndex < LogFilesSize);
 
-    //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
+    ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
     
     char  buffer[BufferSize]         = "";
     char  bufferTime[BufferTimeSize] = "";
@@ -286,7 +293,7 @@ void LogFLine(const LogLevel logLevel, const LogSignature sig, const bool dublic
 
     const char* const logLevelColor  = GetLogLevelColor(logLevel);
     
-    //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
+    ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
     
     fseek(LogFiles[logIndex].file, TextOffset, SEEK_END);
 
@@ -303,14 +310,14 @@ void LogFLine(const LogLevel logLevel, const LogSignature sig, const bool dublic
     
     fputs(buffer, LogFiles[logIndex].file);
 
-    //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
+    ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
     va_list args;
 	va_start(args, format);
     vsnprintf(buffer, BufferSize, format, args);
     va_end(args);
 
-    //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
+    ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
     
     if (dublicateToConsole)
     {
@@ -332,7 +339,7 @@ void LogAddTrace(const LogSignature sig, const LogTrace trace,
     assert(fileName);
     assert(LogFilesCreated);
 
-    //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
+    ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
         
     const size_t logIndex = (size_t)sig;
     assert(logIndex < LogFilesSize);
@@ -345,7 +352,7 @@ void LogAddTrace(const LogSignature sig, const LogTrace trace,
     if (trace == LogTrace::Error)
         logColor = LOG_ERR_TRACE_COLOR;
     
-    //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
+    ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
     fseek(LogFiles[logIndex].file, TextOffset, SEEK_END);
 
@@ -382,13 +389,13 @@ FILE* LogBeginDump(const LogSignature sig, const LogLevel logLevel,
     const size_t logIndex = (size_t)sig;
     assert(logIndex < LogFilesSize);
 
-    //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
+    ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
     char  buffer[BufferSize]         = "";
     char  bufferTime[BufferTimeSize] = "";
     FormatCurrentTime(bufferTime);
 
-    //***\\---//***\\-----//***\\---//***\\-----//*****\\-----//***\\---//***\\-----//***\\---//***\\
+    ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
     fseek(LogFiles[logIndex].file, TextOffset, SEEK_END);
 
@@ -451,7 +458,7 @@ static const char* const GetLogLevelColor(const LogLevel level)
             return LOG_INFO_COLOR;
         default:
             assert(!"Not implemented");
-            // Устанавливаем цвет ошибки, чтобы бросалось в глаза в Release, если assert не срабатывал в Debug.
+            // РЈСЃС‚Р°РЅР°РІР»РёРІР°РµРј С†РІРµС‚ РѕС€РёР±РєРё, С‡С‚РѕР±С‹ Р±СЂРѕСЃР°Р»РѕСЃСЊ РІ РіР»Р°Р·Р° РІ Release, РµСЃР»Рё assert РЅРµ СЃСЂР°Р±Р°С‚С‹РІР°Р» РІ Debug.
             return LOG_ERROR_COLOR;
     }
 }

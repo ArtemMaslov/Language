@@ -1,131 +1,174 @@
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+// Файл грамматики языка. 
+// 
+// Описание основных типов данных и функций.
+//
+// Версия: 1.0.1.0
+// Дата последнего изменения: 12:15 29.01.2023
+// 
+// Автор: Маслов А.С. (https://github.com/ArtemMaslov).
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+
 #ifndef LANGUAGE_GRAMMAR_H
 #define LANGUAGE_GRAMMAR_H
 
+#include <stddef.h>
+
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
-// Ключевые слова
+#define GRAMMAR(type, grammar, keyword, ...) \
+	keyword,
+
+/// Тип ключевого слова.
 enum class KeywordType
 {
-	Null   = -1, // Лексема не является ключевым словом.
-
-	If     = 0,
-	Else   = 1,
-
-	While  = 10,
-
-	Return = 20,
-
-	Input  = 30,
-	Output = 31,
-
+	Null = -1, ///< Лексема не является ключевым словом.
+#include "keywords.inc"
 };
 
-// Операторы
+#undef GRAMMAR
+
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+
+#define GRAMMAR(type, grammar, oper, ...) \
+	oper,
+
+/// Тип оператора.
 enum class OperatorType
 {
-	Null			= -1,  // Лексема не является оператором.
-
-	// Арифметические операции.
-	Addition        = 0,   // Сложение.
-	Subtraction     = 1,   // Вычитание.
-	Multiplication  = 2,   // Умножение.
-	Division        = 3,   // Деление.
-
-	// Операторы сравнения.
-	Equal           = 100, // Оператор сравнения равно.
-	NotEqual        = 101, // Оператор сравнения не равно.
-
-	GreaterEqual    = 102, // Оператор сравнения больше или равно.
-	Greater         = 103, // Оператор сравнения больше.
-
-	LessEqual       = 104, // Оператор сравнения меньше или равно.
-	Less            = 105, // Оператор сравнения меньше.
-
-    // Логические операторы.
-	Not             = 120, // Логическое не.
-	And             = 121, // Логическое и.
-	Or              = 122, // Логическое или.
-
-	SetValue        = 130, // Присвоение.
+	Null = -1, ///< Лексема не является оператором.
+#include "operators.inc"
 };
 
-// Специальные символы.
+#undef GRAMMAR
+
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+
+#define GRAMMAR(type, grammar, specSymbol, ...) \
+	specSymbol,
+
+/// Тип специального символа.
 enum class SpecialSymbolType
 {
-	Null             = -1,   // Лексема не является специальным символом.
-
-	OpeningParenthesis  = '(',  // Символ открывающаяся круглая скобка (.
-	ClosingParenthesis  = ')',  // Символ закрывающаяся круглая скобка ).
-
-	OpeningSquareBracket = '[',  // Символ открывающаяся квадратная скобка [.
-	ClosingSquareBracket = ']',  // Символ закрывающаяся квадратная скобка ].
-
-	OpeningBrace  = '{',  // Символ открывающаяся фигурная скобка {.
-	ClosingBrace  = '}',  // Символ закрывающаяся фигурная скобка }.
-
-	Point            = '.',  // Символ точка ..
-	Comma            = ',',  // Символ запятая ,.
-
-	//Equal            = '=',  // Символ равно =.
-	Colon            = ':',  // Символ двоеточие :.
-	Semicolon        = ';',  // Символ точка с запятой ;.
-
-	SingleQuotes    = '\'', // Символ одинарная кавычка '.
-	DoubleQuotes    = '\"', // Символ двойная кавычка ".
+	Null = -1, ///< Лексема не является специальным символом.
+#include "special_symbols.inc"
 };
 
+#undef GRAMMAR
+
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
-// Типы лексем
-// Название LngTokenType, а не TokenType, потому что TokenType - это одно из значений enum подключаемой библиотеки.
+// !Название LngTokenType, а не TokenType, потому что TokenType - это одно из значений enum подключаемой библиотеки.
+
+/// Тип лексемы.
 enum class LngTokenType
 {
+	/// Ключевое слово.
 	Keyword       = 0,
+	/// Оператор.
 	Operator      = 1,
+	/// Идентификатор.
 	Identifier    = 2,
+	/// Специальный символ.
 	SpecialSymbol = 3,
+	/// Число.
 	Number        = 4
 };
 
+/// Тип грамматики.
 enum class GrammarType
 {
-	Universal = 1 << 0, // Универсальная грамматика.
-	Russian   = 1 << 1, // Русский тип грамматики.
-	English   = 1 << 2, // Английский тип грамматики.
+	Universal = 1 << 0, ///< Универсальная грамматика.
+	Russian   = 1 << 1, ///< Русская грамматика.
+	English   = 1 << 2, ///< Английская грамматика.
 };
 
+/// Структура для описания лексемы.
 struct GrammarToken
 {
-	LngTokenType   Type;
-	GrammarType Grammar;
+	/// Класс лексемы.
+	LngTokenType Type;
+	/// Тип грамматики, в котором определена лексема.
+	GrammarType  Grammar;
 
+	/// Тип лексемы.
 	union
 	{
-		// Числовое значение лексемы. 
-		int               Int;
+		/// Ключевое слово.
 		KeywordType       Keyword;
+		/// Оператор.
 		OperatorType      Operator;
+		/// Специальный символ.
 		SpecialSymbolType SpecialSymbol;
 	} Value;
 
+	/// Символьное представление лексемы.
 	const char*  Name;
+	/// Длина символьного представления.
 	const size_t NameSize;
 };
 
+/// Таблица лексем операторов.
 extern GrammarToken Operators[];
-extern GrammarToken SpecialSymbols[];
-extern GrammarToken Keywords[];
-
-extern const size_t KeywordsSize;
-extern const size_t SpecialSymbolsSize;
+/// Количество лексем операторов.
 extern const size_t OperatorsSize;
 
+/// Таблица лексем специальных символов.
+extern GrammarToken SpecialSymbols[];
+/// Количество лексем специальных символов.
+extern const size_t SpecialSymbolsSize;
+
+/// Таблица лексем ключевых слов.
+extern GrammarToken Keywords[];
+/// Количество лексем ключевых слов.
+extern const size_t KeywordsSize;
+
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
-const GrammarToken* GrammarGetName(LngTokenType type, int id);
+/**
+ * @brief  Получить описание лексемы по её типу.
+ * 
+ * @warning В Release нет проверки на правильность передаваемого типа лексемы.
+ * 
+ * @param keyword Тип ключевого слова.
+ * 
+ * @return Указатель на ключевое слово.
+*/
+const GrammarToken* GrammarGetToken(const KeywordType keyword);
+
+/**
+* @brief  Получить описание лексемы по её типу.
+* 
+* @warning В Release нет проверки на правильность передаваемого типа лексемы.
+*
+* @param oper Тип оператора.
+* 
+* @return Указатель на оператор.
+*/
+const GrammarToken* GrammarGetToken(const OperatorType oper);
+
+/**
+* @brief  Получить описание лексемы по её типу.
+* 
+* @warning В Release нет проверки на правильность передаваемого типа лексемы.
+*
+* @param specSym Тип специального символа.
+* 
+* @return Указатель на специальный символ.
+*/
+const GrammarToken* GrammarGetToken(const SpecialSymbolType specSym);
+
+/**
+ * @brief  Получить строку для оператора для GraphViz.
+ * 
+ * @param oper Тип оператора.
+ * 
+ * @return Указатель на строку.
+ */
+const char* const GrammarGetGraphVizName(const OperatorType oper);
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///

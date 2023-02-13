@@ -1,101 +1,75 @@
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+// Модуль абстрактного синтаксического дерева АСД (AST).
+// 
+// Конструктор, деструктор АСД и служебные функции.
+//  
+// Версия: 1.0.1.0
+// Дата последнего изменения: 15:00 30.01.2023
+// 
+// Автор: Маслов А.С. (https://github.com/ArtemMaslov).
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+
 #include <assert.h>
+#include <string.h>
+
+#include "../Modules/Logs/Logs.h"
+#include "../Modules/ErrorsHandling.h"
 
 #include "AST.h"
+#include "ast_private.h"
+
+#define AST_NODE(type) #type,
+static const char* const AstNodeNames[] =
+{
+	"Variable",
+#include "ast_nodes.inc"
+};
+#undef AST_NODE
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
-#define CHECK_STATUS \
-	if (status != ProgramStatus::Ok) \
-		return status
-
-///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
-///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
-
-ProgramStatus AstConstructor(AST* ast)
+AstError AstConstructor(AST* const ast)
 {
 	assert(ast);
 
 	ProgramStatus status = ProgramStatus::Ok;
 
 	status = ExtArrayConstructor(&ast->ConstrNodes, sizeof(ConstructionNode), AstConstrNodeDefaultCapacity);
-	CHECK_STATUS;
+	if (status != ProgramStatus::Ok)
+	{
+		TRACE_ERROR();
+		return AstError::ExtArray;
+	}
 
-	status = ExtHeapConstructor(&ast->Nodes, AST_NODES_HEAP_DEFAULT_SIZE);
+	status = ExtHeapConstructor(&ast->Nodes, AstNodesDefaultCapacity);
+	if (status != ProgramStatus::Ok)
+	{
+		TRACE_ERROR();
+		ExtArrayDestructor(&ast->ConstrNodes);
+		return AstError::ExtHeap;
+	}
 
-	return status;
+	return AstError::NoErrors;
 }
 
-ProgramStatus AstDestructor(AST* ast)
+void AstDestructor(AST* const ast)
 {
 	assert(ast);
 
-	ProgramStatus status = ProgramStatus::Ok;
+	AstConstrBlockDestructor(&ast->ConstrNodes);
 
 	ExtArrayDestructor(&ast->ConstrNodes);
-	CHECK_STATUS;
-
 	ExtHeapDestructor(&ast->Nodes);
-
-	return status;
+	memset(ast, 0, sizeof(AST));
 }
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
-const char* AstNodeGetName(AstNodeTypes type)
+const char* const AstNodeGetName(const AstNodeType type)
 {
-	switch (type)
-	{
-		case AstNodeTypes::Variable:
-			return "Variable";
-
-		case AstNodeTypes::FunctDef:
-			return "FunctDef";
-
-		case AstNodeTypes::FunctCall:
-			return "FunctCall";
-
-		case AstNodeTypes::FunctParamNode:
-			return "FunctParam";
-
-		case AstNodeTypes::Expression:
-			return "Expression";
-
-		case AstNodeTypes::BinaryOperator:
-			return "BinaryOper";
-
-		case AstNodeTypes::UnaryOperator:
-			return "UnaryOper";
-
-		case AstNodeTypes::If:
-			return "If";
-
-		case AstNodeTypes::While:
-			return "While";
-
-		case AstNodeTypes::Input:
-			return "Input";
-
-		case AstNodeTypes::Output:
-			return "Output";
-
-		case AstNodeTypes::Instruction:
-			return "Instruction";
-
-		case AstNodeTypes::Construction:
-			return "Construction";
-
-		case AstNodeTypes::Number:
-			return "Number";
-
-		case AstNodeTypes::Return:
-			return "Return";
-
-		default:
-			assert(!"Unknown");
-	}
-	return nullptr;
+	return AstNodeNames[(size_t)type];
 }
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///

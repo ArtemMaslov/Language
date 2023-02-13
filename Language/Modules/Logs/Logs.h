@@ -55,8 +55,8 @@
 // 7. Если нужно отключить поддержку логов в модуле, можно добавить в модуль файл "Modules/DisableLogs.h".
 //    Более подробное описание смотри в заголовке этого файла.
 // 
-// Версия: 1.0.0.4
-// Дата последнего изменения: 18:11 28.01.2023
+// Версия: 1.0.1.3
+// Дата последнего изменения: 14:22 30.01.2023
 // 
 // Автор: Маслов А.С. (https://github.com/ArtemMaslov).
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
@@ -66,12 +66,13 @@
 
 #include <stdio.h>
 
+#include "../TargetOS.h"
 #include "LogsConfig.h"
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
-/// Ошибки работы модуля логов.
+/// Особые ситуации при работе модуля логов.
 enum class LogError
 {
     /// Ошибок нет.
@@ -125,6 +126,7 @@ enum class LogSignature
     Reserved
 };
 
+/// Уровни трассировки.
 enum class LogTrace
 {
     /// Конструкторы / деструкторы. 
@@ -134,11 +136,11 @@ enum class LogTrace
     /// Вызывается из внешних модулей и выполняет основные операции.
     Funct0 = 1,
 
-    /// Второстепенные функции модуля.
+    /// Вспомогательные функции модуля.
     /// Вызываются внутри модуля основными функциями.
     Funct1 = 2,
 
-    /// Вспомогательные функции модуля.
+    /// Служебные функции модуля.
     /// Часто вызываются в ходе выполнения основной операции, обычно короткие.
     /// Трассировка таких функций замусорит лог файл.
     Funct2 = 3,
@@ -351,7 +353,7 @@ void LogLine(const char* const message, const LogLevel logLevel, const LogSignat
 * @return void.
 */
 #define LogLine(message, logLevel, sig, dublicateToConsole) \
-    LogLine(message, logLevel, sig, dublicateToConsole, __FUNCSIG__, __FILE__, __LINE__)
+    LogLine(message, logLevel, sig, dublicateToConsole, FUNCT_SIG, __FILE__, __LINE__)
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
@@ -370,7 +372,7 @@ void LogFLine(const LogLevel logLevel, const LogSignature sig, const bool dublic
 * @return void.
 */
 #define LogFLine(logLevel, sig, dublicateToConsole, format, ...) \
-    LogFLine(logLevel, sig, dublicateToConsole, __FUNCSIG__, __FILE__, __LINE__, format, __VA_ARGS__)
+    LogFLine(logLevel, sig, dublicateToConsole, FUNCT_SIG, __FILE__, __LINE__, format, __VA_ARGS__)
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
@@ -387,7 +389,7 @@ void LogAddTrace(const LogSignature sig, const LogTrace trace,
 * @return void.
 */
 #define LogAddTrace(sig, trace) \
-    LogAddTrace(sig, trace, __FUNCSIG__, __FILE__, __LINE__)
+    LogAddTrace(sig, trace, FUNCT_SIG, __FILE__, __LINE__)
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
@@ -416,7 +418,7 @@ FILE* LogBeginDump(const LogSignature sig, const LogLevel logLevel,
  * @return FILE*, указатель на дескриптор файла логов.
 */
 #define LogBeginDump(sig, lvl) \
-    LogBeginDump(sig, lvl, __FUNCSIG__, __FILE__, __LINE__)
+    LogBeginDump(sig, lvl, FUNCT_SIG, __FILE__, __LINE__)
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///

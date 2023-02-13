@@ -27,8 +27,8 @@
 // 7. Чтобы отключить поддержку логов нужно добавить в проект файл "Modules/DisableLogs.h",
 //    и в этом файле установить значение true дефайна MODULE_EXT_HEAP_DISABLE_LOGS.
 // 
-// Версия: 1.0.0.1
-// Дата последнего изменения: 14:16 28.01.2023
+// Версия: 1.0.1.1
+// Дата последнего изменения: 11:11 03.02.2023
 // 
 // Автор: Маслов А.С. (https://github.com/ArtemMaslov).
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
@@ -37,6 +37,7 @@
 #define EXT_HEAP_H
 
 #include "../ErrorsHandling.h"
+#include "../TargetOS.h"
 
 /// Чтобы отключить поддержку логов в модуле, нужно установить значение true.
 #define MODULE_EXT_HEAP_DISABLE_LOGS false
@@ -111,17 +112,19 @@ void ExtHeapDestructor(ExtHeap* const extHeap,
 					   const char* const funct, const char* const file, const size_t line);
 
 /**
-* @brief  Деструктор расширяющейся кучи.
-* 
+ * @brief  Деструктор расширяющейся кучи.
+ * 
  * Если в ходе работы ExtHeap были перевыделения памяти, то сообщение об
  * этом будет записано в файл логов.
-* 
-* @param extHeap Указатель на структуру ExtHeap.
-* 
-* @return void.
+ * 
+ * После вызова деструктора структуру можно повторно использовать.
+ * 
+ * @param extHeap Указатель на структуру ExtHeap.
+ * 
+ * @return void.
 */
 #define ExtHeapDestructor(extHeap) \
-	ExtHeapDestructor(extHeap, __FUNCSIG__, __FILE__, __LINE__)
+	ExtHeapDestructor(extHeap, FUNCT_SIG, __FILE__, __LINE__)
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
@@ -159,7 +162,7 @@ void ExtHeapDump(const ExtHeap* const extHeap,
  * @return void.
 */
 #define ExtHeapDump(extHeap) \
-	ExtHeapDump(extHeap, __FUNCSIG__, __FILE__, __LINE__)
+	ExtHeapDump(extHeap, FUNCT_SIG, __FILE__, __LINE__)
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///

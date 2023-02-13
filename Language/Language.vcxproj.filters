@@ -73,7 +73,7 @@
     <ClCompile Include="Front end\Parser.cpp">
       <Filter>Front end</Filter>
     </ClCompile>
-    <ClCompile Include="Front end\Lexer\_identifier.cpp">
+    <ClCompile Include="Front end\Lexer\Identifier.cpp">
       <Filter>Front end\Lexer</Filter>
     </ClCompile>
     <ClCompile Include="Modules\ExtHeap\ExtHeap.cpp">
@@ -85,29 +85,11 @@
     <ClCompile Include="Front end\ParserUnitTests.cpp">
       <Filter>Front end</Filter>
     </ClCompile>
-    <ClCompile Include="AST\_aux_nodes.cpp">
-      <Filter>AST</Filter>
-    </ClCompile>
-    <ClCompile Include="AST\_funct_nodes.cpp">
-      <Filter>AST</Filter>
-    </ClCompile>
-    <ClCompile Include="AST\_expr_nodes.cpp">
-      <Filter>AST</Filter>
-    </ClCompile>
-    <ClCompile Include="AST\_keyword_nodes.cpp">
-      <Filter>AST</Filter>
-    </ClCompile>
     <ClCompile Include="AST\AST.cpp">
       <Filter>AST</Filter>
     </ClCompile>
     <ClCompile Include="AST\AST_Verify.cpp">
       <Filter>AST</Filter>
-    </ClCompile>
-    <ClCompile Include="Back end\SoftCPU\SoftCpuCompiler.cpp">
-      <Filter>Back end\SoftCPU</Filter>
-    </ClCompile>
-    <ClCompile Include="Back end\SoftCPU\SoftCpuCompilerUnitTests.cpp">
-      <Filter>Back end\SoftCPU</Filter>
     </ClCompile>
     <ClCompile Include="Back end\x86\x86Compiler.cpp">
       <Filter>Back end\x86</Filter>
@@ -115,11 +97,35 @@
     <ClCompile Include="Back end\x86\x86CompilerUnitTests.cpp">
       <Filter>Back end\x86</Filter>
     </ClCompile>
-    <ClCompile Include="Back end\x86\_asm_representation.cpp">
-      <Filter>Back end\x86</Filter>
-    </ClCompile>
     <ClCompile Include="Modules\Logs\logs_config_private.h">
       <Filter>Modules\Logs</Filter>
+    </ClCompile>
+    <ClCompile Include="Back end\x86\asm_representation.cpp">
+      <Filter>Back end\x86</Filter>
+    </ClCompile>
+    <ClCompile Include="AST\aux_nodes.cpp">
+      <Filter>AST</Filter>
+    </ClCompile>
+    <ClCompile Include="AST\expr_nodes.cpp">
+      <Filter>AST</Filter>
+    </ClCompile>
+    <ClCompile Include="AST\funct_nodes.cpp">
+      <Filter>AST</Filter>
+    </ClCompile>
+    <ClCompile Include="AST\keyword_nodes.cpp">
+      <Filter>AST</Filter>
+    </ClCompile>
+    <ClCompile Include="Front end\parse_funct.cpp">
+      <Filter>Front end</Filter>
+    </ClCompile>
+    <ClCompile Include="Front end\parse_keyword.cpp">
+      <Filter>Front end</Filter>
+    </ClCompile>
+    <ClCompile Include="Front end\parse_aux.cpp">
+      <Filter>Front end</Filter>
+    </ClCompile>
+    <ClCompile Include="Front end\parse_expr.cpp">
+      <Filter>Front end</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -150,103 +156,87 @@
     <ClInclude Include="Front end\Parser.h">
       <Filter>Front end</Filter>
     </ClInclude>
-    <ClInclude Include="Front end\Lexer\_identifier.h">
+    <ClInclude Include="Front end\Lexer\Identifier.h">
       <Filter>Front end\Lexer</Filter>
     </ClInclude>
     <ClInclude Include="Modules\ExtHeap\ExtHeap.h">
       <Filter>Modules\ExtHeap</Filter>
     </ClInclude>
-    <ClInclude Include="Front end\Lexer\LexerUnitTests.h">
-      <Filter>Front end\Lexer</Filter>
-    </ClInclude>
-    <ClInclude Include="Front end\ParserUnitTests.h">
-      <Filter>Front end</Filter>
-    </ClInclude>
     <ClInclude Include="AST\AST.h">
       <Filter>AST</Filter>
     </ClInclude>
-    <ClInclude Include="AST\_aux_nodes.h">
-      <Filter>AST</Filter>
-    </ClInclude>
-    <ClInclude Include="AST\_funct_nodes.h">
-      <Filter>AST</Filter>
-    </ClInclude>
-    <ClInclude Include="AST\_expr_nodes.h">
-      <Filter>AST</Filter>
-    </ClInclude>
-    <ClInclude Include="AST\_keyword_nodes.h">
-      <Filter>AST</Filter>
-    </ClInclude>
-    <ClInclude Include="AST\AST_Verify.h">
-      <Filter>AST</Filter>
-    </ClInclude>
-    <ClInclude Include="AST\_ast_verify_patterns.h">
-      <Filter>AST</Filter>
-    </ClInclude>
-    <ClInclude Include="Back end\SoftCPU\SoftCpuCompiler.h">
-      <Filter>Back end\SoftCPU</Filter>
-    </ClInclude>
-    <ClInclude Include="Back end\SoftCPU\SoftCpuCompilerUnitTests.h">
-      <Filter>Back end\SoftCPU</Filter>
-    </ClInclude>
-    <ClInclude Include="Front end\_parse_aux.h">
-      <Filter>Front end</Filter>
-    </ClInclude>
-    <ClInclude Include="Front end\_parse_expr.h">
-      <Filter>Front end</Filter>
-    </ClInclude>
-    <ClInclude Include="Front end\_parse_funct.h">
-      <Filter>Front end</Filter>
-    </ClInclude>
-    <ClInclude Include="Front end\_parse_keyword.h">
-      <Filter>Front end</Filter>
-    </ClInclude>
-    <ClInclude Include="Back end\SoftCPU\_compiler_config.h">
-      <Filter>Back end\SoftCPU</Filter>
-    </ClInclude>
-    <ClInclude Include="Back end\SoftCPU\_intrinsic_funct.h">
-      <Filter>Back end\SoftCPU</Filter>
-    </ClInclude>
-    <ClInclude Include="Back end\x86\_intrinsic_funct.h">
-      <Filter>Back end\x86</Filter>
-    </ClInclude>
     <ClInclude Include="Back end\x86\x86Compiler.h">
-      <Filter>Back end\x86</Filter>
-    </ClInclude>
-    <ClInclude Include="Back end\x86\x86CompilerUnitTests.h">
-      <Filter>Back end\x86</Filter>
-    </ClInclude>
-    <ClInclude Include="Back end\x86\_asm_representation.h">
       <Filter>Back end\x86</Filter>
     </ClInclude>
     <ClInclude Include="Back end\x86\DSL.h">
       <Filter>Back end\x86</Filter>
     </ClInclude>
-    <ClInclude Include="Back end\x86\_compiler_config.h">
-      <Filter>Back end\x86</Filter>
-    </ClInclude>
     <ClInclude Include="Modules\DisableLogs.h">
       <Filter>Modules</Filter>
     </ClInclude>
+    <ClInclude Include="UnitTests.h" />
+    <ClInclude Include="Front end\parser_private.h">
+      <Filter>Front end</Filter>
+    </ClInclude>
+    <ClInclude Include="AST\ast_private.h">
+      <Filter>AST</Filter>
+    </ClInclude>
+    <ClInclude Include="Back end\x86\asm_representation.h">
+      <Filter>Back end\x86</Filter>
+    </ClInclude>
+    <ClInclude Include="Back end\x86\compiler_config.h">
+      <Filter>Back end\x86</Filter>
+    </ClInclude>
+    <ClInclude Include="Back end\x86\intrinsic_funct.h">
+      <Filter>Back end\x86</Filter>
+    </ClInclude>
+    <ClInclude Include="AST\ast_verify_patterns.h">
+      <Filter>AST</Filter>
+    </ClInclude>
+    <ClInclude Include="AST\aux_nodes.h">
+      <Filter>AST</Filter>
+    </ClInclude>
+    <ClInclude Include="AST\expr_nodes.h">
+      <Filter>AST</Filter>
+    </ClInclude>
+    <ClInclude Include="AST\funct_nodes.h">
+      <Filter>AST</Filter>
+    </ClInclude>
+    <ClInclude Include="AST\keyword_nodes.h">
+      <Filter>AST</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="LanguageGrammar\Universal\Operators.inc">
+    <None Include="LanguageGrammar\Universal\operators.inc">
       <Filter>LanguageGrammar\Universal</Filter>
     </None>
-    <None Include="LanguageGrammar\Universal\SpecialSymbols.inc">
+    <None Include="LanguageGrammar\Universal\special_symbols.inc">
       <Filter>LanguageGrammar\Universal</Filter>
     </None>
-    <None Include="LanguageGrammar\English\Keywords.inc">
+    <None Include="LanguageGrammar\English\keywords.inc">
       <Filter>LanguageGrammar\English</Filter>
     </None>
-    <None Include="Back end\x86\_asm_cmd_names.inc">
+    <None Include="LanguageGrammar\keywords.inc">
+      <Filter>LanguageGrammar</Filter>
+    </None>
+    <None Include="LanguageGrammar\operators.inc">
+      <Filter>LanguageGrammar</Filter>
+    </None>
+    <None Include="LanguageGrammar\special_symbols.inc">
+      <Filter>LanguageGrammar</Filter>
+    </None>
+    <None Include="AST\ast_nodes.inc">
+      <Filter>AST</Filter>
+    </None>
+    <None Include="Back end\x86\asm_cmd_codes.inc">
       <Filter>Back end\x86</Filter>
     </None>
-    <None Include="Back end\x86\_asm_regs.inc">
+    <None Include="Back end\x86\asm_cmd_names.inc">
       <Filter>Back end\x86</Filter>
     </None>
-    <None Include="Back end\x86\_asm_cmd_codes.inc">
+    <None Include="Back end\x86\asm_regs.inc">
       <Filter>Back end\x86</Filter>
     </None>
+    <None Include="Front end\parse_funct.cpp.vsspell" />
   </ItemGroup>
 </Project>
