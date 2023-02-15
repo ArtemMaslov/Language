@@ -16,7 +16,7 @@
 /// Установить false, чтобы скомпилировать основную программу.
 /// Установить true,  чтобы запустить тестирование модулей. Также необходимо выбрать 
 /// модуль для тестирования ниже.
-#define ENABLE_UNIT_TESTS true
+#define ENABLE_UNIT_TESTS false
 
 // Выбор тестируемых модулей. 1 - включить тестирование, 0 - выключить.
 // Одновременно можно проводить тестирование только 1 модуля.
@@ -26,7 +26,7 @@
 #define ENABLE_PARSER_TEST               0
 #define ENABLE_X86_COMPILER_TEST_COMPILE 0
 #define ENABLE_X86_COMPILER_TEST_RUN     0
-#define ENABLE_SOFT_CPU_TEST_RUN         1
+#define ENABLE_SOFT_CPU_TEST_RUN         0
 #endif
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///

@@ -11,14 +11,25 @@ objs_ast      := aux_nodes.o expr_nodes.o funct_nodes.o keyword_nodes.o AST.o AS
 objs_x86      := x86Compiler.o asm_representation.o asm_labels.o \
 			     compile_aux.o compile_expr.o compile_funct.o compile_keywords.o
 objs_soft_cpu := SoftCpuCompiler.o
+obj_main      := $(OBJ)/main.o
 
 objs_frontend := $(objs_lexer) $(objs_parser) $(objs_grammar)
 
-$(OBJ)/main.o: main.cpp
-	@echo Компиляция $@
-	@$(COMP) -o $(OBJ64)/$@ $< $(COMP_FLAGS)
+$(obj_main): main.cpp
+	@echo "\033[35m\tКомпиляция \033[1m$@ \033[22m...\033[0m"
+	@$(COMP) -o $@ $< $(COMP_FLAGS)
 
-compile: dir_obj compile_modules compile_ast compile_frontend compile_x86 compile_soft_cpu
+compile: dir_obj  compile_modules compile_ast compile_frontend compile_x86 compile_soft_cpu $(obj_main)
+
+build:
+	@echo "\033[33mСборка основной программы ...\033[0m"
+	$(MAKE) compile --no-print-directory --quiet
+	@echo "\033[33mРедактирование связей ...\033[0m"
+
+	@$(COMP) -o $(TARGET_PATH) $(addprefix $(OBJ)/, \
+	$(objs_modules) $(objs_ast) $(objs_frontend) $(objs_x86) $(objs_soft_cpu) main.o) $(LINK_FLAGS)
+
+	@echo "\033[32mСборка программы успешно завершена.\033[0m"
 
 lexer_test: dir_obj dir_bin compile_modules compile_grammar compile_lexer
 	@cd ./Front\ end/Lexer && $(MAKE) lexer_test --no-print-directory --quiet
@@ -56,8 +67,6 @@ soft_cpu_test: dir_obj dir_bin compile_modules compile_frontend compile_ast comp
 
 	@echo "\033[32mСборка программы успешно завершена.\033[0m"
 
-default: compile
-
 compile_frontend: compile_grammar compile_lexer compile_parser
 
 compile_modules:
@@ -75,8 +84,8 @@ compile_x86:
 compile_soft_cpu:
 	@cd ./Back\ end/SoftCPU && $(MAKE) --no-print-directory
 
-.PHONY: compile compile_modules compile_grammar compile_ast compile_lexer compile_parser \
+.PHONY: compile build compile_modules compile_grammar compile_ast compile_lexer compile_parser \
 		compile_frontend compile_x86 compile_soft_cpu \
 		x86_test soft_cpu_test parser_test lexer_test
 
-.DEFAULT_GOAL = default
+.DEFAULT_GOAL = build
