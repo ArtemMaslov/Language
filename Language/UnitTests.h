@@ -25,7 +25,8 @@
 #define ENABLE_LEXER_TEST                0
 #define ENABLE_PARSER_TEST               0
 #define ENABLE_X86_COMPILER_TEST_COMPILE 0
-#define ENABLE_X86_COMPILER_TEST_RUN     1
+#define ENABLE_X86_COMPILER_TEST_RUN     0
+#define ENABLE_SOFT_CPU_TEST_RUN         1
 #endif
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///

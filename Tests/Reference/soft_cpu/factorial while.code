@@ -1,0 +1,136 @@
+	call main
+	hlt
+
+main:
+	push bx
+	push cx
+	push bx
+	pop cx
+
+	push 0.000000
+
+	pop [cx +0]
+	push bx
+	push 1
+	add
+	pop bx
+
+	in
+	pop [cx +0]
+
+	push [cx +0]
+
+	pop [bx]
+	push bx
+	push 1
+	add
+	pop bx
+
+	call Factorial
+	push bx
+	push 1
+	sub
+	pop bx
+
+	push ax
+
+	pop [cx +1]
+	push bx
+	push 1
+	add
+	pop bx
+
+	push [cx +1]
+
+	out
+
+	pop cx
+	pop bx
+	ret
+
+Factorial:
+	push bx
+	push cx
+	push bx
+	pop cx
+
+	push [cx -1]
+
+	push 0.000000
+
+	jae l_less_false_1
+	push 1
+	jmp l_less_end_1
+l_less_false_1:
+	push 0
+l_less_end_1:
+
+	push 1
+	jne l_if_false_0
+
+	push -1.000000
+
+	pop ax
+	pop cx
+	pop bx
+	ret
+
+	jmp l_if_end_0
+l_if_false_0:
+
+l_if_end_0:
+
+	push 1.000000
+
+	pop [cx +0]
+	push bx
+	push 1
+	add
+	pop bx
+
+l_while_cond_2:
+
+	push [cx -1]
+
+	push 1.000000
+
+	jbe l_greater_false_3
+	push 1
+	jmp l_greater_end_3
+l_greater_false_3:
+	push 0
+l_greater_end_3:
+
+	push 1
+	jne l_while_end_2
+
+	push [cx +0]
+
+	push [cx -1]
+
+	mul
+
+	pop [cx +0]
+
+	push [cx -1]
+
+	push 1.000000
+
+	sub
+
+	pop [cx -1]
+
+	jmp l_while_cond_2
+l_while_end_2:
+
+	push [cx +0]
+
+	pop ax
+	pop cx
+	pop bx
+	ret
+
+	pop cx
+	pop bx
+	ret
+

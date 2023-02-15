@@ -7,11 +7,11 @@ objs := $(addprefix $(OBJ)/, asm_representation.o x86Compiler.o asm_labels.o \
 obj_compiler_test := $(OBJ)/x86CompilerUnitTests.o
 
 compile:
-	@echo "\033[33mКомпиляция \033[1mx86 Backend \033[22m...\033[0m"
+	@echo "\033[33mКомпиляция \033[1mBackend x86 \033[22m...\033[0m"
 
 	@$(MAKE) _compile --quiet
 
-	@echo "\033[32mКомпиляция \033[1mx86 Backend \033[22mуспешно завершена.\033[0m"
+	@echo "\033[32mКомпиляция \033[1mBackend x86 \033[22mуспешно завершена.\033[0m"
 
 _compile: $(objs)
 

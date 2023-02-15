@@ -1,3 +1,12 @@
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+// Файл содержит правила перевода языковых конструкций в ассемблер эмулятора процессора.
+// 
+// Версия: 1.0.0.0
+// Дата последнего изменения: 18:20 14.02.2023
+// 
+// Автор: Маслов А.С. (https://github.com/ArtemMaslov).
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+
 #ifndef COMPILER_CONFIG_H
 #define COMPILER_CONFIG_H
 
@@ -13,14 +22,16 @@
 	"\tadd\n"	  \
 	"\tpop bx\n"
 
-//***///***///---\\\***\\\***\\\___/// Arithmetic \\\___///***///***///---\\\***\\\***\\ 
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
 static const char* const CompAdd = "\tadd\n\n";
 static const char* const CompSub = "\tsub\n\n";
 static const char* const CompMul = "\tmul\n\n";
 static const char* const CompDiv = "\tdiv\n\n";
 
-//***///***///---\\\***\\\***\\\___/// Condition \\\___///***///***///---\\\***\\\***\\ 
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+///                                    Condition
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
 static const char* const CompCompare = 
 	"\t%s l_%s_false_%zd\n"
@@ -48,10 +59,12 @@ static const char* const CompGreaterLabelName      = "greater";
 static const char* const CompGreaterEqualJmpType   = "jb";
 static const char* const CompGreaterEqualLabelName = "greater_equal";
 
-//***///***///---\\\***\\\***\\\___/// Logical \\\___///***///***///---\\\***\\\***\\ 
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+///                                     Logical
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
 static const char* const CompNot = 
-	"\tpush 0\t"
+	"\tpush 0\n"
 	"\tjne l_not_false_%zd\n"
 	"\tpush 1\n"
 	"\tjmp l_not_end_%zd\n"
@@ -148,7 +161,9 @@ static const char* const CompInput =
 static const char* const CompOutput =
 	"\tout\n\n";
 
-//***///***///---\\\***\\\***\\\___///    If   \\\___///***///***///---\\\***\\\***\\ 
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+///                                       If
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
 static const char* const CompIfConditionFormat = 
 	"\tpush 1\n"
@@ -161,7 +176,9 @@ static const char* const CompIfFalseLabelFormat =
 static const char* const CompIfEndLabelFormat = 
 "l_if_end_%zd:\n\n";
 
-//***///***///---\\\***\\\***\\\___///  While  \\\___///***///***///---\\\***\\\***\\ 
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+///                                      While
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
 static const char* const CompWhileConditionLabelFormat = 
 "l_while_cond_%zd:\n\n";

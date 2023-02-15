@@ -39,6 +39,7 @@
 /x86
 /Language/x64
 /Language/x86
+/Tests/SoftCpu
 
 Language.\ Пометки.txt
 *.bak

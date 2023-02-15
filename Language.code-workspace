@@ -13,18 +13,6 @@
 		"C_Cpp.doxygen.generatedStyle": "/**",
 		"files.associations": {
 			"*.inc": "cpp",
-			"*.tcc": "cpp",
-			"compare": "cpp",
-			"random": "cpp",
-			"limits": "cpp",
-			"new": "cpp",
-			"numeric": "cpp",
-			"cmath": "cpp",
-			"tuple": "cpp",
-			"type_traits": "cpp",
-			"utility": "cpp",
-			"array": "cpp",
-			"functional": "cpp"
 		}
 	}
 }

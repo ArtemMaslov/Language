@@ -7,8 +7,7 @@ TARGET_OS  := LINUX
 TARGET_NAME := Language.out
 TARGET_PATH  = $(BIN)/$(TARGET_NAME)
 
-FLAGS  := -O0 -DEBUG -Wall -Werror -Wno-unused-function -Wno-unused-variable -Wno-unused-but-set-variable \
-          -fno-permissive -Wno-comment
+FLAGS  := -O0 -DEBUG -Wall -Werror -Wno-unused-function -Wno-unused-variable -Wno-unused-but-set-variable
 AFLAGS := -fsanitize=address -fsanitize=undefined
 
 COMP_FLAGS := $(FLAGS) -D$(TARGET_OS) -c -g -m32

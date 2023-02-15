@@ -48,8 +48,11 @@ ProgramStatus CompileFunctDef(x86Compiler* const comp, const FunctDefNode* const
 	const Identifier* const id = IdentifierGetById(comp->Ast->Identifiers, functNode->NameId);
 	if (!id)
 	{
+		TRACE_ERROR();
+		IdentifierTableDestructor(&comp->CurrentVariablesScope);
 		return ProgramStatus::Fault;
 	}
+
 	const char* const functNodeName = id->Name;
 
 	LABEL(functNodeName);
@@ -65,6 +68,7 @@ ProgramStatus CompileFunctDef(x86Compiler* const comp, const FunctDefNode* const
 	if (status != ProgramStatus::Ok)
 	{
 		TRACE_ERROR();
+		IdentifierTableDestructor(&comp->CurrentVariablesScope);
 		return status;
 	}
 

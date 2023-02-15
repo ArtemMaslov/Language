@@ -1,7 +1,17 @@
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+// Модуль компилятора для архитектуры эмулятора процессора SoftCpu.
+// 
+// Версия: 1.0.1.0
+// Дата последнего изменения: 16:50 15.02.2023
+// 
+// Автор: Маслов А.С. (https://github.com/ArtemMaslov).
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdint.h>
 
 #include "../../Modules/Logs/Logs.h"
 #include "../../Modules/ErrorsHandling.h"
@@ -15,65 +25,198 @@
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
-#define CHECK_STATUS \
-	assert(status == ProgramStatus::Ok)
-	//if (status != ProgramStatus::Ok) \
-	//	return status;
-
-///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
-///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
-
-struct x86Compiler
+/// Структура компилятора SoftCpu.
+struct SoftCpuCompiler
 {
+	/// Индекс метки. Используется, чтобы у меток были уникальные имена.
 	size_t LabelIndex;
 
+	/// Указатель на выходной файл с ассемблерным кодом.
 	FILE* File;
+	/// Указатель на АСД.
 	AST*  Ast;
 
 	/// Узел функции, которая сейчас компилируется.
 	const FunctDefNode* CurrentFunction;
 
+	/// Текущая область видимости переменных. Используется для выделения переменным места
+	/// в стеке сразу после вызова процедуры.
 	IdentifierTable CurrentVariablesScope;
 };
 
-const size_t IdentifierNull = (size_t)(-1);
+/// Значение нулевой (пустой) переменной. Сигнализирует об ошибке внутри вызванной функции.
+const int IdentifierNull = INT32_MAX;
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
-static ProgramStatus CompileFunctDef(x86Compiler* comp, const FunctDefNode* functNode);
+/**
+ * @brief  Скомпилировать определение функции.
+ * 
+ * @param comp      Указатель на структуру компилятора.
+ * @param functNode Указатель на узел определения функции.
+ * 
+ * @return ProgramStatus::Ok, если функция выполнена без ошибок.
+ */
+static ProgramStatus CompileFunctDef(SoftCpuCompiler* comp, const FunctDefNode* functNode);
 
-static ProgramStatus CompileFunctCall(x86Compiler* comp, const FunctCallNode* functCallNode);
+/**
+ * @brief  Скомпилировать вызов функции.
+ * 
+ * @param comp          Указатель на структуру компилятора.
+ * @param functCallNode Указатель на узел вызова функции.
+ * 
+ * @return ProgramStatus::Ok, если функция выполнена без ошибок.
+ */
+static ProgramStatus CompileFunctCall(SoftCpuCompiler* comp, const FunctCallNode* functCallNode);
 
-static ProgramStatus CompileInstrinsicFunction(x86Compiler* comp, FunctCallNode* functCallNode);
+/**
+ * @brief  Скомпилировать встроенные в язык функции.
+ * 
+ * @param comp          Указатель на структуру компилятора.
+ * @param functCallNode Указатель на узел вызова функции.
+ * 
+ * @return ProgramStatus::Ok, если функция выполнена без ошибок.
+ */
+static ProgramStatus CompileInstrinsicFunction(SoftCpuCompiler* comp, FunctCallNode* functCallNode);
 
-static ProgramStatus CompileWhile(x86Compiler* comp, const WhileNode* whileNode);
+/**
+ * @brief  Скомпилировать оператор цикла.
+ * 
+ * @param comp      Указатель на структуру компилятора.
+ * @param whileNode Указатель на узел оператора цикла.
+ * 
+ * @return ProgramStatus::Ok, если функция выполнена без ошибок.
+ */
+static ProgramStatus CompileWhile(SoftCpuCompiler* comp, const WhileNode* whileNode);
 
-static ProgramStatus CompileIf(x86Compiler* comp, const IfNode* ifNode);
+/**
+ * @brief  Скомпилировать условный оператор.
+ * 
+ * @param comp   Указатель на структуру компилятора.
+ * @param ifNode Указатель на узел условного оператора.
+ * 
+ * @return ProgramStatus::Ok, если функция выполнена без ошибок.
+ */
+static ProgramStatus CompileIf(SoftCpuCompiler* comp, const IfNode* ifNode);
 
-static ProgramStatus CompileOutput(x86Compiler* comp, const OutputNode* outputNode);
+/**
+ * @brief  Скомпилировать оператор вывода.
+ * 
+ * @param comp       Указатель на структуру компилятора.
+ * @param outputNode Указатель на узел оператора вывода.
+ * 
+ * @return ProgramStatus::Ok, если функция выполнена без ошибок.
+ */
+static ProgramStatus CompileOutput(SoftCpuCompiler* comp, const OutputNode* outputNode);
 
-static ProgramStatus CompileInput(x86Compiler* comp, const InputNode* inputNode);
+/**
+ * @brief  Скомпилировать оператор ввода.
+ * 
+ * @param comp      Указатель на структуру компилятора.
+ * @param inputNode Указатель на оператор ввода.
+ * 
+ * @return ProgramStatus::Ok, если функция выполнена без ошибок.
+ */
+static ProgramStatus CompileInput(SoftCpuCompiler* comp, const InputNode* inputNode);
 
-static ProgramStatus CompileExpression(x86Compiler* comp, const ExpressionNode* exprNode);
+/**
+ * @brief  Скомпилировать выражение.
+ * 
+ * @param comp     Указатель на структуру компилятора.
+ * @param exprNode Указатель на узел выражения.
+ * 
+ * @return ProgramStatus::Ok, если функция выполнена без ошибок.
+ */
+static ProgramStatus CompileExpression(SoftCpuCompiler* comp, const ExpressionNode* exprNode);
 
-static ProgramStatus CompileUnaryOperator(x86Compiler* comp, const UnaryOperatorNode* unOperNode);
+/**
+ * @brief  Скомпилировать унарный оператор.
+ * 
+ * @param comp       Указатель на структуру компилятора.
+ * @param unOperNode Указатель на узел унарного оператора.
+ * 
+ * @return ProgramStatus::Ok, если функция выполнена без ошибок.
+ */
+static ProgramStatus CompileUnaryOperator(SoftCpuCompiler* comp, const UnaryOperatorNode* unOperNode);
 
-static ProgramStatus CompileBinaryOperator(x86Compiler* comp, const BinaryOperatorNode* binOperNode);
+/**
+ * @brief  Скомпилировать бинарный оператор.
+ * 
+ * @param comp        Указатель на структуру компилятора.
+ * @param binOperNode Указатель на узел бинарного оператора.
+ * 
+ * @return ProgramStatus::Ok, если функция выполнена без ошибок.
+ */
+static ProgramStatus CompileBinaryOperator(SoftCpuCompiler* comp, const BinaryOperatorNode* binOperNode);
 
-static int IdentifierGetMemoryOffset(x86Compiler* comp, const int varId, bool* outVarInitialization = nullptr);
+/**
+ * @brief  Скомпилировать оператор возврата.
+ * 
+ * @param comp       Указатель на структуру компилятора.
+ * @param returnNode Указатель на узел оператора возврата.
+ * 
+ * @return ProgramStatus::Ok, если функция выполнена без ошибок.
+ */
+static ProgramStatus CompileReturn(SoftCpuCompiler* comp, const ReturnNode* returnNode);
 
-static ProgramStatus CompileReturn(x86Compiler* comp, const ReturnNode* returnNode);
+/**
+ * @brief  Скомпилировать использование константного числа с плавающей точкой.
+ * 
+ * @param comp   Указатель на структуру компилятора.
+ * @param number Значение числа с плавающей точкой.
+ */
+static void CompileNumber(SoftCpuCompiler* comp, double number);
 
-static ProgramStatus CompileNumber(x86Compiler* comp, double number);
+/**
+ * @brief  Скомпилировать использование переменной (инициализация и получение значения).
+ * 
+ * @param comp    Указатель на структуру компилятора.
+ * @param varNode Указатель на узел переменной.
+ * 
+ * @return ProgramStatus::Ok, если функция выполнена без ошибок.
+ */
+static ProgramStatus CompileVariable(SoftCpuCompiler* comp, const VariableNode* varNode);
 
-static ProgramStatus CompileVariable(x86Compiler* comp, const VariableNode* varNode);
+/**
+ * @brief  Скомпилировать блок инструкций.
+ * 
+ * @param comp       Указатель на структуру компилятора.
+ * @param instrBlock ExtArray<InstructionNode> - блок инструкций.
+ * 
+ * @return ProgramStatus::Ok, если функция выполнена без ошибок.
+ */
+static ProgramStatus CompileInstrBlock(SoftCpuCompiler* comp, const ExtArray* instrBlock);
 
-static ProgramStatus CompileInstrBlock(x86Compiler* comp, const ExtArray* instrBlock);
+/**
+ * @brief  Скомпилировать конструкционные узлы.
+ * 
+ * @param comp Указатель на структуру компилятора.
+ * 
+ * @return ProgramStatus::Ok, если функция выполнена без ошибок.
+ */
+static ProgramStatus CompileConstrNodes(SoftCpuCompiler* comp);
 
-static ProgramStatus CompileConstrNodes(x86Compiler* comp);
+/**
+ * @brief  Скомпилировать оператор сравнения.
+ * 
+ * @param comp        Указатель на структуру компилятора.
+ * @param binOperNode Указатель на бинарный оператор, который является оператором сравнения.
+ */
+static void CompileCompareOperator(SoftCpuCompiler* comp, const BinaryOperatorNode* binOperNode);
 
-static ProgramStatus CompileCompareOperator(x86Compiler* comp, const BinaryOperatorNode* binOperNode);
+/**
+ * @brief  Получить смещение в стеке для адреса локальной переменной функции.
+ * 
+ * @param comp                 Указатель на структуру компилятора.
+ * @param varId                Идентификатор переменной.
+ * @param outVarInitialization Выходной параметр. Равен true, если переменная раньше 
+ *                             не встречалась в функции, то есть происходит её инициализация.
+ *                             false, если происходит получение значения переменной.
+ * 
+ * @return ProgramStatus::Ok, если функция выполнена без ошибок.
+ */
+static int IdentifierGetMemoryOffset(SoftCpuCompiler* comp, const size_t varId, bool* outVarInitialization = nullptr);
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
@@ -83,27 +226,38 @@ ProgramStatus SoftCpuCompileFile(AST* ast, const char* outFile)
 	assert(ast);
 	assert(outFile);
 
-	FILE* file = fopen(outFile, "w");
+	ProgramStatus status = ProgramStatus::Ok;
 
+	FILE* const file = fopen(outFile, "w");
 	if (!file)
 	{
+		LOG_F_ERR("Ошибка открытия файла \"%s\"", file);
 		return ProgramStatus::Fault;
 	}
 
-	x86Compiler comp = {};
-	comp.File     = file;
-	comp.Ast      = ast;
+	SoftCpuCompiler comp = {};
+	comp.File            = file;
+	comp.Ast             = ast;
 
 	fputs("\tcall main\n\thlt\n\n", file);
 
-	ProgramStatus status = CompileConstrNodes(&comp);
-	CHECK_STATUS;
+	status = CompileConstrNodes(&comp);
+	if (status != ProgramStatus::Ok)
+	{
+		TRACE_ERROR();
+		fclose(file);
+		return status;
+	}
+	
 	fclose(file);
 
-	return ProgramStatus::Ok;
+	return status;
 }
 
-static ProgramStatus CompileFunctDef(x86Compiler* comp, const FunctDefNode* functNode)
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+
+static ProgramStatus CompileFunctDef(SoftCpuCompiler* comp, const FunctDefNode* functNode)
 {
 	assert(comp);
 	assert(functNode);
@@ -118,17 +272,25 @@ static ProgramStatus CompileFunctDef(x86Compiler* comp, const FunctDefNode* func
 		return ProgramStatus::Fault;
 	}
 
-	const Identifier* const id = IdentifierGetById(&comp->Ast->IdentififerTable, functNode->NameId);
+	const Identifier* const id = IdentifierGetById(comp->Ast->Identifiers, functNode->NameId);
 	if (!id)
 	{
+		TRACE_ERROR();
+		IdentifierTableDestructor(&comp->CurrentVariablesScope);
 		return ProgramStatus::Fault;
 	}
+
 	const char* const functNodeName = id->Name;
 
 	fprintf(comp->File, CompFunctDefStart, functNodeName);
 
 	status = CompileInstrBlock(comp, &functNode->Body);
-	CHECK_STATUS;
+	if (status != ProgramStatus::Ok)
+	{
+		TRACE_ERROR();
+		IdentifierTableDestructor(&comp->CurrentVariablesScope);
+		return ProgramStatus::Fault;
+	}
 
 	fputs(CompFunctDefEnd, comp->File);
 
@@ -137,7 +299,7 @@ static ProgramStatus CompileFunctDef(x86Compiler* comp, const FunctDefNode* func
 	return status;
 }
 
-static ProgramStatus CompileFunctCall(x86Compiler* comp, const FunctCallNode* functCallNode)
+static ProgramStatus CompileFunctCall(SoftCpuCompiler* comp, const FunctCallNode* functCallNode)
 {
 	assert(comp);
 	assert(functCallNode);
@@ -152,16 +314,22 @@ static ProgramStatus CompileFunctCall(x86Compiler* comp, const FunctCallNode* fu
 		FunctParamNode* param = (FunctParamNode*)ExtArrayGetElemAt(params, st);
 
 		status = CompileExpression(comp, param->Value);
-		CHECK_STATUS;
+		if (status != ProgramStatus::Ok)
+		{
+			TRACE_ERROR();
+			return status;
+		}
 
 		fputs(CompFunctCallSaveParam, comp->File);
 	}
 
-	const Identifier* const id = IdentifierGetById(&comp->Ast->IdentififerTable, functCallNode->NameId);
+	const Identifier* const id = IdentifierGetById(comp->Ast->Identifiers, functCallNode->NameId);
 	if (!id)
 	{
+		TRACE_ERROR();
 		return ProgramStatus::Fault;
 	}
+
 	const char* const functNodeName = id->Name;
 
 	fprintf(comp->File, CompFunctCall, functNodeName, paramsCount);
@@ -169,7 +337,7 @@ static ProgramStatus CompileFunctCall(x86Compiler* comp, const FunctCallNode* fu
 	return status;
 }
 
-static ProgramStatus CompileReturn(x86Compiler* comp, const ReturnNode* returnNode)
+static ProgramStatus CompileReturn(SoftCpuCompiler* comp, const ReturnNode* returnNode)
 {
 	assert(returnNode);
 
@@ -178,16 +346,21 @@ static ProgramStatus CompileReturn(x86Compiler* comp, const ReturnNode* returnNo
 	if (returnNode->Value)
 	{
 		status = CompileExpression(comp, returnNode->Value);
-		CHECK_STATUS;
+		if (status != ProgramStatus::Ok)
+		{
+			TRACE_ERROR();
+			return status;
+		}
+
 		fputs(CompRetValue, comp->File);
 	}
 
 	fputs(CompFunctDefEnd, comp->File);
 
-	return ProgramStatus::Ok;
+	return status;
 }
 
-static ProgramStatus CompileWhile(x86Compiler* comp, const WhileNode* whileNode)
+static ProgramStatus CompileWhile(SoftCpuCompiler* comp, const WhileNode* whileNode)
 {
 	assert(comp);
 	assert(whileNode);
@@ -198,19 +371,27 @@ static ProgramStatus CompileWhile(x86Compiler* comp, const WhileNode* whileNode)
 	fprintf(comp->File, CompWhileConditionLabelFormat, labelIndex);
 
 	status = CompileExpression(comp, whileNode->Condition);
-	CHECK_STATUS;
+	if (status != ProgramStatus::Ok)
+	{
+		TRACE_ERROR();
+		return status;
+	}
 
 	fprintf(comp->File, CompWhileConditionCheckFormat, labelIndex);
 
 	status = CompileInstrBlock(comp, &whileNode->Body);
-	CHECK_STATUS;
+	if (status != ProgramStatus::Ok)
+	{
+		TRACE_ERROR();
+		return status;
+	}
 
 	fprintf(comp->File, CompWhileEndFormat, labelIndex, labelIndex);
 
 	return status;
 }
 
-static ProgramStatus CompileIf(x86Compiler* comp, const IfNode* ifNode)
+static ProgramStatus CompileIf(SoftCpuCompiler* comp, const IfNode* ifNode)
 {
 	assert(comp);
 	assert(ifNode);
@@ -219,55 +400,70 @@ static ProgramStatus CompileIf(x86Compiler* comp, const IfNode* ifNode)
 	const size_t labelIndex = comp->LabelIndex++;
 		
 	status = CompileExpression(comp, ifNode->Condition);
-	CHECK_STATUS;
+	if (status != ProgramStatus::Ok)
+	{
+		TRACE_ERROR();
+		return status;
+	}
 
 	fprintf(comp->File, CompIfConditionFormat, labelIndex);
 
 	status = CompileInstrBlock(comp, &ifNode->TrueBlock);
-	CHECK_STATUS;
+	if (status != ProgramStatus::Ok)
+	{
+		TRACE_ERROR();
+		return status;
+	}
 
 	fprintf(comp->File, CompIfFalseLabelFormat, labelIndex, labelIndex);
 
 	status = CompileInstrBlock(comp, &ifNode->FalseBlock);
-	CHECK_STATUS;
+	if (status != ProgramStatus::Ok)
+	{
+		TRACE_ERROR();
+		return status;
+	}
 
 	fprintf(comp->File, CompIfEndLabelFormat, labelIndex);
 
 	return status;
 }
 
-static ProgramStatus CompileOutput(x86Compiler* comp, const OutputNode* outputNode)
+static ProgramStatus CompileOutput(SoftCpuCompiler* comp, const OutputNode* outputNode)
 {
 	assert(comp);
 	assert(outputNode);
 
 	ProgramStatus status = CompileExpression(comp, outputNode->Output);
-	CHECK_STATUS;
+	if (status != ProgramStatus::Ok)
+	{
+		TRACE_ERROR();
+		return status;
+	}
 
 	fputs(CompOutput, comp->File);
 
 	return status;
 }
 
-static ProgramStatus CompileInput(x86Compiler* comp, const InputNode* inputNode)
+static ProgramStatus CompileInput(SoftCpuCompiler* comp, const InputNode* inputNode)
 {
 	assert(comp);
 	assert(inputNode);
 
-	int memOffset = IdentifierGetMemoryOffset(comp, inputNode->Input->NameId);
-
-	if (memOffset == IdentifierNull)
+	const int offset = IdentifierGetMemoryOffset(comp, inputNode->Input->NameId);
+	if (offset == IdentifierNull)
 	{
-		assert(!"Error");
+		TRACE_ERROR();
 		return ProgramStatus::Fault;
 	}
 
-	fprintf(comp->File, CompInput, memOffset);
+	fprintf(comp->File, CompInput, offset);
 
 	return ProgramStatus::Ok;
 }
 
-static ProgramStatus CompileExpression(x86Compiler* comp, const ExpressionNode* exprNode)
+static ProgramStatus CompileExpression(SoftCpuCompiler* comp, const ExpressionNode* exprNode)
 {
 	assert(comp);
 	assert(exprNode);
@@ -276,26 +472,26 @@ static ProgramStatus CompileExpression(x86Compiler* comp, const ExpressionNode* 
 
 	switch (exprNode->Type)
 	{
-		case AstNodeTypes::BinaryOperator:
+		case AstNodeType::BinaryOperator:
 			status = CompileBinaryOperator(comp, exprNode->Node.BinaryOperator);
 			break;
 
-		case AstNodeTypes::UnaryOperator:
+		case AstNodeType::UnaryOperator:
 			status = CompileUnaryOperator(comp, exprNode->Node.UnaryOperator);
 			break;
 
-		case AstNodeTypes::Number:
-			status = CompileNumber(comp, exprNode->Node.Number);
+		case AstNodeType::Number:
+			CompileNumber(comp, exprNode->Node.Number);
 			break;
 
-		case AstNodeTypes::FunctCall:
+		case AstNodeType::FunctCall:
 			status = CompileInstrinsicFunction(comp, exprNode->Node.FunctCall);
 
 			fputs(CompGetRetValue, comp->File);
 
 			break;
 
-		case AstNodeTypes::Variable:
+		case AstNodeType::Variable:
 			status = CompileVariable(comp, exprNode->Node.Variable);
 			break;
 
@@ -304,11 +500,16 @@ static ProgramStatus CompileExpression(x86Compiler* comp, const ExpressionNode* 
 			break;
 	}
 
-	CHECK_STATUS;
+	if (status != ProgramStatus::Ok)
+	{
+		TRACE_ERROR();
+		return status;
+	}
+
 	return status;
 }
 
-static ProgramStatus CompileUnaryOperator(x86Compiler* comp, const UnaryOperatorNode* unOperNode)
+static ProgramStatus CompileUnaryOperator(SoftCpuCompiler* comp, const UnaryOperatorNode* unOperNode)
 {
 	assert(comp);
 	assert(unOperNode);
@@ -316,8 +517,11 @@ static ProgramStatus CompileUnaryOperator(x86Compiler* comp, const UnaryOperator
 	ProgramStatus status = ProgramStatus::Ok;
 
 	status = CompileExpression(comp, unOperNode->Operand);
-	CHECK_STATUS;
-
+	if (status != ProgramStatus::Ok)
+	{
+		TRACE_ERROR();
+		return status;
+	}
 	const size_t labelIndex = comp->LabelIndex;
 
 	switch (unOperNode->Operator)
@@ -343,7 +547,7 @@ static ProgramStatus CompileUnaryOperator(x86Compiler* comp, const UnaryOperator
 	return status;
 }
 
-static ProgramStatus CompileBinaryOperator(x86Compiler* comp, const BinaryOperatorNode* binOperNode)
+static ProgramStatus CompileBinaryOperator(SoftCpuCompiler* comp, const BinaryOperatorNode* binOperNode)
 {
 	assert(comp);
 	assert(binOperNode);
@@ -351,10 +555,18 @@ static ProgramStatus CompileBinaryOperator(x86Compiler* comp, const BinaryOperat
 	ProgramStatus status = ProgramStatus::Ok;
 
 	status = CompileExpression(comp, binOperNode->LeftOperand);
-	CHECK_STATUS;
+	if (status != ProgramStatus::Ok)
+	{
+		TRACE_ERROR();
+		return status;
+	}
 
 	status = CompileExpression(comp, binOperNode->RightOperand);
-	CHECK_STATUS;
+	if (status != ProgramStatus::Ok)
+	{
+		TRACE_ERROR();
+		return status;
+	}
 
 	const size_t labelIndex = comp->LabelIndex;
 
@@ -382,16 +594,17 @@ static ProgramStatus CompileBinaryOperator(x86Compiler* comp, const BinaryOperat
 		case OperatorType::GreaterEqual:
 		case OperatorType::Less:
 		case OperatorType::LessEqual:
-			return CompileCompareOperator(comp, binOperNode);
-
-		case OperatorType::Not:
-			fprintf(comp->File, CompNot,
-					labelIndex,
-					labelIndex,
-					labelIndex,
-					labelIndex);
-			comp->LabelIndex++;
+			CompileCompareOperator(comp, binOperNode);
 			break;
+
+		// case OperatorType::Not:
+		// 	fprintf(comp->File, CompNot,
+		// 			labelIndex,
+		// 			labelIndex,
+		// 			labelIndex,
+		// 			labelIndex);
+		// 	comp->LabelIndex++;
+		// 	break;
 
 		case OperatorType::And:
 			fprintf(comp->File, CompAnd,
@@ -422,12 +635,10 @@ static ProgramStatus CompileBinaryOperator(x86Compiler* comp, const BinaryOperat
 	return status;
 }
 
-static ProgramStatus CompileCompareOperator(x86Compiler* comp, const BinaryOperatorNode* binOperNode)
+static void CompileCompareOperator(SoftCpuCompiler* comp, const BinaryOperatorNode* binOperNode)
 {
 	assert(comp);
 	assert(binOperNode);
-
-	ProgramStatus status = ProgramStatus::Ok;
 
 	const char*  jmpType    = nullptr;
 	const char*  labelName  = nullptr;
@@ -478,11 +689,9 @@ static ProgramStatus CompileCompareOperator(x86Compiler* comp, const BinaryOpera
 			labelName, labelIndex);
 
 	comp->LabelIndex++;
-
-	return status;
 }
 
-static int IdentifierGetMemoryOffset(x86Compiler* comp, const int varId, bool* outVarInitialization)
+static int IdentifierGetMemoryOffset(SoftCpuCompiler* comp, const size_t varId, bool* outVarInitialization)
 {
 	assert(comp);
 	// assert(outVarInitialization);
@@ -532,7 +741,11 @@ static int IdentifierGetMemoryOffset(x86Compiler* comp, const int varId, bool* o
 	newIdent.Id                  = varId;
 
 	ProgramStatus status = ExtArrayAddElem(&table->Records, &newIdent);
-	CHECK_STATUS;
+	if (status != ProgramStatus::Ok)
+	{
+		TRACE_ERROR();
+		return IdentifierNull;
+	}
 
 	if (outVarInitialization)
 		*outVarInitialization = true;
@@ -540,16 +753,14 @@ static int IdentifierGetMemoryOffset(x86Compiler* comp, const int varId, bool* o
 	return offset;
 }
 
-static ProgramStatus CompileNumber(x86Compiler* comp, double number)
+static void CompileNumber(SoftCpuCompiler* comp, double number)
 {
 	assert(comp);
 
 	fprintf(comp->File, CompNumber, number);
-
-	return ProgramStatus::Ok;
 }
 
-static ProgramStatus CompileVariable(x86Compiler* comp, const VariableNode* varNode)
+static ProgramStatus CompileVariable(SoftCpuCompiler* comp, const VariableNode* varNode)
 {
 	assert(comp);
 	assert(varNode);
@@ -559,11 +770,20 @@ static ProgramStatus CompileVariable(x86Compiler* comp, const VariableNode* varN
 	bool varInit = false;
 
 	const int offset = IdentifierGetMemoryOffset(comp, varNode->NameId, &varInit);
+	if (offset == IdentifierNull)
+	{
+		TRACE_ERROR();
+		return ProgramStatus::Fault;
+	}
 
 	if (varNode->InitValue)
 	{
 		status = CompileExpression(comp, varNode->InitValue);
-		CHECK_STATUS;
+		if (status != ProgramStatus::Ok)
+		{
+			TRACE_ERROR();
+			return status;
+		}
 
 		if (varInit)
 			fprintf(comp->File, CompVarInit, offset);
@@ -578,7 +798,7 @@ static ProgramStatus CompileVariable(x86Compiler* comp, const VariableNode* varN
 	return status;
 }
 
-static ProgramStatus CompileInstrBlock(x86Compiler* comp, const ExtArray* instrBlock)
+static ProgramStatus CompileInstrBlock(SoftCpuCompiler* comp, const ExtArray* instrBlock)
 {
 	assert(comp);
 	assert(instrBlock);
@@ -593,31 +813,31 @@ static ProgramStatus CompileInstrBlock(x86Compiler* comp, const ExtArray* instrB
 
 		switch (instr->Type)
 		{
-			case AstNodeTypes::Variable:
+			case AstNodeType::Variable:
 				status = CompileVariable(comp, instr->Node.Variable);
 				break;
 
-			case AstNodeTypes::FunctCall:
+			case AstNodeType::FunctCall:
 				status = CompileInstrinsicFunction(comp, instr->Node.FunctCall);
 				break;
 
-			case AstNodeTypes::If:
+			case AstNodeType::If:
 				status = CompileIf(comp, instr->Node.If);
 				break;
 
-			case AstNodeTypes::While:
+			case AstNodeType::While:
 				status = CompileWhile(comp, instr->Node.While);
 				break;
 
-			case AstNodeTypes::Input:
+			case AstNodeType::Input:
 				status = CompileInput(comp, instr->Node.Input);
 				break;
 
-			case AstNodeTypes::Output:
+			case AstNodeType::Output:
 				status = CompileOutput(comp, instr->Node.Output);
 				break;
 
-			case AstNodeTypes::Return:
+			case AstNodeType::Return:
 				status = CompileReturn(comp, instr->Node.Return);
 				break;
 
@@ -625,13 +845,18 @@ static ProgramStatus CompileInstrBlock(x86Compiler* comp, const ExtArray* instrB
 				assert(!"Unknown type");
 				break;
 		}
-		CHECK_STATUS;
+
+		if (status != ProgramStatus::Ok)
+		{
+			TRACE_ERROR();
+			return status;
+		}
 	}
 
 	return status;
 }
 
-static ProgramStatus CompileConstrNodes(x86Compiler* comp)
+static ProgramStatus CompileConstrNodes(SoftCpuCompiler* comp)
 {
 	assert(comp);
 
@@ -646,33 +871,40 @@ static ProgramStatus CompileConstrNodes(x86Compiler* comp)
 
 		switch (node->Type)
 		{
-			case AstNodeTypes::FunctDef:
-				status = CompileFunctDef(comp, node->Node.FunctCall);
+			case AstNodeType::FunctDef:
+				status = CompileFunctDef(comp, node->Node.FunctDef);
 				break;
 
-			case AstNodeTypes::GlobVar:
+			case AstNodeType::GlobVar:
 				break;
 
 			default:
 				assert(!"Unknown");
 				break;
 		}
-		CHECK_STATUS;
+		
+		if (status != ProgramStatus::Ok)
+		{
+			TRACE_ERROR();
+			return status;
+		}
 	}
 
 	return status;
 }
 
-static ProgramStatus CompileInstrinsicFunction(x86Compiler* comp, FunctCallNode* functCallNode)
+static ProgramStatus CompileInstrinsicFunction(SoftCpuCompiler* comp, FunctCallNode* functCallNode)
 {
 	assert(comp);
 	assert(functCallNode);
 
-	const Identifier* const id = IdentifierGetById(&comp->Ast->IdentififerTable, functCallNode->NameId);
+	const Identifier* const id = IdentifierGetById(comp->Ast->Identifiers, functCallNode->NameId);
 	if (!id)
 	{
+		TRACE_ERROR();
 		return ProgramStatus::Fault;
 	}
+
 	const char* const functNodeName = id->Name;
 
 	if (strncmp(functNodeName, IntrinSqrt.Name, IntrinSqrt.NameSize) == 0)
@@ -682,7 +914,11 @@ static ProgramStatus CompileInstrinsicFunction(x86Compiler* comp, FunctCallNode*
 		FunctParamNode* arg = (FunctParamNode*)ExtArrayGetElemAt(&functCallNode->Params, 0);
 
 		ProgramStatus status = CompileExpression(comp, arg->Value);
-		CHECK_STATUS;
+		if (status != ProgramStatus::Ok)
+		{
+			TRACE_ERROR();
+			return status;
+		}
 
 		fputs(CompSqrt, comp->File);
 
@@ -698,10 +934,18 @@ static ProgramStatus CompileInstrinsicFunction(x86Compiler* comp, FunctCallNode*
 		ProgramStatus status = ProgramStatus::Ok;
 		
 		status = CompileExpression(comp, value->Value);
-		CHECK_STATUS;
+		if (status != ProgramStatus::Ok)
+		{
+			TRACE_ERROR();
+			return status;
+		}
 
 		status = CompileExpression(comp, ramAddr->Value);
-		CHECK_STATUS;
+		if (status != ProgramStatus::Ok)
+		{
+			TRACE_ERROR();
+			return status;
+		}
 		
 		fputs(CompSetRam, comp->File);
 
@@ -714,7 +958,11 @@ static ProgramStatus CompileInstrinsicFunction(x86Compiler* comp, FunctCallNode*
 		FunctParamNode* ramAddr = (FunctParamNode*)ExtArrayGetElemAt(&functCallNode->Params, 0);
 
 		ProgramStatus status = CompileExpression(comp, ramAddr->Value);
-		CHECK_STATUS;
+		if (status != ProgramStatus::Ok)
+		{
+			TRACE_ERROR();
+			return status;
+		}
 
 		fputs(CompGetRam, comp->File);
 
@@ -735,7 +983,11 @@ static ProgramStatus CompileInstrinsicFunction(x86Compiler* comp, FunctCallNode*
 		FunctParamNode* value = (FunctParamNode*)ExtArrayGetElemAt(&functCallNode->Params, 0);
 
 		ProgramStatus status = CompileExpression(comp, value->Value);
-		CHECK_STATUS;
+		if (status != ProgramStatus::Ok)
+		{
+			TRACE_ERROR();
+			return status;
+		}
 
 		fputs(CompInt, comp->File);
 

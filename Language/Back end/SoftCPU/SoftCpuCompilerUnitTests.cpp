@@ -1,20 +1,42 @@
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+// Тестирование модуля компилятора для эмулятора процессора SoftCPU.
+// 
+// Использование:
+// 1. Настроить файл конфигурации модульного тестирования "project/UnitTest.h":
+//     1.1. Установить ENABLE_UNIT_TESTS true.
+//     1.2. Установить ENABLE_SOFT_CPU_TEST_RUN 1.
+// 
+// 2. Скомпилировать и запустить программу.
+// 
+// Версия: 1.0.1.1
+// Дата последнего изменения: 14:53 13.02.2023
+// 
+// Автор: Маслов А.С. (https://github.com/ArtemMaslov).
+///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+
+#include "../../UnitTests.h"
+
+#if ENABLE_UNIT_TESTS
+#if ENABLE_SOFT_CPU_TEST_RUN
+
 #include <assert.h>
 #include <stdio.h>
+
+#include "../../Modules/TargetOS.h"
+#if defined(WINDOWS)
+#include <Windows.h>
+#endif
+
+#include "../../Modules/Logs/Logs.h"
 
 #include "../../Front end/Parser.h"
 #include "../../AST/AST.h"
 #include "SoftCpuCompiler.h"
-#include "SoftCpuCompilerUnitTests.h"
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
-#define CHECK_STATUS \
-	assert (status == ProgramStatus::Ok)
-
-///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
-///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
-
+/// Тестовые программы.
 static const char* testFiles[] =
 {
 	"../../Tests/simple hello world.lng",
@@ -24,43 +46,88 @@ static const char* testFiles[] =
 	"../../Tests/circle_soft_cpu.lng",
 };
 
+/// Количество тестовых программ.
 static const size_t testFilesCount = sizeof(testFiles) / sizeof(char*);
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 
-void SoftCpuCompilerTest1()
+int main()
 {
-	ProgramStatus status = ProgramStatus::Ok;
+#if defined(WINDOWS)
+SetConsoleCP(1251);
+SetConsoleOutputCP(1251);
+#endif
+
+	LogError logErr = LogsConstructor();
+	if (logErr != LogError::NoErrors)
+	{
+		puts("Ошибка открытия файла логов.");
+		return (int)logErr;
+	}
 
 	for (size_t st = 0; st < testFilesCount; st++)
 	{
-		Parser parser = {};
 		AST ast = {};
+		
+		if (AstConstructor(&ast) != AstError::NoErrors)
+		{
+			TRACE_ERROR();
+			return -1;
+		}
 
-		status = ParserConstructor(&parser);
-		CHECK_STATUS;
+		IdentifierTable table = {};
+		if (IdentifierTableConstructor(&table) != IdentifierError::NoErrors)
+		{
+			TRACE_ERROR();
+			return -1;
+		}
 
-		status = AstConstructor(&ast);
-		CHECK_STATUS;
+		Lexer lexer = {};
+		if (LexerConstructor(&lexer, &table) != LexerError::NoErrors)
+		{
+			TRACE_ERROR();
+			return -1;
+		}
 
-		status = ParserParseFile(&parser, &ast, testFiles[st]);
-		CHECK_STATUS;
+		if (LexerAnalyseFile(&lexer, testFiles[st]) != LexerError::NoErrors)
+		{
+			TRACE_ERROR();
+			return -1;
+		}
+
+		if (ParserParseFile(&lexer, &ast) != ParserError::NoErrors)
+		{
+			TRACE_ERROR();
+			return -1;
+		}
+		LexerDestructor(&lexer);
+		
+		if (AstGraphicDump(&ast) != ProgramStatus::Ok)
+		{
+			TRACE_ERROR();
+			return -1;
+		}
 
 		char buffer[256] = "";
 		sprintf(buffer, "compiled%zd.code", st);
 
-		status = SoftCpuCompileFile(&ast, buffer);
-		CHECK_STATUS;
+		if (SoftCpuCompileFile(&ast, buffer) != ProgramStatus::Ok)
+		{
+			TRACE_ERROR();
+			return -1;
+		}
 
-		status = AstDestructor(&ast);
-		CHECK_STATUS;
-
-		status = ParserDestructor(&parser);
+		AstDestructor(&ast);
+		IdentifierTableDestructor(&table);
 	}
 
-	CHECK_STATUS;
+	LogsDestructor();
+	return 0;
 }
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***///
+
+#endif // !ENABLE_SOFT_CPU_TEST_RUN
+#endif // !ENABLE_UNIT_TESTS

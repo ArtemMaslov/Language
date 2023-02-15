@@ -1,0 +1,45 @@
+	call main
+	hlt
+
+main:
+	push bx
+	push cx
+	push bx
+	pop cx
+
+	push 5.000000
+
+	pop [cx +0]
+	push bx
+	push 1
+	add
+	pop bx
+
+	push 10.000000
+
+	pop [cx +1]
+	push bx
+	push 1
+	add
+	pop bx
+
+	push [cx +0]
+
+	push [cx +1]
+
+	add
+
+	pop [cx +2]
+	push bx
+	push 1
+	add
+	pop bx
+
+	push [cx +2]
+
+	out
+
+	pop cx
+	pop bx
+	ret
+

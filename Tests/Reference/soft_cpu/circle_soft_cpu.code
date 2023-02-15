@@ -1,0 +1,340 @@
+	call main
+	hlt
+
+main:
+	push bx
+	push cx
+	push bx
+	pop cx
+
+	push 29.000000
+
+	pop [cx +0]
+	push bx
+	push 1
+	add
+	pop bx
+
+	push 29.000000
+
+	pop [cx +1]
+	push bx
+	push 1
+	add
+	pop bx
+
+	push 20.000000
+
+	pop [cx +2]
+	push bx
+	push 1
+	add
+	pop bx
+
+	push [cx +2]
+
+	pop [bx]
+	push bx
+	push 1
+	add
+	pop bx
+
+	push [cx +1]
+
+	pop [bx]
+	push bx
+	push 1
+	add
+	pop bx
+
+	push [cx +0]
+
+	pop [bx]
+	push bx
+	push 1
+	add
+	pop bx
+
+	call draw_circle
+	push bx
+	push 3
+	sub
+	pop bx
+
+	dsp
+
+	pop cx
+	pop bx
+	ret
+
+draw_circle:
+	push bx
+	push cx
+	push bx
+	pop cx
+
+	push 0.000000
+
+	pop [cx +0]
+	push bx
+	push 1
+	add
+	pop bx
+
+l_while_cond_0:
+
+	push [cx +0]
+
+	push [cx -3]
+
+	ja l_less_equal_false_1
+	push 1
+	jmp l_less_equal_end_1
+l_less_equal_false_1:
+	push 0
+l_less_equal_end_1:
+
+	push 1
+	jne l_while_end_0
+
+	push [cx -3]
+
+	pop [bx]
+	push bx
+	push 1
+	add
+	pop bx
+
+	push [cx +0]
+
+	pop [bx]
+	push bx
+	push 1
+	add
+	pop bx
+
+	call calc_y
+	push bx
+	push 2
+	sub
+	pop bx
+
+	push ax
+
+	pop [cx +1]
+	push bx
+	push 1
+	add
+	pop bx
+
+	push [cx -2]
+
+	push [cx +1]
+
+	add
+
+	pop [bx]
+	push bx
+	push 1
+	add
+	pop bx
+
+	push [cx -2]
+
+	push [cx +1]
+
+	sub
+
+	pop [bx]
+	push bx
+	push 1
+	add
+	pop bx
+
+	push [cx -1]
+
+	push [cx +0]
+
+	sub
+
+	pop [bx]
+	push bx
+	push 1
+	add
+	pop bx
+
+	call draw_row
+	push bx
+	push 3
+	sub
+	pop bx
+
+	push [cx -2]
+
+	push [cx +1]
+
+	add
+
+	pop [bx]
+	push bx
+	push 1
+	add
+	pop bx
+
+	push [cx -2]
+
+	push [cx +1]
+
+	sub
+
+	pop [bx]
+	push bx
+	push 1
+	add
+	pop bx
+
+	push [cx -1]
+
+	push [cx +0]
+
+	add
+
+	pop [bx]
+	push bx
+	push 1
+	add
+	pop bx
+
+	call draw_row
+	push bx
+	push 3
+	sub
+	pop bx
+
+	push [cx +0]
+
+	push 1.000000
+
+	add
+
+	pop [cx +0]
+
+	jmp l_while_cond_0
+l_while_end_0:
+
+	pop cx
+	pop bx
+	ret
+
+calc_y:
+	push bx
+	push cx
+	push bx
+	pop cx
+
+	push [cx -2]
+
+	push [cx -2]
+
+	mul
+
+	push [cx -1]
+
+	push [cx -1]
+
+	mul
+
+	sub
+
+	sqrt
+	pop ax
+
+	push ax
+
+	pop ax
+	pop cx
+	pop bx
+	ret
+
+	pop cx
+	pop bx
+	ret
+
+draw_row:
+	push bx
+	push cx
+	push bx
+	pop cx
+
+	push [cx -1]
+
+	int
+	pop ax
+
+	push ax
+
+	pop [cx -1]
+
+l_while_cond_2:
+
+	push [cx -2]
+
+	push [cx -3]
+
+	ja l_less_equal_false_3
+	push 1
+	jmp l_less_equal_end_3
+l_less_equal_false_3:
+	push 0
+l_less_equal_end_3:
+
+	push 1
+	jne l_while_end_2
+
+	push 128.000000
+
+	push [cx -1]
+
+	add
+
+	push [cx -2]
+
+	int
+	pop ax
+
+	push ax
+
+	push 60.000000
+
+	mul
+
+	add
+
+	pop [cx +0]
+	push bx
+	push 1
+	add
+	pop bx
+
+	push 1.000000
+
+	push [cx +0]
+
+	pop ax
+	pop [ax]
+
+	push [cx -2]
+
+	push 1.000000
+
+	add
+
+	pop [cx -2]
+
+	jmp l_while_cond_2
+l_while_end_2:
+
+	pop cx
+	pop bx
+	ret
+
