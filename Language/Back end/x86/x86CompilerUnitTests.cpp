@@ -42,8 +42,9 @@ static const char* testFiles[] =
 	//"../../Tests/simple ret.lng",
 	//"../../Tests/simple hello world.lng",
 	//"../../Tests/quadratic equation 1.lng",
+	"../../Tests/quadratic equation 2.lng",
 	//"../../Tests/factorial recursion.lng",
-	"../../Tests/factorial while.lng",
+	//"../../Tests/factorial while.lng",
 	//"../../Tests/circle_x86.lng",
 	//"../../Tests/call funct.lng",
 };

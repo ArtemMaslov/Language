@@ -10,7 +10,7 @@
             "cwd": "${workspaceRoot}/../x86/Debug/",
             "args": 
             [
-                "circle_x86.lng", "-o", "comp.code"
+                "factorial recursion.lng", "-dump_ast", "-o", "comp.code"
             ]
         }
     ]

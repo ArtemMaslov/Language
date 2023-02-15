@@ -21,7 +21,7 @@ GRAMMAR(Operator, Universal, NotEqual, "!=", "!=")
 
 GRAMMAR(Operator, Universal, GreaterEqual, ">=", "&gt;=")
 
-GRAMMAR(Operator, Universal, Greater, ">", "&gt;=")
+GRAMMAR(Operator, Universal, Greater, ">", "&gt;")
 
 GRAMMAR(Operator, Universal, LessEqual, "<=", "&lt;=")
 

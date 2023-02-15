@@ -288,7 +288,7 @@ ProgramStatus CompileNotOperator(x86Compiler* const comp, const UnaryOperatorNod
 	snprintf(labelEnd,   LabelBufferSize, "l_not_end_%zd",   labelIndex);
 
 	POP(REG1(eax));
-	CMP(IMM1(0), REG2(eax));
+	CMP(IMM1(1), REG2(eax));
 	JNE(labelFalse);
 
 	PUSH(IMM1(1));

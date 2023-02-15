@@ -458,6 +458,8 @@ static bool RunCompilerX86(AST* const ast, const CommandLineArgs* const args)
 		}
 	}
 
+	puts("Трансляция завершена. Запуск программы.");
+
 	if (x86RunJIT(&comp) != ProgramStatus::Ok)
 	{
 		TRACE_ERROR();
