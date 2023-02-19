@@ -42,10 +42,10 @@ static const char* testFiles[] =
 	//"../../Tests/simple ret.lng",
 	//"../../Tests/simple hello world.lng",
 	//"../../Tests/quadratic equation 1.lng",
-	"../../Tests/quadratic equation 2.lng",
+	//"../../Tests/quadratic equation 2.lng",
 	//"../../Tests/factorial recursion.lng",
 	//"../../Tests/factorial while.lng",
-	//"../../Tests/circle_x86.lng",
+	"../../Tests/circle_x86.lng",
 	//"../../Tests/call funct.lng",
 };
 
@@ -60,8 +60,8 @@ static const size_t testFilesCount = sizeof(testFiles) / sizeof(char*);
 int main()
 {
 #if defined(WINDOWS)
-SetConsoleCP(1251);
-SetConsoleOutputCP(1251);
+SetConsoleCP(65001);
+SetConsoleOutputCP(65001);
 #endif
 
 	LogError logErr = LogsConstructor();
@@ -192,33 +192,64 @@ SetConsoleOutputCP(1251);
 int main()
 {
 #if defined(WINDOWS)
-SetConsoleCP(1251);
-SetConsoleOutputCP(1251);
+SetConsoleCP(65001);
+SetConsoleOutputCP(65001);
 #endif
 
-	LogError status = LogsConstructor();
-	if (status != LogError::NoErrors)
+	LogError logError = LogsConstructor();
+	if (logError != LogError::NoErrors)
 	{
 		puts("Ошибка открытия файла логов.");
-		return (int)status;
+		return (int)logError;
 	}
-
-	ProgramStatus status = ProgramStatus::Ok;
 
 	for (size_t st = 0; st < testFilesCount; st++)
 	{
-		Parser parser = {};
 		AST ast = {};
 
-		status = ParserConstructor(&parser);
+		if (AstConstructor(&ast) != AstError::NoErrors)
+		{
+			TRACE_ERROR();
+			return -1;
+		}
 
-		status = AstConstructor(&ast);
+		IdentifierTable table = {};
+		if (IdentifierTableConstructor(&table) != IdentifierError::NoErrors)
+		{
+			TRACE_ERROR();
+			return -1;
+		}
 
-		status = ParserParseFile(&parser, &ast, testFiles[st]);
+		Lexer lexer = {};
+		if (LexerConstructor(&lexer, &table) != LexerError::NoErrors)
+		{
+			TRACE_ERROR();
+			return -1;
+		}
 
-		status = AstDestructor(&ast);
+		if (LexerAnalyseFile(&lexer, testFiles[st]) != LexerError::NoErrors)
+		{
+			TRACE_ERROR();
+			return -1;
+		}
 
-		status = ParserDestructor(&parser);
+		LexerLogDump(&lexer);
+
+		if (ParserParseFile(&lexer, &ast) != ParserError::NoErrors)
+		{
+			TRACE_ERROR();
+			return -1;
+		}
+		LexerDestructor(&lexer);
+
+		if (AstGraphicDump(&ast) != ProgramStatus::Ok)
+		{
+			TRACE_ERROR();
+			return -1;
+		}
+
+		AstDestructor(&ast);
+		IdentifierTableDestructor(&table);
 	}
 
 	LogsDestructor();

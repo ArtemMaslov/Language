@@ -53,8 +53,8 @@ static const size_t testFilesCount = sizeof(testFiles) / sizeof(char*);
 int main()
 {
 #if defined(WINDOWS)
-	SetConsoleCP(1251);
-	SetConsoleOutputCP(1251);
+	SetConsoleCP(65001);
+	SetConsoleOutputCP(65001);
 #endif
 
 	LogError status = LogsConstructor();

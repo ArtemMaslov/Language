@@ -125,8 +125,8 @@ static bool RunCompilerSoftCpu(AST* const ast, const CommandLineArgs* const args
 int main(int argc, char* argv[])
 {
 #if defined(WINDOWS)
-	SetConsoleCP(1251);
-	SetConsoleOutputCP(1251);
+	SetConsoleCP(65001);
+	SetConsoleOutputCP(65001);
 #endif
 
 	LogError logErr = LogsConstructor();

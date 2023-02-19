@@ -155,16 +155,25 @@
     <ClCompile Include="AST\expr_nodes.cpp" />
     <ClCompile Include="AST\funct_nodes.cpp" />
     <ClCompile Include="AST\keyword_nodes.cpp" />
+    <ClCompile Include="Back end\SoftCPU\SoftCpuCompiler.cpp" />
+    <ClCompile Include="Back end\SoftCPU\SoftCpuCompilerUnitTests.cpp" />
+    <ClCompile Include="Back end\x86\asm_labels.cpp" />
     <ClCompile Include="Back end\x86\asm_representation.cpp" />
-    <ClCompile Include="Back end\x86\x86Compiler.cpp">
-      <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">All</AssemblerOutput>
-    </ClCompile>
+    <ClCompile Include="Back end\x86\compile_aux.cpp" />
+    <ClCompile Include="Back end\x86\compile_expr.cpp" />
+    <ClCompile Include="Back end\x86\compile_funct.cpp" />
+    <ClCompile Include="Back end\x86\compile_keywords.cpp" />
+    <ClCompile Include="Back end\x86\x86Compiler.cpp" />
     <ClCompile Include="Back end\x86\x86CompilerUnitTests.cpp" />
     <ClCompile Include="Front end\Lexer\Identifier.cpp" />
     <ClCompile Include="Front end\Lexer\Lexer.cpp" />
     <ClCompile Include="Front end\Lexer\LexerUnitTests.cpp" />
     <ClCompile Include="Front end\Parser.cpp" />
     <ClCompile Include="Front end\ParserUnitTests.cpp" />
+    <ClCompile Include="Front end\parse_aux.cpp" />
+    <ClCompile Include="Front end\parse_expr.cpp" />
+    <ClCompile Include="Front end\parse_funct.cpp" />
+    <ClCompile Include="Front end\parse_keyword.cpp" />
     <ClCompile Include="LanguageGrammar\LanguageGrammar.cpp" />
     <ClCompile Include="main.cpp">
       <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NoListing</AssemblerOutput>
@@ -187,8 +196,17 @@
     <ClInclude Include="AST\expr_nodes.h" />
     <ClInclude Include="AST\funct_nodes.h" />
     <ClInclude Include="AST\keyword_nodes.h" />
+    <ClInclude Include="Back end\SoftCPU\SoftCpuCompiler.h" />
+    <ClInclude Include="Back end\SoftCPU\_compiler_config.h" />
+    <ClInclude Include="Back end\SoftCPU\_intrinsic_funct.h" />
+    <ClInclude Include="Back end\x86\asm_defs.h" />
+    <ClInclude Include="Back end\x86\asm_labels.h" />
     <ClInclude Include="Back end\x86\asm_representation.h" />
     <ClInclude Include="Back end\x86\compiler_config.h" />
+    <ClInclude Include="Back end\x86\compile_aux.h" />
+    <ClInclude Include="Back end\x86\compile_expr.h" />
+    <ClInclude Include="Back end\x86\compile_funct.h" />
+    <ClInclude Include="Back end\x86\compile_keywords.h" />
     <ClInclude Include="Back end\x86\DSL.h" />
     <ClInclude Include="Back end\x86\intrinsic_funct.h" />
     <ClInclude Include="Back end\x86\x86Compiler.h" />
@@ -196,40 +214,14 @@
     <ClInclude Include="Front end\Lexer\Lexer.h" />
     <ClInclude Include="Front end\Parser.h" />
     <ClInclude Include="Front end\parser_private.h" />
-    <ClCompile Include="Front end\parse_aux.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="Front end\parse_expr.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="Front end\parse_funct.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="Front end\parse_keyword.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-    </ClCompile>
+    <ClInclude Include="LanguageGrammar\LanguageGrammar.h" />
+    <ClInclude Include="Modules\TargetOS.h" />
     <ClInclude Include="UnitTests.h" />
     <None Include="AST\ast_nodes.inc" />
     <None Include="Back end\x86\asm_cmd_codes.inc" />
     <None Include="Back end\x86\asm_cmd_names.inc" />
     <None Include="Back end\x86\asm_regs.inc" />
     <None Include="Front end\parse_funct.cpp.vsspell" />
-    <None Include="LanguageGrammar\operators.inc">
-      <FileType>Document</FileType>
-    </None>
-    <ClInclude Include="LanguageGrammar\LanguageGrammar.h" />
     <ClInclude Include="Modules\DisableLogs.h" />
     <ClInclude Include="Modules\ErrorsHandling.h" />
     <ClInclude Include="Modules\ExtArray\ExtArray.h" />
@@ -242,6 +234,7 @@
   <ItemGroup>
     <None Include="LanguageGrammar\English\keywords.inc" />
     <None Include="LanguageGrammar\keywords.inc" />
+    <None Include="LanguageGrammar\operators.inc" />
     <None Include="LanguageGrammar\special_symbols.inc" />
     <None Include="LanguageGrammar\Universal\operators.inc" />
     <None Include="LanguageGrammar\Universal\special_symbols.inc" />

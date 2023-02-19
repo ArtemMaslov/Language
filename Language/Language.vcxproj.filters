@@ -61,47 +61,20 @@
       <Filter>Modules\FilesIO</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="LanguageGrammar\LanguageGrammar.cpp">
-      <Filter>LanguageGrammar</Filter>
-    </ClCompile>
     <ClCompile Include="Modules\ExtArray\ExtArray.cpp">
       <Filter>Modules\ExtArray</Filter>
-    </ClCompile>
-    <ClCompile Include="Front end\Lexer\Lexer.cpp">
-      <Filter>Front end\Lexer</Filter>
-    </ClCompile>
-    <ClCompile Include="Front end\Parser.cpp">
-      <Filter>Front end</Filter>
-    </ClCompile>
-    <ClCompile Include="Front end\Lexer\Identifier.cpp">
-      <Filter>Front end\Lexer</Filter>
     </ClCompile>
     <ClCompile Include="Modules\ExtHeap\ExtHeap.cpp">
       <Filter>Modules\ExtHeap</Filter>
     </ClCompile>
-    <ClCompile Include="Front end\Lexer\LexerUnitTests.cpp">
-      <Filter>Front end\Lexer</Filter>
-    </ClCompile>
-    <ClCompile Include="Front end\ParserUnitTests.cpp">
-      <Filter>Front end</Filter>
+    <ClCompile Include="Modules\Logs\logs_config_private.h">
+      <Filter>Modules\Logs</Filter>
     </ClCompile>
     <ClCompile Include="AST\AST.cpp">
       <Filter>AST</Filter>
     </ClCompile>
     <ClCompile Include="AST\AST_Verify.cpp">
       <Filter>AST</Filter>
-    </ClCompile>
-    <ClCompile Include="Back end\x86\x86Compiler.cpp">
-      <Filter>Back end\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="Back end\x86\x86CompilerUnitTests.cpp">
-      <Filter>Back end\x86</Filter>
-    </ClCompile>
-    <ClCompile Include="Modules\Logs\logs_config_private.h">
-      <Filter>Modules\Logs</Filter>
-    </ClCompile>
-    <ClCompile Include="Back end\x86\asm_representation.cpp">
-      <Filter>Back end\x86</Filter>
     </ClCompile>
     <ClCompile Include="AST\aux_nodes.cpp">
       <Filter>AST</Filter>
@@ -115,17 +88,65 @@
     <ClCompile Include="AST\keyword_nodes.cpp">
       <Filter>AST</Filter>
     </ClCompile>
-    <ClCompile Include="Front end\parse_funct.cpp">
-      <Filter>Front end</Filter>
+    <ClCompile Include="Back end\SoftCPU\SoftCpuCompiler.cpp">
+      <Filter>Back end\SoftCPU</Filter>
     </ClCompile>
-    <ClCompile Include="Front end\parse_keyword.cpp">
-      <Filter>Front end</Filter>
+    <ClCompile Include="Back end\SoftCPU\SoftCpuCompilerUnitTests.cpp">
+      <Filter>Back end\SoftCPU</Filter>
+    </ClCompile>
+    <ClCompile Include="Back end\x86\asm_labels.cpp">
+      <Filter>Back end\x86</Filter>
+    </ClCompile>
+    <ClCompile Include="Back end\x86\asm_representation.cpp">
+      <Filter>Back end\x86</Filter>
+    </ClCompile>
+    <ClCompile Include="Back end\x86\compile_aux.cpp">
+      <Filter>Back end\x86</Filter>
+    </ClCompile>
+    <ClCompile Include="Back end\x86\compile_expr.cpp">
+      <Filter>Back end\x86</Filter>
+    </ClCompile>
+    <ClCompile Include="Back end\x86\compile_funct.cpp">
+      <Filter>Back end\x86</Filter>
+    </ClCompile>
+    <ClCompile Include="Back end\x86\compile_keywords.cpp">
+      <Filter>Back end\x86</Filter>
+    </ClCompile>
+    <ClCompile Include="Back end\x86\x86Compiler.cpp">
+      <Filter>Back end\x86</Filter>
+    </ClCompile>
+    <ClCompile Include="Back end\x86\x86CompilerUnitTests.cpp">
+      <Filter>Back end\x86</Filter>
+    </ClCompile>
+    <ClCompile Include="Front end\Lexer\Identifier.cpp">
+      <Filter>Front end\Lexer</Filter>
+    </ClCompile>
+    <ClCompile Include="Front end\Lexer\Lexer.cpp">
+      <Filter>Front end\Lexer</Filter>
+    </ClCompile>
+    <ClCompile Include="Front end\Lexer\LexerUnitTests.cpp">
+      <Filter>Front end\Lexer</Filter>
     </ClCompile>
     <ClCompile Include="Front end\parse_aux.cpp">
       <Filter>Front end</Filter>
     </ClCompile>
     <ClCompile Include="Front end\parse_expr.cpp">
       <Filter>Front end</Filter>
+    </ClCompile>
+    <ClCompile Include="Front end\parse_funct.cpp">
+      <Filter>Front end</Filter>
+    </ClCompile>
+    <ClCompile Include="Front end\parse_keyword.cpp">
+      <Filter>Front end</Filter>
+    </ClCompile>
+    <ClCompile Include="Front end\Parser.cpp">
+      <Filter>Front end</Filter>
+    </ClCompile>
+    <ClCompile Include="Front end\ParserUnitTests.cpp">
+      <Filter>Front end</Filter>
+    </ClCompile>
+    <ClCompile Include="LanguageGrammar\LanguageGrammar.cpp">
+      <Filter>LanguageGrammar</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -144,51 +165,21 @@
     <ClInclude Include="Modules\FilesIO\FilesIO.h">
       <Filter>Modules\FilesIO</Filter>
     </ClInclude>
-    <ClInclude Include="LanguageGrammar\LanguageGrammar.h">
-      <Filter>LanguageGrammar</Filter>
-    </ClInclude>
     <ClInclude Include="Modules\ExtArray\ExtArray.h">
       <Filter>Modules\ExtArray</Filter>
     </ClInclude>
-    <ClInclude Include="Front end\Lexer\Lexer.h">
-      <Filter>Front end\Lexer</Filter>
-    </ClInclude>
-    <ClInclude Include="Front end\Parser.h">
-      <Filter>Front end</Filter>
-    </ClInclude>
-    <ClInclude Include="Front end\Lexer\Identifier.h">
-      <Filter>Front end\Lexer</Filter>
-    </ClInclude>
     <ClInclude Include="Modules\ExtHeap\ExtHeap.h">
       <Filter>Modules\ExtHeap</Filter>
-    </ClInclude>
-    <ClInclude Include="AST\AST.h">
-      <Filter>AST</Filter>
-    </ClInclude>
-    <ClInclude Include="Back end\x86\x86Compiler.h">
-      <Filter>Back end\x86</Filter>
-    </ClInclude>
-    <ClInclude Include="Back end\x86\DSL.h">
-      <Filter>Back end\x86</Filter>
     </ClInclude>
     <ClInclude Include="Modules\DisableLogs.h">
       <Filter>Modules</Filter>
     </ClInclude>
     <ClInclude Include="UnitTests.h" />
-    <ClInclude Include="Front end\parser_private.h">
-      <Filter>Front end</Filter>
+    <ClInclude Include="AST\AST.h">
+      <Filter>AST</Filter>
     </ClInclude>
     <ClInclude Include="AST\ast_private.h">
       <Filter>AST</Filter>
-    </ClInclude>
-    <ClInclude Include="Back end\x86\asm_representation.h">
-      <Filter>Back end\x86</Filter>
-    </ClInclude>
-    <ClInclude Include="Back end\x86\compiler_config.h">
-      <Filter>Back end\x86</Filter>
-    </ClInclude>
-    <ClInclude Include="Back end\x86\intrinsic_funct.h">
-      <Filter>Back end\x86</Filter>
     </ClInclude>
     <ClInclude Include="AST\ast_verify_patterns.h">
       <Filter>AST</Filter>
@@ -205,6 +196,66 @@
     <ClInclude Include="AST\keyword_nodes.h">
       <Filter>AST</Filter>
     </ClInclude>
+    <ClInclude Include="Back end\SoftCPU\_compiler_config.h">
+      <Filter>Back end\SoftCPU</Filter>
+    </ClInclude>
+    <ClInclude Include="Back end\SoftCPU\_intrinsic_funct.h">
+      <Filter>Back end\SoftCPU</Filter>
+    </ClInclude>
+    <ClInclude Include="Back end\SoftCPU\SoftCpuCompiler.h">
+      <Filter>Back end\SoftCPU</Filter>
+    </ClInclude>
+    <ClInclude Include="Back end\x86\asm_defs.h">
+      <Filter>Back end\x86</Filter>
+    </ClInclude>
+    <ClInclude Include="Back end\x86\asm_labels.h">
+      <Filter>Back end\x86</Filter>
+    </ClInclude>
+    <ClInclude Include="Back end\x86\asm_representation.h">
+      <Filter>Back end\x86</Filter>
+    </ClInclude>
+    <ClInclude Include="Back end\x86\compile_aux.h">
+      <Filter>Back end\x86</Filter>
+    </ClInclude>
+    <ClInclude Include="Back end\x86\compile_expr.h">
+      <Filter>Back end\x86</Filter>
+    </ClInclude>
+    <ClInclude Include="Back end\x86\compile_funct.h">
+      <Filter>Back end\x86</Filter>
+    </ClInclude>
+    <ClInclude Include="Back end\x86\compile_keywords.h">
+      <Filter>Back end\x86</Filter>
+    </ClInclude>
+    <ClInclude Include="Back end\x86\compiler_config.h">
+      <Filter>Back end\x86</Filter>
+    </ClInclude>
+    <ClInclude Include="Back end\x86\DSL.h">
+      <Filter>Back end\x86</Filter>
+    </ClInclude>
+    <ClInclude Include="Back end\x86\intrinsic_funct.h">
+      <Filter>Back end\x86</Filter>
+    </ClInclude>
+    <ClInclude Include="Back end\x86\x86Compiler.h">
+      <Filter>Back end\x86</Filter>
+    </ClInclude>
+    <ClInclude Include="Front end\Lexer\Identifier.h">
+      <Filter>Front end\Lexer</Filter>
+    </ClInclude>
+    <ClInclude Include="Front end\Lexer\Lexer.h">
+      <Filter>Front end\Lexer</Filter>
+    </ClInclude>
+    <ClInclude Include="Front end\Parser.h">
+      <Filter>Front end</Filter>
+    </ClInclude>
+    <ClInclude Include="Front end\parser_private.h">
+      <Filter>Front end</Filter>
+    </ClInclude>
+    <ClInclude Include="Modules\TargetOS.h">
+      <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="LanguageGrammar\LanguageGrammar.h">
+      <Filter>LanguageGrammar</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="LanguageGrammar\Universal\operators.inc">
@@ -216,15 +267,7 @@
     <None Include="LanguageGrammar\English\keywords.inc">
       <Filter>LanguageGrammar\English</Filter>
     </None>
-    <None Include="LanguageGrammar\keywords.inc">
-      <Filter>LanguageGrammar</Filter>
-    </None>
-    <None Include="LanguageGrammar\operators.inc">
-      <Filter>LanguageGrammar</Filter>
-    </None>
-    <None Include="LanguageGrammar\special_symbols.inc">
-      <Filter>LanguageGrammar</Filter>
-    </None>
+    <None Include="Front end\parse_funct.cpp.vsspell" />
     <None Include="AST\ast_nodes.inc">
       <Filter>AST</Filter>
     </None>
@@ -237,6 +280,14 @@
     <None Include="Back end\x86\asm_regs.inc">
       <Filter>Back end\x86</Filter>
     </None>
-    <None Include="Front end\parse_funct.cpp.vsspell" />
+    <None Include="LanguageGrammar\keywords.inc">
+      <Filter>LanguageGrammar</Filter>
+    </None>
+    <None Include="LanguageGrammar\operators.inc">
+      <Filter>LanguageGrammar</Filter>
+    </None>
+    <None Include="LanguageGrammar\special_symbols.inc">
+      <Filter>LanguageGrammar</Filter>
+    </None>
   </ItemGroup>
 </Project>
